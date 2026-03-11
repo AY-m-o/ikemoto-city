@@ -7,23 +7,21 @@ import { C } from "./constants.js";
 export function Ticker({ text }) {
   return (
     <div style={{
-      background:"linear-gradient(90deg,#0a1a0e,#0d2016,#0a1a0e)",
-      borderTop:"1px solid rgba(46,107,79,0.5)",
-      borderBottom:"1px solid rgba(46,107,79,0.5)",
+      background:"#000000",
+      borderBottom:"1px solid rgba(0,255,136,0.3)",
       padding:"5px 0",
       overflow:"hidden",
       position:"relative",
     }}>
-      {/* スキャングロー */}
-      <div style={{position:"absolute",inset:0,background:"linear-gradient(90deg,transparent 0%,rgba(46,160,79,0.06) 50%,transparent 100%)",animation:"scanGlow 3s ease-in-out infinite",pointerEvents:"none"}}/>
+      <div style={{position:"absolute",inset:0,background:"linear-gradient(90deg,transparent,rgba(0,255,136,0.04),transparent)",animation:"scanGlow 4s ease-in-out infinite",pointerEvents:"none"}}/>
       <span style={{
-        animation:"ticker 48s linear infinite",
+        animation:"ticker 36s linear infinite",
         display:"inline-block",
         fontFamily:"'SF Mono','Fira Mono','Courier New',monospace",
-        fontSize:8.5,
+        fontSize:9,
         letterSpacing:"0.18em",
-        color:"rgba(100,220,140,0.85)",
-        textShadow:"0 0 6px rgba(46,160,79,0.55)",
+        color:"#00ff88",
+        textShadow:"0 0 8px #00ff88",
         whiteSpace:"nowrap",
       }}>
         {"　"}{text}
@@ -37,8 +35,8 @@ export function Ticker({ text }) {
 // ─────────────────────────────────────────────
 export function Stamp() {
   return (
-    <div style={{position:"absolute",bottom:7,right:9,border:"1px solid rgba(46,107,79,0.18)",borderRadius:2,padding:"1px 4px",transform:"rotate(-7deg)",pointerEvents:"none"}}>
-      <span style={{fontSize:6.5,fontWeight:700,letterSpacing:"0.18em",color:"rgba(46,107,79,0.22)"}}>APPROVED</span>
+    <div style={{position:"absolute",bottom:7,right:9,border:"1px solid rgba(0,255,136,0.2)",borderRadius:2,padding:"1px 5px",transform:"rotate(-7deg)",pointerEvents:"none"}}>
+      <span style={{fontSize:6.5,fontWeight:700,letterSpacing:"0.18em",color:"rgba(0,255,136,0.25)",textShadow:"0 0 4px rgba(0,255,136,0.2)"}}>APPROVED</span>
     </div>
   );
 }
@@ -49,7 +47,7 @@ export function Stamp() {
 export function Watermark({ id }) {
   return (
     <div style={{position:"fixed",bottom:78,right:0,zIndex:40,transform:"rotate(-90deg)",transformOrigin:"right center",pointerEvents:"none",userSelect:"none"}}>
-      <span style={{fontSize:8,color:"rgba(26,37,64,0.09)",letterSpacing:"0.2em",fontWeight:700,whiteSpace:"nowrap"}}>{id||"IK-2026-████"}</span>
+      <span style={{fontSize:8,color:"rgba(0,255,136,0.06)",letterSpacing:"0.2em",fontWeight:700,whiteSpace:"nowrap"}}>{id||"IK-2026-████"}</span>
     </div>
   );
 }
@@ -60,8 +58,8 @@ export function Watermark({ id }) {
 export function RR({ value }) {
   return (
     <div style={{position:"fixed",bottom:78,left:11,zIndex:40,pointerEvents:"none"}}>
-      <div style={{fontSize:7,color:"rgba(26,37,64,0.2)",letterSpacing:"0.14em",marginBottom:1}}>RR</div>
-      <div style={{fontSize:10,color:"rgba(26,37,64,0.16)",fontWeight:700,letterSpacing:"0.1em",fontVariantNumeric:"tabular-nums"}}>{value}</div>
+      <div style={{fontSize:7,color:"rgba(0,255,136,0.2)",letterSpacing:"0.14em",marginBottom:1,fontFamily:"monospace"}}>RR</div>
+      <div style={{fontSize:10,color:"rgba(0,255,136,0.18)",fontWeight:700,letterSpacing:"0.1em",fontVariantNumeric:"tabular-nums",fontFamily:"monospace"}}>{value}</div>
     </div>
   );
 }
@@ -70,10 +68,11 @@ export function RR({ value }) {
 // SECTION HEADER
 // ─────────────────────────────────────────────
 export function SectionHead({ accent, label, sub }) {
+  const col = accent || C.green;
   return (
-    <div style={{display:"flex",alignItems:"center",gap:7,marginBottom:11}}>
-      <div style={{width:2.5,height:13,background:accent||C.navy,borderRadius:2,flexShrink:0,boxShadow:"0 0 5px "+(accent||C.navy)+"55"}}/>
-      <span style={{fontSize:10,color:C.txM,letterSpacing:"0.18em",fontWeight:600}}>{label}</span>
+    <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:12}}>
+      <div style={{width:2.5,height:14,background:col,borderRadius:2,flexShrink:0,boxShadow:"0 0 8px "+col}}/>
+      <span style={{fontSize:10,color:C.txM,letterSpacing:"0.18em",fontWeight:700,textTransform:"uppercase"}}>{label}</span>
       {sub&&<span style={{fontSize:8.5,color:C.txL,letterSpacing:"0.08em"}}>{sub}</span>}
     </div>
   );
@@ -92,13 +91,13 @@ export function LogTerminal({ logs, running, dark=true }) {
     s.includes("終了しました") || s.includes("公開されました");
 
   const getColor = (s) => dark
-    ? (isSuccess(s) ? "#4caf7d" : "#4a7060")
+    ? (isSuccess(s) ? "#00ff88" : "#2a5040")
     : (isSuccess(s) ? C.green   : C.txM);
 
   const getPrefix = (s) => isSuccess(s) ? "" : "> ";
 
   return (
-    <div ref={ref} style={{background:dark?"#07101a":"#f0f4f8",border:"1px solid "+(dark?"rgba(46,107,79,0.35)":C.border),borderRadius:6,padding:"11px 13px",marginBottom:16,height:148,overflowY:"auto",scrollbarWidth:"none",fontFamily:"'SF Mono','Fira Mono',monospace",fontSize:9.5,lineHeight:1.9,letterSpacing:"0.03em",boxShadow:dark?"inset 0 0 20px rgba(0,0,0,0.3)":"none"}}>
+    <div ref={ref} style={{background:dark?"#060b15":"#111827",border:"1px solid "+(dark?"rgba(0,255,136,0.2)":C.border),borderRadius:8,padding:"12px 14px",marginBottom:16,height:148,overflowY:"auto",scrollbarWidth:"none",fontFamily:"'SF Mono','Fira Mono',monospace",fontSize:9.5,lineHeight:1.9,letterSpacing:"0.03em",boxShadow:dark?"inset 0 0 24px rgba(0,0,0,0.5)":"none"}}>
       {logs
         .filter((l) => l != null && String(l).trim() !== "")
         .map((log, i) => {
@@ -109,20 +108,48 @@ export function LogTerminal({ logs, running, dark=true }) {
             </div>
           );
         })}
-      {running && <span style={{animation:"cursorBlink 0.7s infinite",color:dark?"#4caf7d":C.green}}>▋</span>}
+      {running && <span style={{animation:"cursorBlink 0.7s infinite",color:"#00ff88",textShadow:"0 0 6px #00ff88"}}>▋</span>}
     </div>
   );
 }
 
 // ─────────────────────────────────────────────
-// BUTTON — with cyber glow on press
+// BUTTON — primary: #00ff88 + glow
 // ─────────────────────────────────────────────
 export function Btn({ label, onClick, variant="primary", small=false, disabled=false }) {
   const [pressed, setPressed] = useState(false);
-  const bg  = variant==="primary"?C.green : variant==="navy"?C.navy : variant==="danger"?C.red : "transparent";
-  const col = variant==="ghost" ? C.txM : "#fff";
-  const bdr = variant==="ghost" ? "1px solid "+C.border : "none";
-  const glowColor = variant==="primary"?"rgba(46,160,79,0.55)" : variant==="navy"?"rgba(26,50,120,0.55)" : "transparent";
+
+  const styles = {
+    primary: {
+      bg: "transparent",
+      color: "#00ff88",
+      border: "1px solid #00ff88",
+      shadow: "0 0 12px rgba(0,255,136,0.3),inset 0 0 12px rgba(0,255,136,0.04)",
+      shadowPress: "0 0 24px rgba(0,255,136,0.6),inset 0 0 16px rgba(0,255,136,0.1)",
+    },
+    navy: {
+      bg: C.navyL,
+      color: C.tx,
+      border: "1px solid "+C.border,
+      shadow: "none",
+      shadowPress: "0 0 12px rgba(0,255,136,0.2)",
+    },
+    danger: {
+      bg: "transparent",
+      color: C.red,
+      border: "1px solid "+C.red,
+      shadow: "none",
+      shadowPress: "0 0 12px rgba(255,68,85,0.4)",
+    },
+    ghost: {
+      bg: "transparent",
+      color: C.txM,
+      border: "1px solid "+C.border,
+      shadow: "none",
+      shadowPress: "none",
+    },
+  };
+  const s = styles[variant] || styles.primary;
 
   return (
     <button
@@ -134,22 +161,22 @@ export function Btn({ label, onClick, variant="primary", small=false, disabled=f
       onTouchStart={() => setPressed(true)}
       onTouchEnd={() => setPressed(false)}
       style={{
-        padding:small?"6px 14px":"11px 0",
+        padding:small?"7px 16px":"12px 0",
         width:small?"auto":"100%",
-        background:disabled?"rgba(46,107,79,0.2)":bg,
-        border:bdr,
-        borderRadius:6,
-        color:disabled?"rgba(255,255,255,0.35)":col,
+        background:disabled?"rgba(0,255,136,0.05)":s.bg,
+        border:disabled?"1px solid rgba(0,255,136,0.15)":s.border,
+        borderRadius:8,
+        color:disabled?"rgba(0,255,136,0.3)":s.color,
         fontSize:small?9:10,
-        fontWeight:600,
-        letterSpacing:"0.12em",
+        fontWeight:700,
+        letterSpacing:"0.14em",
+        textTransform:"uppercase",
         cursor:disabled?"default":"pointer",
         fontFamily:"inherit",
         transition:"all 0.15s",
-        boxShadow:pressed&&!disabled?"0 0 16px "+glowColor+",0 0 4px "+glowColor
-          : variant==="primary"&&!disabled?"0 2px 8px rgba(46,107,79,0.2)":"none",
+        boxShadow:pressed&&!disabled ? s.shadowPress : (disabled?"none":s.shadow),
         transform:pressed&&!disabled?"scale(0.97)":"scale(1)",
-        opacity:disabled?0.6:1,
+        textShadow:variant==="primary"&&!disabled?"0 0 8px rgba(0,255,136,0.6)":"none",
       }}>
       {label}
     </button>
@@ -163,10 +190,10 @@ export function Modal({ children, onClose }) {
   return (
     <div
       onClick={onClose}
-      style={{position:"fixed",inset:0,zIndex:500,background:"rgba(10,16,28,0.76)",display:"flex",alignItems:"flex-end",justifyContent:"center",animation:"fadeIn 0.2s ease",backdropFilter:"blur(2px)"}}>
+      style={{position:"fixed",inset:0,zIndex:500,background:"rgba(6,11,21,0.85)",display:"flex",alignItems:"flex-end",justifyContent:"center",animation:"fadeIn 0.2s ease",backdropFilter:"blur(4px)"}}>
       <div
         onClick={(e)=>e.stopPropagation()}
-        style={{background:C.bg,width:"100%",maxWidth:390,borderRadius:"14px 14px 0 0",padding:"20px 16px 32px",animation:"slideUp 0.25s ease",maxHeight:"85vh",overflowY:"auto",scrollbarWidth:"none",boxShadow:"0 -4px 32px rgba(0,0,0,0.2)"}}>
+        style={{background:C.card,width:"100%",maxWidth:390,borderRadius:"16px 16px 0 0",padding:"20px 16px 36px",animation:"slideUp 0.25s ease",maxHeight:"88vh",overflowY:"auto",scrollbarWidth:"none",border:"1px solid rgba(0,255,136,0.15)",borderBottom:"none",boxShadow:"0 -8px 40px rgba(0,255,136,0.08)"}}>
         {children}
       </div>
     </div>
@@ -178,31 +205,37 @@ export function Modal({ children, onClose }) {
 // ─────────────────────────────────────────────
 export function AuthField({ label, value, onChangeVal, placeholder, type="text" }) {
   return (
-    <div style={{marginBottom:12}}>
-      <div style={{fontSize:8.5,color:C.txL,letterSpacing:"0.18em",marginBottom:5}}>{label}</div>
+    <div style={{marginBottom:13}}>
+      <div style={{fontSize:8.5,color:C.txL,letterSpacing:"0.2em",marginBottom:6,textTransform:"uppercase"}}>{label}</div>
       <input
         type={type}
         value={value}
         onChange={(e)=>onChangeVal(e.target.value)}
         placeholder={placeholder}
-        style={{width:"100%",padding:"10px 13px",background:"rgba(255,255,255,0.05)",border:"1px solid rgba(255,255,255,0.1)",borderRadius:6,color:"#c0d0e4",fontSize:13,letterSpacing:"0.1em",fontFamily:"inherit",outline:"none",boxSizing:"border-box"}}/>
+        style={{width:"100%",padding:"11px 14px",background:"rgba(0,255,136,0.03)",border:"1px solid rgba(0,255,136,0.15)",borderRadius:8,color:C.tx,fontSize:13,letterSpacing:"0.08em",fontFamily:"inherit",outline:"none",boxSizing:"border-box",transition:"border-color 0.2s"}}
+        onFocus={e=>e.target.style.borderColor="rgba(0,255,136,0.5)"}
+        onBlur={e=>e.target.style.borderColor="rgba(0,255,136,0.15)"}
+        />
     </div>
   );
 }
 
 // ─────────────────────────────────────────────
-// INPUT FIELD — light background (App)
+// INPUT FIELD — dark background (App)
 // ─────────────────────────────────────────────
 export function Field({ label, value, onChangeVal, placeholder, type="text" }) {
   return (
-    <div style={{marginBottom:12}}>
-      <div style={{fontSize:8.5,color:C.txM,letterSpacing:"0.18em",marginBottom:5}}>{label}</div>
+    <div style={{marginBottom:13}}>
+      <div style={{fontSize:8.5,color:C.txL,letterSpacing:"0.2em",marginBottom:6,textTransform:"uppercase"}}>{label}</div>
       <input
         type={type}
         value={value}
         onChange={(e)=>onChangeVal(e.target.value)}
         placeholder={placeholder}
-        style={{width:"100%",padding:"10px 13px",background:C.card,border:"1px solid "+C.border,borderRadius:6,color:C.tx,fontSize:13,letterSpacing:"0.06em",fontFamily:"inherit",outline:"none",boxSizing:"border-box"}}/>
+        style={{width:"100%",padding:"11px 14px",background:"rgba(255,255,255,0.03)",border:"1px solid "+C.border,borderRadius:8,color:C.tx,fontSize:13,letterSpacing:"0.06em",fontFamily:"inherit",outline:"none",boxSizing:"border-box",transition:"border-color 0.2s"}}
+        onFocus={e=>e.target.style.borderColor="rgba(0,255,136,0.4)"}
+        onBlur={e=>e.target.style.borderColor=C.border}
+        />
     </div>
   );
 }
@@ -212,16 +245,16 @@ export function Field({ label, value, onChangeVal, placeholder, type="text" }) {
 // ─────────────────────────────────────────────
 export function SubScreenNav({ label, onBack }) {
   return (
-    <div style={{background:C.navy,padding:"0 0 0 0",borderBottom:"1px solid rgba(46,107,79,0.35)",marginBottom:0}}>
+    <div style={{background:C.navy,padding:"0",borderBottom:"1px solid rgba(0,255,136,0.15)",marginBottom:0}}>
       <div style={{display:"flex",alignItems:"center",gap:0}}>
         <button
           onClick={onBack}
-          style={{background:"transparent",border:"none",color:"rgba(143,168,200,0.6)",fontSize:9,cursor:"pointer",fontFamily:"inherit",letterSpacing:"0.1em",padding:"12px 14px",display:"flex",alignItems:"center",gap:6,flexShrink:0}}>
+          style={{background:"transparent",border:"none",color:C.txL,fontSize:9,cursor:"pointer",fontFamily:"inherit",letterSpacing:"0.1em",padding:"12px 14px",display:"flex",alignItems:"center",gap:6,flexShrink:0}}>
           <span style={{fontSize:12,lineHeight:1}}>‹</span>
           <span>マイページ</span>
         </button>
         <div style={{flex:1,textAlign:"center",paddingRight:80}}>
-          <span style={{fontSize:11,fontWeight:600,color:"#e4eaf4",letterSpacing:"0.12em"}}>{label}</span>
+          <span style={{fontSize:11,fontWeight:700,color:C.tx,letterSpacing:"0.14em"}}>{label}</span>
         </div>
       </div>
     </div>
@@ -233,10 +266,11 @@ export function SubScreenNav({ label, onBack }) {
 // ─────────────────────────────────────────────
 export const GLOBAL_CSS = `
   @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&display=swap');
-  html,body,#root{margin:0;padding:0;min-height:100vh;background:#0f1828;}
+  html,body,#root{margin:0;padding:0;min-height:100vh;background:#0a0f1e;}
   *{box-sizing:border-box;}
   ::-webkit-scrollbar{width:0;}
   input,textarea{outline:none;box-sizing:border-box;}
+  ::placeholder{color:rgba(107,114,128,0.6);}
 
   @keyframes slideDown{from{opacity:0;transform:translateY(-10px);}to{opacity:1;transform:translateY(0);}}
   @keyframes slideUp{from{opacity:0;transform:translateY(30px);}to{opacity:1;transform:translateY(0);}}
@@ -244,20 +278,17 @@ export const GLOBAL_CSS = `
   @keyframes ticker{0%{transform:translateX(0);}100%{transform:translateX(-50%);}}
   @keyframes cursorBlink{0%,100%{opacity:1;}50%{opacity:0;}}
   @keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
-
-  /* サイバーアニメ */
-  @keyframes scanGlow{0%,100%{opacity:0.4;transform:translateX(-100%);}50%{opacity:1;transform:translateX(200%);}}
-  @keyframes likeGlow{0%{box-shadow:0 0 0 0 rgba(77,220,130,0.7);}50%{box-shadow:0 0 18px 6px rgba(77,220,130,0.45);}100%{box-shadow:0 0 0 0 rgba(77,220,130,0);}}
-  @keyframes followScan{0%{background-position:0% 0%;}100%{background-position:100% 0%;}}
-  @keyframes gridPulse{0%,100%{opacity:0.03;}50%{opacity:0.06;}}
+  @keyframes scanGlow{0%,100%{opacity:0;transform:translateX(-100%);}50%{opacity:1;transform:translateX(300%);}}
+  @keyframes likeGlow{0%{box-shadow:0 0 0 0 rgba(0,255,136,0.7);}50%{box-shadow:0 0 20px 6px rgba(0,255,136,0.4);}100%{box-shadow:0 0 0 0 rgba(0,255,136,0);}}
+  @keyframes gridPulse{0%,100%{opacity:0.25;}50%{opacity:0.45;}}
+  @keyframes borderPulse{0%,100%{box-shadow:0 0 6px rgba(0,255,136,0.3);}50%{box-shadow:0 0 16px rgba(0,255,136,0.7);}}
   @keyframes scanLine{0%{top:-4px;}100%{top:100%;}}
-  @keyframes cyberFlicker{0%,94%,96%,100%{opacity:1;}95%{opacity:0.7;}}
+  @keyframes cyberFlicker{0%,94%,96%,100%{opacity:1;}95%{opacity:0.75;}}
 
-  /* カード */
-  .card{transition:transform 0.15s ease,box-shadow 0.15s ease;cursor:pointer;}
-  .card:hover{transform:translateY(-2px);box-shadow:0 4px 16px rgba(46,107,79,0.12),0 0 0 1px rgba(46,107,79,0.08);}
+  /* カード hover グロー */
+  .card{transition:all 0.2s ease;cursor:pointer;border-radius:12px;}
+  .card:hover{border-color:rgba(0,255,136,0.4)!important;box-shadow:0 0 16px rgba(0,255,136,0.12),0 4px 20px rgba(0,0,0,0.4)!important;transform:translateY(-2px);}
 
-  /* グロー付きカード */
-  .card-glow{transition:all 0.2s;}
-  .card-glow:hover{box-shadow:0 0 12px rgba(46,107,79,0.15),0 2px 12px rgba(0,0,0,0.08);}
+  /* フォロー中ボーダーパルス */
+  .follow-active{animation:borderPulse 2s ease-in-out infinite;}
 `;

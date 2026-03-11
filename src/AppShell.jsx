@@ -172,38 +172,38 @@ export default function AppShell({ citizenId, userId, onLogout }) {
   return (
     <div style={{display:"flex",flexDirection:"column",flex:1,animation:"fadeIn 0.4s ease",position:"relative"}} onClick={closeMenus}>
       {/* グリッドパターン背景 */}
-      <div style={{position:"fixed",inset:0,zIndex:0,pointerEvents:"none",backgroundImage:"linear-gradient(rgba(46,107,79,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(46,107,79,0.04) 1px,transparent 1px)",backgroundSize:"32px 32px",animation:"gridPulse 6s ease-in-out infinite"}}/>
+      <div style={{position:"fixed",inset:0,zIndex:0,pointerEvents:"none",backgroundImage:"linear-gradient(#1f2937 1px,transparent 1px),linear-gradient(90deg,#1f2937 1px,transparent 1px)",backgroundSize:"32px 32px",opacity:0.3,animation:"gridPulse 8s ease-in-out infinite"}}/>
 
       {/* ── HEADER ── */}
-      <div style={{background:"linear-gradient(180deg,#1a2540,#141d33)",position:"sticky",top:0,zIndex:200,borderBottom:"1px solid rgba(46,107,79,0.55)",boxShadow:"0 2px 16px rgba(0,0,0,0.3),0 1px 0 rgba(46,120,79,0.2)"}}>
+      <div style={{background:"#0a0f1e",position:"sticky",top:0,zIndex:200,borderBottom:"1px solid rgba(0,255,136,0.2)",boxShadow:"0 2px 20px rgba(0,0,0,0.6),0 0 0 0 rgba(0,255,136,0.1)"}}>
         <Ticker text={TICKER}/>
         <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"10px 15px 9px"}}>
           <div>
-            <div style={{color:"rgba(143,168,200,0.45)",fontSize:7.5,letterSpacing:"0.24em",marginBottom:2,fontWeight:300}}>IKEMOTO CITY DIGITAL GOVERNMENT</div>
-            <div style={{color:"#e4eaf4",fontSize:14,fontWeight:700,letterSpacing:"0.1em"}}>池本市　デジタル市役所</div>
+            <div style={{color:"rgba(0,255,136,0.3)",fontSize:7.5,letterSpacing:"0.26em",marginBottom:2,fontWeight:300,fontFamily:"monospace"}}>IKEMOTO CITY DIGITAL GOVERNMENT</div>
+            <div style={{color:"#f9fafb",fontSize:14,fontWeight:700,letterSpacing:"0.1em",textShadow:"0 0 20px rgba(0,255,136,0.15)"}}>池本市　デジタル市役所</div>
           </div>
           <div style={{display:"flex",gap:5,alignItems:"center",position:"relative"}} onClick={e => e.stopPropagation()}>
 
             {/* ③ 検索アイコン */}
             <button onClick={() => { setShowSearch(v => !v); setShowLangMenu(false); setShowNotif(false); setSearchQuery(""); }}
-              style={{height:28,width:28,background:showSearch?"rgba(46,107,79,0.18)":"rgba(255,255,255,0.06)",border:"1px solid "+(showSearch?"rgba(46,107,79,0.4)":"rgba(255,255,255,0.12)"),borderRadius:6,padding:0,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,transition:"all 0.18s"}}>
+              style={{height:28,width:28,background:showSearch?"rgba(0,255,136,0.1)":"rgba(255,255,255,0.04)",border:"1px solid "+(showSearch?"rgba(0,255,136,0.5)":"rgba(255,255,255,0.08)"),borderRadius:6,padding:0,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,transition:"all 0.18s",boxShadow:showSearch?"0 0 8px rgba(0,255,136,0.3)":"none"}}>
               <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
-                <circle cx="5.5" cy="5.5" r="4" stroke="rgba(100,140,178,0.8)" strokeWidth="1.3"/>
-                <line x1="9" y1="9" x2="12" y2="12" stroke="rgba(100,140,178,0.8)" strokeWidth="1.3" strokeLinecap="round"/>
+                <circle cx="5.5" cy="5.5" r="4" stroke="rgba(0,255,136,0.6)" strokeWidth="1.3"/>
+                <line x1="9" y1="9" x2="12" y2="12" stroke="rgba(0,255,136,0.6)" strokeWidth="1.3" strokeLinecap="round"/>
               </svg>
             </button>
 
             {/* 言語ドロップダウン */}
             <div style={{position:"relative"}}>
               <button onClick={() => { setShowLangMenu(v => !v); setShowNotif(false); setShowSearch(false); }}
-                style={{height:28,background:"rgba(255,255,255,0.06)",border:"1px solid rgba(255,255,255,0.12)",borderRadius:6,padding:"0 9px",cursor:"pointer",color:"rgba(100,140,178,0.8)",fontSize:8.5,letterSpacing:"0.08em",fontWeight:600,fontFamily:"inherit",transition:"all 0.18s",display:"flex",alignItems:"center",gap:4,whiteSpace:"nowrap",flexShrink:0}}>
+                style={{height:28,background:"rgba(255,255,255,0.04)",border:"1px solid rgba(255,255,255,0.08)",borderRadius:6,padding:"0 9px",cursor:"pointer",color:"rgba(0,255,136,0.6)",fontSize:8.5,letterSpacing:"0.08em",fontWeight:600,fontFamily:"inherit",transition:"all 0.18s",display:"flex",alignItems:"center",gap:4,whiteSpace:"nowrap",flexShrink:0}}>
                 {lang} <span style={{fontSize:7,opacity:0.5}}>&#x25BC;</span>
               </button>
               {showLangMenu && (
-                <div style={{position:"absolute",top:"calc(100% + 4px)",right:0,background:"#0d1e30",border:"1px solid rgba(46,107,79,0.4)",borderRadius:7,overflow:"hidden",zIndex:400,minWidth:64,boxShadow:"0 4px 16px rgba(0,0,0,0.4)"}}>
+                <div style={{position:"absolute",top:"calc(100% + 4px)",right:0,background:"#0a0f1e",border:"1px solid rgba(0,255,136,0.2)",borderRadius:8,overflow:"hidden",zIndex:400,minWidth:64,boxShadow:"0 4px 24px rgba(0,0,0,0.6),0 0 12px rgba(0,255,136,0.05)"}}>
                   {LANGS.map(l => (
                     <button key={l} onClick={() => { setLang(l); setShowLangMenu(false); }}
-                      style={{display:"block",width:"100%",padding:"8px 14px",background:l===lang?"rgba(46,107,79,0.2)":"transparent",border:"none",color:l===lang?"#4caf7d":"rgba(143,168,200,0.75)",fontSize:9.5,fontWeight:l===lang?700:400,cursor:"pointer",fontFamily:"inherit",letterSpacing:"0.08em",textAlign:"center",borderBottom:"1px solid rgba(255,255,255,0.05)"}}>
+                      style={{display:"block",width:"100%",padding:"8px 14px",background:l===lang?"rgba(0,255,136,0.08)":"transparent",border:"none",color:l===lang?"#00ff88":"rgba(156,163,175,0.7)",fontSize:9.5,fontWeight:l===lang?700:400,cursor:"pointer",fontFamily:"inherit",letterSpacing:"0.08em",textAlign:"center",borderBottom:"1px solid rgba(255,255,255,0.04)",textShadow:l===lang?"0 0 6px rgba(0,255,136,0.5)":"none"}}>
                       {l}
                     </button>
                   ))}
@@ -214,20 +214,20 @@ export default function AppShell({ citizenId, userId, onLogout }) {
             {/* 通知ベル */}
             <div style={{position:"relative"}}>
               <button onClick={() => { setShowNotif(v => !v); setShowLangMenu(false); setShowSearch(false); if (!readNotif) setReadNotif(true); }}
-                style={{height:28,width:28,background:showNotif?"rgba(46,107,79,0.18)":"rgba(255,255,255,0.06)",border:"1px solid "+(showNotif?"rgba(46,107,79,0.35)":"rgba(255,255,255,0.12)"),borderRadius:6,padding:0,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,transition:"all 0.18s"}}>
+                style={{height:28,width:28,background:showNotif?"rgba(0,255,136,0.1)":"rgba(255,255,255,0.04)",border:"1px solid "+(showNotif?"rgba(0,255,136,0.4)":"rgba(255,255,255,0.08)"),borderRadius:6,padding:0,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,transition:"all 0.18s",boxShadow:showNotif?"0 0 8px rgba(0,255,136,0.25)":"none"}}>
                 <BellIcon hasUnread={!readNotif}/>
               </button>
               {showNotif && (
-                <div style={{position:"absolute",top:"calc(100% + 4px)",right:0,background:"#0d1e30",border:"1px solid rgba(46,107,79,0.3)",borderRadius:8,overflow:"hidden",zIndex:400,width:220,boxShadow:"0 4px 16px rgba(0,0,0,0.5)"}}>
-                  <div style={{padding:"9px 12px",borderBottom:"1px solid rgba(255,255,255,0.06)",fontSize:8,color:"rgba(143,168,200,0.5)",letterSpacing:"0.14em"}}>通知 NOTIFICATIONS</div>
+                <div style={{position:"absolute",top:"calc(100% + 4px)",right:0,background:"#0a0f1e",border:"1px solid rgba(0,255,136,0.15)",borderRadius:8,overflow:"hidden",zIndex:400,width:220,boxShadow:"0 4px 24px rgba(0,0,0,0.6),0 0 16px rgba(0,255,136,0.04)"}}>
+                  <div style={{padding:"9px 12px",borderBottom:"1px solid rgba(255,255,255,0.05)",fontSize:8,color:"rgba(0,255,136,0.4)",letterSpacing:"0.18em",fontFamily:"monospace"}}>通知 // NOTIFICATIONS</div>
                   {NOTIFS.map(n => {
-                    const iconMap = { assign:"✔", msg:"💬", doc:"📄" };
+                    const iconMap = { assign:"✔", msg:"◈", doc:"▣" };
                     return (
-                      <div key={n.id} style={{padding:"10px 12px",borderBottom:"1px solid rgba(255,255,255,0.04)",display:"flex",gap:8,alignItems:"flex-start"}}>
-                        <span style={{fontSize:12,flexShrink:0,marginTop:1,opacity:0.7}}>{iconMap[n.icon]||"•"}</span>
+                      <div key={n.id} style={{padding:"10px 12px",borderBottom:"1px solid rgba(255,255,255,0.03)",display:"flex",gap:8,alignItems:"flex-start"}}>
+                        <span style={{fontSize:11,flexShrink:0,marginTop:1,color:"rgba(0,255,136,0.5)"}}>{iconMap[n.icon]||"•"}</span>
                         <div style={{flex:1}}>
-                          <div style={{fontSize:8.5,color:"rgba(200,220,240,0.8)",lineHeight:1.6,letterSpacing:"0.02em"}}>{n.text}</div>
-                          <div style={{fontSize:7.5,color:"rgba(143,168,200,0.4)",marginTop:3}}>{n.time}</div>
+                          <div style={{fontSize:8.5,color:"rgba(249,250,251,0.8)",lineHeight:1.6,letterSpacing:"0.02em"}}>{n.text}</div>
+                          <div style={{fontSize:7.5,color:"rgba(107,114,128,0.7)",marginTop:3}}>{n.time}</div>
                         </div>
                       </div>
                     );
@@ -237,7 +237,7 @@ export default function AppShell({ citizenId, userId, onLogout }) {
             </div>
 
             {/* 市民証 */}
-            <button onClick={() => setShowId((v) => !v)} style={{height:28,background:showId?C.green:"rgba(255,255,255,0.06)",border:"1px solid "+(showId?C.green:"rgba(255,255,255,0.12)"),borderRadius:6,padding:"0 10px",cursor:"pointer",color:showId?"#fff":"rgba(100,140,178,0.8)",fontSize:9,letterSpacing:"0.08em",fontWeight:600,fontFamily:"inherit",transition:"all 0.18s",whiteSpace:"nowrap",flexShrink:0,display:"flex",alignItems:"center"}}>
+            <button onClick={() => setShowId((v) => !v)} style={{height:28,background:showId?"rgba(0,255,136,0.12)":"rgba(255,255,255,0.04)",border:"1px solid "+(showId?"rgba(0,255,136,0.5)":"rgba(255,255,255,0.08)"),borderRadius:6,padding:"0 10px",cursor:"pointer",color:showId?"#00ff88":"rgba(156,163,175,0.7)",fontSize:9,letterSpacing:"0.08em",fontWeight:600,fontFamily:"inherit",transition:"all 0.18s",whiteSpace:"nowrap",flexShrink:0,display:"flex",alignItems:"center",boxShadow:showId?"0 0 10px rgba(0,255,136,0.25)":"none",textShadow:showId?"0 0 6px rgba(0,255,136,0.5)":"none"}}>
               {showId ? "✕" : "◈ 市民証"}
             </button>
           </div>
@@ -320,23 +320,23 @@ export default function AppShell({ citizenId, userId, onLogout }) {
         onNavigateMarket={navigateToMarket}/>}
 
       {/* ── BOTTOM NAV ── */}
-      <div style={{position:"fixed",bottom:0,left:"50%",transform:"translateX(-50%)",width:390,background:"linear-gradient(180deg,#171f38,#111828)",borderTop:"1px solid rgba(46,107,79,0.6)",display:"flex",zIndex:200,boxShadow:"0 -4px 20px rgba(0,0,0,0.4),0 -1px 0 rgba(46,120,79,0.15)"}}>
+      <div style={{position:"fixed",bottom:0,left:"50%",transform:"translateX(-50%)",width:390,background:"#0a0f1e",borderTop:"1px solid rgba(0,255,136,0.2)",display:"flex",zIndex:200,boxShadow:"0 -4px 24px rgba(0,0,0,0.6),0 -1px 0 rgba(0,255,136,0.1)"}}>
         {TABS.map((t) => {
           const isActive = tab === t.id;
           const isTapped = tappedTab === t.id;
           return (
             <button key={t.id} onClick={() => handleTab(t.id)}
-              style={{flex:1,padding:"9px 0 11px",background:"transparent",border:"none",cursor:"pointer",display:"flex",flexDirection:"column",alignItems:"center",gap:3,borderTop:isActive?"1.5px solid "+C.green:"1.5px solid transparent",marginTop:-1.5,fontFamily:"inherit",transition:"all 0.14s"}}>
+              style={{flex:1,padding:"9px 0 11px",background:isActive?"rgba(0,255,136,0.04)":"transparent",border:"none",cursor:"pointer",display:"flex",flexDirection:"column",alignItems:"center",gap:3,borderTop:isActive?"1.5px solid #00ff88":"1.5px solid transparent",marginTop:-1.5,fontFamily:"inherit",transition:"all 0.14s"}}>
               <span style={{
                 fontSize:18,
                 lineHeight:1,
-                color:isActive?"#8fd4a8":"#3a4e68",
+                color:isActive?"#00ff88":"#374151",
                 transform:isTapped?"translateY(-4px) scale(1.15)":(isActive?"translateY(-2px) scale(1.05)":"translateY(0) scale(1)"),
                 transition:"transform 0.15s ease-out, color 0.14s, filter 0.14s",
                 display:"inline-block",
-                filter:isActive?"drop-shadow(0 0 5px rgba(46,180,79,0.7))":"none",
+                filter:isActive?"drop-shadow(0 0 6px rgba(0,255,136,0.8))":"none",
               }}>{t.icon}</span>
-              <span style={{fontSize:8.5,letterSpacing:"0.08em",fontWeight:500,color:isActive?"#8fd4a8":"#3a4e68",transition:"color 0.14s",textShadow:isActive?"0 0 8px rgba(77,220,120,0.4)":"none"}}>{t.label}</span>
+              <span style={{fontSize:8.5,letterSpacing:"0.1em",fontWeight:isActive?700:400,color:isActive?"#00ff88":"#4b5563",transition:"color 0.14s",textShadow:isActive?"0 0 8px rgba(0,255,136,0.5)":"none"}}>{t.label}</span>
             </button>
           );
         })}

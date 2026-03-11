@@ -82,23 +82,23 @@ export default function AuthScreen({ onLogin }) {
       boxSizing:"border-box",
     }}>
       {/* グリッド背景 */}
-      <div style={{position:"absolute",inset:0,opacity:0.025,backgroundImage:"linear-gradient(#fff 1px,transparent 1px),linear-gradient(90deg,#fff 1px,transparent 1px)",backgroundSize:"30px 30px",pointerEvents:"none"}}/>
+      <div style={{position:"absolute",inset:0,backgroundImage:"linear-gradient(#1f2937 1px,transparent 1px),linear-gradient(90deg,#1f2937 1px,transparent 1px)",backgroundSize:"30px 30px",opacity:0.3,pointerEvents:"none"}}/>
 
       <div style={{width:"100%",maxWidth:320,position:"relative"}}>
 
         {/* ロゴ */}
         <div style={{textAlign:"center",marginBottom:mode==="top"?48:32}}>
-          <div style={{color:"rgba(143,168,200,0.4)",fontSize:7.5,letterSpacing:"0.28em",marginBottom:10}}>IKEMOTO CITY DIGITAL GOVERNMENT</div>
-          <div style={{color:"#e4eaf4",fontSize:26,fontWeight:700,letterSpacing:"0.16em",marginBottom:6}}>池本市</div>
-          <div style={{color:C.greenL,fontSize:9.5,letterSpacing:"0.22em"}}>デジタル市役所</div>
-          <div style={{width:32,height:1,background:"rgba(46,107,79,0.4)",margin:"14px auto 0"}}/>
+          <div style={{color:"rgba(0,255,136,0.3)",fontSize:7.5,letterSpacing:"0.3em",marginBottom:10,fontFamily:"monospace"}}>IKEMOTO CITY DIGITAL GOVERNMENT</div>
+          <div style={{color:"#f9fafb",fontSize:26,fontWeight:700,letterSpacing:"0.16em",marginBottom:6,textShadow:"0 0 30px rgba(0,255,136,0.15)"}}>池本市</div>
+          <div style={{color:"#00ff88",fontSize:9.5,letterSpacing:"0.26em",textShadow:"0 0 8px rgba(0,255,136,0.5)"}}>デジタル市役所</div>
+          <div style={{width:40,height:1,background:"rgba(0,255,136,0.3)",margin:"14px auto 0",boxShadow:"0 0 6px rgba(0,255,136,0.3)"}}/>
         </div>
 
         {/* ── TOP ── */}
         {mode==="top" && (
           <div style={{display:"flex",flexDirection:"column",gap:10}}>
-            <div style={{background:"rgba(255,255,255,0.04)",border:"1px solid rgba(46,107,79,0.3)",borderRadius:9,padding:"16px 15px",marginBottom:10}}>
-              <div style={{color:"rgba(143,168,200,0.7)",fontSize:8,letterSpacing:"0.2em",marginBottom:10}}>ABOUT IKEMOTO CITY</div>
+            <div style={{background:"rgba(0,255,136,0.03)",border:"1px solid rgba(0,255,136,0.12)",borderRadius:10,padding:"16px 15px",marginBottom:10}}>
+              <div style={{color:"rgba(0,255,136,0.4)",fontSize:8,letterSpacing:"0.24em",marginBottom:10,fontFamily:"monospace"}}>// ABOUT IKEMOTO CITY</div>
               <div style={{fontSize:9.5,color:"rgba(200,220,240,0.75)",lineHeight:1.85,letterSpacing:"0.04em",marginBottom:12}}>
                 池本市は、仮想空間と現実空間を創造で結ぶ実験都市です。市民として登録し、プロジェクトに参加・アセットを制作・購入することで都市の成長に貢献できます。
               </div>

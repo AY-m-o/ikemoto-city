@@ -2,11 +2,11 @@
 // COLOR PALETTE
 // ─────────────────────────────────────────────
 export const C = {
-  navy:"#1a2540", navyD:"#0f1828", navyL:"#243258",
-  green:"#2e6b4f", greenL:"#3d8a65",
-  red:"#b83228", bg:"#f2f3f5", card:"#ffffff",
-  border:"#d8dce6", borderD:"#e8ebf0",
-  tx:"#1a2540", txM:"#5a6478", txL:"#9aa0ae",
+  navy:"#0a0f1e",    navyD:"#060b15",  navyL:"#111827",
+  green:"#00ff88",   greenL:"#33ffaa", greenD:"#00cc6a",
+  red:"#ff4455",     bg:"#0a0f1e",     card:"#111827",
+  border:"#1f2937",  borderD:"#374151",
+  tx:"#f9fafb",      txM:"#9ca3af",    txL:"#6b7280",
 };
 
 // ─────────────────────────────────────────────
