@@ -3,14 +3,43 @@ import { C, DIAGNOSIS_LOGS, ASSET_LOGS, runSequence } from "./constants.js";
 import { Stamp, SectionHead, LogTerminal, Btn } from "./components.jsx";
 
 export default function ProcScreen({ onNudge }) {
-  const [sub, setSub] = useState(null);
+  const [sub, setSub]     = useState(null);
   const [phase, setPhase] = useState("idle"); // idle | running | done
-  const [logs, setLogs] = useState([]);
+  const [logs, setLogs]   = useState([]);
 
   const [assetStep, setAssetStep] = useState(1);
   const [assetForm, setAssetForm] = useState({
     name: "", category: "服飾", price: "", type: "physical", concept: "", photos: []
   });
+
+  // Stripe Connect登録フロー
+  const [connectEmail, setConnectEmail]     = useState("");
+  const [connectLoading, setConnectLoading] = useState(false);
+  const [connectError, setConnectError]     = useState("");
+  const [connectDone, setConnectDone]       = useState(false);
+
+  // URLクエリでConnect完了検知
+  const params = new URLSearchParams(window.location.search);
+  const connectSuccess = params.get("connect") === "success";
+
+  const handleConnectRegister = async () => {
+    setConnectError("");
+    if (!connectEmail.trim()) { setConnectError("メールアドレスを入力してください。"); return; }
+    setConnectLoading(true);
+    try {
+      const res = await fetch("/api/create-connect-account", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: connectEmail }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Connect error");
+      window.location.href = data.url;
+    } catch (err) {
+      setConnectError(err.message);
+      setConnectLoading(false);
+    }
+  };
 
   const run = (seq) => {
     setPhase("running");
@@ -33,9 +62,19 @@ export default function ProcScreen({ onNudge }) {
     <div style={{flex:1,overflowY:"auto",paddingBottom:72}} onScroll={onNudge}>
       <div style={{padding:"15px 14px 0"}}>
         <SectionHead accent={C.navy} label="手続き" sub="Procedure"/>
+
+        {/* Stripe Connect損完了バナー */}
+        {connectSuccess && (
+          <div style={{background:"rgba(46,107,79,0.1)",border:"1px solid rgba(46,107,79,0.4)",borderRadius:8,padding:"13px 14px",marginBottom:14}}>
+            <div style={{fontSize:10,fontWeight:700,color:C.green,marginBottom:4}}>✓ 売上受取設定が完了しました</div>
+            <div style={{fontSize:9,color:C.txM,lineHeight:1.7}}>Stripe Connectの登録が完了しました。売上は登録の口座に直接振り込まれます。</div>
+          </div>
+        )}
+
         {[
-          { id:"creator", label:"表現者認可申請", sub:"クリエイター登録", desc:"市の産業区分との整合性を診断し、表現者として公式に登録します。" },
-          { id:"asset", label:"資産出力許可申請", sub:"作品の市資産登録", desc:"登録した作品を市の資産台帳に封印・管理する手続きを行います。" },
+          { id:"creator", label:"表現者認可申請",   sub:"クリエイター登録",     desc:"市の産業区分との整合性を診断し、表現者として公式に登録します。" },
+          { id:"asset",   label:"資産出力許可申請",   sub:"作品の市資産登録",   desc:"登録した作品を市の資産台帳に封印・管理する手続きを行います。" },
+          { id:"connect", label:"売上受取設定",         sub:"Stripe Connect登録",  desc:"アセットの売上を受け取るために決済アカウントを登録します。購入者の支払いからインフラ維持税〨1.5%）を差し引いた金額が直接振り込まれます。" },
         ].map((p) => (
           <div key={p.id} className="card" onClick={()=>setSub(p.id)} style={{background:C.card,border:"1px solid "+C.border,borderRadius:8,padding:"14px 14px",marginBottom:10,position:"relative",overflow:"hidden",cursor:"pointer"}}>
             <Stamp/>
@@ -49,7 +88,51 @@ export default function ProcScreen({ onNudge }) {
     </div>
   );
 
-  // 申請フロー
+  // ── Stripe Connect登録フロー ──
+  if (sub === "connect") return (
+    <div style={{flex:1,overflowY:"auto",paddingBottom:72}} onScroll={onNudge}>
+      <div style={{padding:"15px 14px 0"}}>
+        <button onClick={reset} style={{background:"transparent",border:"none",color:C.txL,fontSize:9,cursor:"pointer",fontFamily:"inherit",letterSpacing:"0.1em",marginBottom:14}}>{"\u2190 手続き一覧へ"}</button>
+        <SectionHead accent={C.navy} label="売上受取設定" sub="Stripe Connect"/>
+
+        <div style={{background:C.card,border:"1px solid "+C.border,borderLeft:"2.5px solid "+C.green,borderRadius:7,padding:"12px 14px",marginBottom:16}}>
+          <div style={{fontSize:9.5,color:C.txM,lineHeight:1.8,letterSpacing:"0.04em"}}>
+            アセット購入時の売上が登録の口座に直接振り込まれます。<br/>
+            <span style={{color:C.txL}}>インフラ維持税（1.5%）を差し引いた公駒金額がお支払いされます。</span>
+          </div>
+        </div>
+
+        <div style={{marginBottom:14}}>
+          <div style={{fontSize:8.5,color:C.txL,letterSpacing:"0.18em",marginBottom:6}}>メールアドレス</div>
+          <input
+            type="email"
+            value={connectEmail}
+            onChange={e => { setConnectEmail(e.target.value); setConnectError(""); }}
+            placeholder="you@example.com"
+            style={{width:"100%",padding:"10px 12px",background:C.bg,border:"1px solid "+C.border,borderRadius:7,color:C.tx,fontSize:10,fontFamily:"inherit",letterSpacing:"0.04em",outline:"none",boxSizing:"border-box"}}
+          />
+        </div>
+
+        {connectError && (
+          <div style={{background:"rgba(184,50,40,0.1)",border:"1px solid rgba(184,50,40,0.35)",borderRadius:7,padding:"9px 13px",marginBottom:12}}>
+            <div style={{fontSize:8.5,color:"#e57a74",lineHeight:1.6}}>{connectError}</div>
+          </div>
+        )}
+
+        <Btn
+          label={connectLoading ? "接続中…" : "Stripe Connect登録を開始"}
+          onClick={handleConnectRegister}
+          disabled={connectLoading}
+        />
+        <div style={{marginTop:14,fontSize:8,color:C.txL,letterSpacing:"0.05em",lineHeight:1.8,textAlign:"center"}}>
+          Stripeの外部ページで決済情報を登録します。<br/>
+          銀行口座・本人確認書類が必要になる場合があります。
+        </div>
+      </div>
+    </div>
+  );
+
+  // ── 申請フロー ──
   return (
     <div style={{flex:1,overflowY:"auto",paddingBottom:72}} onScroll={onNudge}>
       <div style={{padding:"15px 14px 0"}}>

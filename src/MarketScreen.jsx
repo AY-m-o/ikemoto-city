@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { C, MARKET_ITEMS, PURCHASE_LOGS, SHOP_META, calcTax, runSequence } from "./constants.js";
 import { Btn, Modal, LogTerminal } from "./components.jsx";
+import { getStripe, parsePriceJPY } from "./stripe.js";
 
 // ダミーレビューデータ
 const DUMMY_REVIEWS = {
@@ -57,6 +58,50 @@ function ItemDetail({ item, shopName, onBack, onNudge, likedItems, onLikeItem })
   const [reportDone, setReportDone] = useState(false);
   const REPORT_REASONS = ["スパム", "不適切なコンテンツ", "規約違反", "その他"];
   const [reportReason, setReportReason] = useState("");
+
+  // ③ Stripe購入フロー
+  const [checkoutLoading, setCheckoutLoading] = useState(false);
+  const [checkoutError,   setCheckoutError]   = useState("");
+  const [purchaseSuccess, setPurchaseSuccess] = useState(false);
+
+  // URLクエリで購入完了の検知
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("purchase") === "success") {
+      setPurchaseSuccess(true);
+      // URLをクリーン
+      window.history.replaceState({}, "", window.location.pathname);
+    }
+  }, []);
+
+  const handleStripeCheckout = async () => {
+    setCheckoutLoading(true);
+    setCheckoutError("");
+    try {
+      const res = await fetch("/api/create-checkout-session", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          itemName: item.name,
+          price: item.price,
+          shopName,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "checkout session error");
+      // Stripe Checkoutへリダイレクト
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        const stripe = await getStripe();
+        const { error } = await stripe.redirectToCheckout({ sessionId: data.sessionId });
+        if (error) throw new Error(error.message);
+      }
+    } catch (err) {
+      setCheckoutError(err.message);
+      setCheckoutLoading(false);
+    }
+  };
 
   const { total, tax } = calcTax(item.price);
   const typeLabel = item.type==="physical"?"PHYSICAL":item.type==="digital"?"DIGITAL":"LICENSE";
@@ -249,7 +294,18 @@ function ItemDetail({ item, shopName, onBack, onNudge, likedItems, onLikeItem })
 
           {/* ① タイプ判定：physicalのみ購入ボタンを表示 */}
           {item.type === "physical" ? (
-            <Btn label="物質化申請" onClick={() => { setPurchasePhase("confirm"); setPurchaseLogs([]); onNudge(); }}/>
+            <>
+              {checkoutError && (
+                <div style={{background:"rgba(184,50,40,0.1)",border:"1px solid rgba(184,50,40,0.35)",borderRadius:7,padding:"9px 13px",marginBottom:10}}>
+                  <div style={{fontSize:8.5,color:"#e57a74",lineHeight:1.6}}>{checkoutError}</div>
+                </div>
+              )}
+              <Btn
+                label={checkoutLoading ? "接続中…" : "物質化申請（Stripe決済）"}
+                onClick={() => { if(!checkoutLoading) handleStripeCheckout(); }}
+                disabled={checkoutLoading}
+              />
+            </>
           ) : (
             <div style={{background:"rgba(26,37,64,0.6)",border:"1px solid "+C.border,borderRadius:8,padding:"13px 16px",marginBottom:8,textAlign:"center"}}>
               <div style={{fontSize:9.5,color:C.txL,letterSpacing:"0.04em",lineHeight:1.8}}>このアセットはWebサイトにて</div>
@@ -259,6 +315,22 @@ function ItemDetail({ item, shopName, onBack, onNudge, likedItems, onLikeItem })
           )}
         </div>
       </div>
+
+      {/* 購入完了モーダル（Stripe返遷後） */}
+      {purchaseSuccess && (
+        <Modal onClose={() => setPurchaseSuccess(false)}>
+          <div style={{textAlign:"center",padding:"10px 0"}}>
+            <div style={{fontSize:32,marginBottom:12}}>&#x2713;</div>
+            <div style={{fontSize:13,fontWeight:700,color:C.green,marginBottom:6,letterSpacing:"0.06em"}}>購入が完了しました</div>
+            <div style={{fontSize:9.5,color:C.txM,lineHeight:1.8,letterSpacing:"0.04em",marginBottom:4}}>{item.name}</div>
+            <div style={{fontSize:9,color:C.txL,lineHeight:1.7,marginBottom:16}}>転写プロセスが開始されました。<br/>完了通知をお待ちください。</div>
+            <div style={{background:"rgba(46,107,79,0.08)",border:"1px solid rgba(46,107,79,0.25)",borderRadius:7,padding:"10px 14px",marginBottom:16,fontSize:9,color:C.txM,lineHeight:1.7}}>
+              領収書はご登録のメールアドレスに送付されます。
+            </div>
+            <Btn label="閉じる" onClick={() => setPurchaseSuccess(false)} variant="ghost"/>
+          </div>
+        </Modal>
+      )}
 
       {/* ② 通報モーダル */}
       {showReport && (
