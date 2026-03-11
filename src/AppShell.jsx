@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { C, TICKER, TABS, MARKET_ITEMS, SHOP_META, nudge } from "./constants.js";
 import { Stamp, Watermark, RR } from "./components.jsx";
 import BoardScreen  from "./BoardScreen.jsx";
@@ -38,16 +38,18 @@ const I18N = {
           board:"TABL\u00d3N", market:"MERCADO", gov_tab:"GOB", proc:"TR\u00c1MITE", my:"MI P\u00c1G" },
 };
 
-// SVG\u901a\u77e5\u30d9\u30eb\u30a2\u30a4\u30b3\u30f3\uff08\u2468\u30ea\u30c7\u30b6\u30a4\u30f3\uff09
+// ③ ベルアイコン（白・細線・赤い点バッジのみ）
 function BellIcon({ hasUnread }) {
   return (
-    <svg width="15" height="16" viewBox="0 0 15 16" fill="none" xmlns="http://www.w3.org/2000/svg" style={{display:"block"}}>
-      <path d="M7.5 1.5C7.5 1.5 4 3.5 4 8V11.5H11V8C11 3.5 7.5 1.5 7.5 1.5Z" stroke="rgba(0,255,136,0.55)" strokeWidth="1.8" fill="rgba(0,255,136,0.04)" strokeLinejoin="round"/>
-      <path d="M4 11.5H11L11.8 13H3.2L4 11.5Z" stroke="rgba(0,255,136,0.45)" strokeWidth="1.6" fill="rgba(0,20,10,0.5)" strokeLinejoin="round"/>
-      <path d="M6.2 13.5C6.2 13.5 6.5 14.8 7.5 14.8C8.5 14.8 8.8 13.5 8.8 13.5" stroke="rgba(0,255,136,0.45)" strokeWidth="1.5" fill="none" strokeLinecap="round"/>
-      <rect x="5.5" y="0.5" width="4" height="1.5" rx="0.75" fill="rgba(0,255,136,0.15)" stroke="rgba(0,255,136,0.3)" strokeWidth="0.5"/>
-      {hasUnread && <circle cx="11.5" cy="2" r="2" fill="#ff4455" stroke="rgba(6,11,21,0.9)" strokeWidth="1"/>}
-    </svg>
+    <div style={{position:"relative",width:15,height:16,display:"flex",alignItems:"center",justifyContent:"center"}}>
+      <svg width="15" height="16" viewBox="0 0 15 16" fill="none" xmlns="http://www.w3.org/2000/svg" style={{display:"block"}}>
+        <path d="M7.5 1.5C7.5 1.5 4 3.5 4 8V11.5H11V8C11 3.5 7.5 1.5 7.5 1.5Z" stroke="rgba(255,255,255,0.65)" strokeWidth="1.2" fill="none" strokeLinejoin="round"/>
+        <path d="M4 11.5H11L11.8 13H3.2L4 11.5Z" stroke="rgba(255,255,255,0.55)" strokeWidth="1.2" fill="none" strokeLinejoin="round"/>
+        <path d="M6.2 13.5C6.2 13.5 6.5 14.8 7.5 14.8C8.5 14.8 8.8 13.5 8.8 13.5" stroke="rgba(255,255,255,0.5)" strokeWidth="1.2" fill="none" strokeLinecap="round"/>
+        <line x1="7.5" y1="0.5" x2="7.5" y2="1.8" stroke="rgba(255,255,255,0.45)" strokeWidth="1.2" strokeLinecap="round"/>
+      </svg>
+      {hasUnread && <div style={{position:"absolute",top:1,right:0,width:5,height:5,borderRadius:"50%",background:"#ff4455",boxShadow:"0 0 4px rgba(255,68,85,0.8)",border:"1px solid rgba(6,11,21,0.9)"}}/>}
+    </div>
   );
 }
 
@@ -67,6 +69,27 @@ export default function AppShell({ citizenId, userId, onLogout }) {
   const [showNotif, setShowNotif]       = useState(false);
   const [readNotif, setReadNotif]       = useState(false);
   const [resetKeys, setResetKeys]       = useState({ board:0, market:0, gov:0, proc:0, my:0 });
+  // ⑦ 市民証スキャンアニメーション
+  const [showScan, setShowScan]         = useState(false);
+  // ⑩ 3D回転
+  const [cardFlipped, setCardFlipped]   = useState(false);
+  const longPressRef                    = useRef(null);
+  const scanTimerRef                    = useRef(null);
+  const startLongPress = () => {
+    longPressRef.current = setTimeout(() => setCardFlipped(v => !v), 600);
+  };
+  const cancelLongPress = () => {
+    if (longPressRef.current) clearTimeout(longPressRef.current);
+  };
+  // ⑦ 市民証ボタンタップ：スキャンアニメーション後に表示
+  const handleIdBtn = () => {
+    if (showId) { setShowId(false); setCardFlipped(false); return; }
+    setShowScan(true);
+    if (scanTimerRef.current) clearTimeout(scanTimerRef.current);
+    scanTimerRef.current = setTimeout(() => { setShowScan(false); setShowId(true); }, 800);
+  };
+  useEffect(() => { return () => { if (scanTimerRef.current) clearTimeout(scanTimerRef.current); }; }, []);
+
   // 検索
   const [showSearch, setShowSearch] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -79,6 +102,9 @@ export default function AppShell({ citizenId, userId, onLogout }) {
   const [blockedShops,  setBlockedShops]  = useState({});
   // マーケットへのディープリンク
   const [marketJump, setMarketJump] = useState(null);
+  // ⑥ スクロール標高→トリガージャス&フェード
+  const [scrolled, setScrolled] = useState(false);
+  const [screenKey, setScreenKey] = useState(0);
 
   // ── Supabaseからいいね・フォローをロード ─────────
   useEffect(() => {
@@ -86,6 +112,23 @@ export default function AppShell({ citizenId, userId, onLogout }) {
     fetchLikes(userId).then(data => setLikedItems(data));
     fetchFollows(userId).then(data => setFollowedShops(data));
   }, [userId]);
+
+  // ⑦ コンテンツエリアのスクロール検知
+  const contentRef = useRef(null);
+  useEffect(() => {
+    const el = contentRef.current;
+    if (!el) return;
+    const onScroll = () => setScrolled(el.scrollTop > 8);
+    el.addEventListener("scroll", onScroll, { passive: true });
+    return () => el.removeEventListener("scroll", onScroll);
+  }, [tab]);
+
+  // ⑥ タブ切替時にscreenKeyを増加してフェード再生
+  const handleTabChange = (newTab) => {
+    setTab(newTab);
+    setScrolled(false);
+    setScreenKey(k => k + 1);
+  };
 
   // マイページから商業区に遷移
   const navigateToMarket = (shop, itemName) => {
@@ -203,7 +246,8 @@ export default function AppShell({ citizenId, userId, onLogout }) {
       <div style={{position:"fixed",inset:0,zIndex:-1,pointerEvents:"none",backgroundImage:"linear-gradient(#1f2937 1px,transparent 1px),linear-gradient(90deg,#1f2937 1px,transparent 1px)",backgroundSize:"32px 32px",opacity:0.3,animation:"gridPulse 8s ease-in-out infinite"}}/>
 
       {/* ── HEADER ── */}
-      <div style={{background:"#0a0f1e",position:"sticky",top:0,zIndex:200,borderBottom:"1px solid rgba(0,255,136,0.2)",boxShadow:"0 4px 24px rgba(0,0,0,0.7),0 0 0 0 rgba(0,255,136,0.1)"}}>
+      <div className={scrolled ? "glass-header" : ""}
+        style={{background:scrolled?"rgba(10,15,30,0.75)":"#0a0f1e",position:"sticky",top:0,zIndex:200,borderBottom:"1px solid rgba(0,255,136,0.2)",boxShadow:"0 4px 24px rgba(0,0,0,0.7)",transition:"background 0.3s ease, backdrop-filter 0.3s ease"}}>
         <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"14px 18px 13px"}}>
           <div>
             <div style={{color:"rgba(0,255,136,0.3)",fontSize:8,letterSpacing:"0.28em",marginBottom:3,fontWeight:300,fontFamily:"monospace"}}>{I18N[lang].sub}</div>
@@ -263,9 +307,15 @@ export default function AppShell({ citizenId, userId, onLogout }) {
               )}
             </div>
 
-            {/* 市民証 */}
-            <button onClick={() => setShowId((v) => !v)} style={{height:28,background:showId?"rgba(0,255,136,0.12)":"rgba(255,255,255,0.04)",border:"1px solid "+(showId?"rgba(0,255,136,0.5)":"rgba(255,255,255,0.08)"),borderRadius:6,padding:"0 10px",cursor:"pointer",color:showId?"#00ff88":"rgba(156,163,175,0.7)",fontSize:9,letterSpacing:"0.08em",fontWeight:600,fontFamily:"inherit",transition:"all 0.18s",whiteSpace:"nowrap",flexShrink:0,display:"flex",alignItems:"center",boxShadow:showId?"0 0 10px rgba(0,255,136,0.25)":"none",textShadow:showId?"0 0 6px rgba(0,255,136,0.5)":"none"}}>
-              {showId ? "✕" : "◈ 市民証"}
+            {/* 市民証 押して長押と3D回転（⑩） */}
+            <button
+              onClick={handleIdBtn}
+              onMouseDown={startLongPress}
+              onMouseUp={cancelLongPress}
+              onTouchStart={startLongPress}
+              onTouchEnd={cancelLongPress}
+              style={{height:28,background:showId?"rgba(0,255,136,0.12)":"rgba(255,255,255,0.04)",border:"1px solid "+(showId?"rgba(0,255,136,0.5)":"rgba(255,255,255,0.08)"),borderRadius:6,padding:"0 10px",cursor:"pointer",color:showId?"#00ff88":"rgba(156,163,175,0.7)",fontSize:9,letterSpacing:"0.08em",fontWeight:600,fontFamily:"inherit",transition:"all 0.18s",whiteSpace:"nowrap",flexShrink:0,display:"flex",alignItems:"center",boxShadow:showId?"0 0 10px rgba(0,255,136,0.25)":"none",textShadow:showId?"0 0 6px rgba(0,255,136,0.5)":"none"}}>
+              {showId ? "x" : "◈ 市民証"}
             </button>
           </div>
         </div>
@@ -316,47 +366,78 @@ export default function AppShell({ citizenId, userId, onLogout }) {
         )}
       </div>
 
-      {/* ── CITIZEN ID PANEL ── */}
+      {/* ⑥ スキャンアニメーションオーバーレイ */}
+      {showScan && (
+        <div style={{position:"fixed",inset:0,zIndex:1000,pointerEvents:"none",overflow:"hidden"}}>
+          <div style={{position:"absolute",left:0,right:0,height:4,background:"linear-gradient(transparent,rgba(0,255,136,0.9),transparent)",animation:"scanLine 0.8s linear forwards",boxShadow:"0 0 20px 4px rgba(0,255,136,0.5)"}}/>
+          <div style={{position:"absolute",inset:0,background:"rgba(0,255,136,0.03)"}} />
+        </div>
+      )}
+
+      {/* CITIZEN ID PANEL — ⑨ 3D回転対応 */}
       {showId && (
         <div style={{background:C.navy,padding:"0 14px 14px",animation:"slideDown 0.2s ease",borderBottom:"1px solid rgba(46,107,79,0.35)"}}>
-          <div style={{background:"linear-gradient(135deg,#1c3050,#0d1c30)",border:"1px solid rgba(46,107,79,0.45)",borderRadius:8,padding:"14px 16px",position:"relative",overflow:"hidden"}}>
-            <div style={{position:"absolute",top:-20,right:-20,width:90,height:90,borderRadius:"50%",background:"rgba(46,107,79,0.08)"}}/>
-            <Stamp/>
-            <div style={{color:"#5a80a8",fontSize:7.5,letterSpacing:"0.26em",marginBottom:8}}>DIGITAL CITIZEN IDENTIFICATION</div>
-            <div style={{color:"#dde8f5",fontSize:18,fontWeight:700,letterSpacing:"0.18em",marginBottom:4}}>{citizenId}</div>
-            <div style={{color:C.greenL,fontSize:9.5,fontWeight:500,letterSpacing:"0.1em",marginBottom:3}}>市民区分：開発局員</div>
-            <div style={{fontSize:9.5,color:"#7a98b8"}}>認証状態：<span style={{color:"#4caf7d",animation:"pulse 2.5s infinite"}}>●</span><span style={{color:"#4caf7d",fontWeight:500}}> 稼働中</span></div>
-            <div style={{marginTop:10,paddingTop:9,borderTop:"1px solid rgba(255,255,255,0.06)",display:"flex",justifyContent:"space-between"}}>
-              <span style={{color:"#3a5070",fontSize:8.5}}>127.0.0.1 / 拡張現実領域</span>
-              <span style={{color:"#3a5070",fontSize:8.5}}>市制施行：2026.02.26</span>
+          <div style={{perspective:"800px"}}>
+            <div
+              onMouseDown={startLongPress} onMouseUp={cancelLongPress}
+              onTouchStart={startLongPress} onTouchEnd={cancelLongPress}
+              style={{position:"relative",transformStyle:"preserve-3d",transition:"transform 0.6s ease",transform:cardFlipped?"rotateY(180deg)":"rotateY(0deg)",minHeight:122}}>
+              {/* 表面 */}
+              <div style={{backfaceVisibility:"hidden",WebkitBackfaceVisibility:"hidden",position:"absolute",inset:0,background:"linear-gradient(135deg,#1c3050,#0d1c30)",border:"1px solid rgba(46,107,79,0.45)",borderRadius:8,padding:"14px 16px",overflow:"hidden"}}>
+                <div style={{position:"absolute",top:-20,right:-20,width:90,height:90,borderRadius:"50%",background:"rgba(46,107,79,0.08)"}}/>
+                <Stamp/>
+                <div style={{color:"#5a80a8",fontSize:7.5,letterSpacing:"0.26em",marginBottom:8}}>DIGITAL CITIZEN IDENTIFICATION</div>
+                <div className="mono" style={{color:"#dde8f5",fontSize:18,fontWeight:700,letterSpacing:"0.18em",marginBottom:4}}>{citizenId}</div>
+                <div style={{color:C.greenL,fontSize:9.5,fontWeight:500,letterSpacing:"0.1em",marginBottom:3}}>市民区分：開発局員</div>
+                <div style={{fontSize:9.5,color:"#7a98b8"}}>認証状態：<span style={{color:"#4caf7d",animation:"pulse 2.5s infinite"}}>●</span><span style={{color:"#4caf7d",fontWeight:500}}> 稼働中</span></div>
+                <div style={{marginTop:10,paddingTop:9,borderTop:"1px solid rgba(255,255,255,0.06)",display:"flex",justifyContent:"space-between"}}>
+                  <span style={{color:"#3a5070",fontSize:8.5}}>127.0.0.1 / 拡張現実領域</span>
+                  <span style={{color:"#3a5070",fontSize:8.5}}>市制施行：2026.02.26</span>
+                </div>
+                <div style={{position:"absolute",bottom:5,left:"50%",transform:"translateX(-50%)",fontSize:7,color:"rgba(0,255,136,0.2)",letterSpacing:"0.08em",whiteSpace:"nowrap"}}>長押しで裏面表示</div>
+              </div>
+              {/* 裏面 */}
+              <div style={{backfaceVisibility:"hidden",WebkitBackfaceVisibility:"hidden",transform:"rotateY(180deg)",position:"absolute",inset:0,background:"linear-gradient(135deg,#0d1a22,#111827)",border:"1px solid rgba(0,255,136,0.25)",borderRadius:8,padding:"14px 16px",display:"flex",flexDirection:"column",justifyContent:"center",gap:8}}>
+                <div style={{color:"rgba(0,255,136,0.4)",fontSize:7,letterSpacing:"0.3em",fontFamily:"monospace",marginBottom:4}}>// CLASSIFIED — BACK SIDE</div>
+                <div style={{background:"rgba(0,0,0,0.4)",border:"1px solid rgba(0,255,136,0.1)",borderRadius:4,padding:"8px 10px",fontFamily:"monospace",fontSize:8,color:"rgba(0,255,136,0.6)",lineHeight:1.9}}>
+                  <div>NODE: IKEMOTO-ALPHA-7</div>
+                  <div>ACCESS_LEVEL: CITIZEN_GRADE_1</div>
+                  <div>ISSUED: 2026.02.26</div>
+                  <div>STATUS: <span style={{color:"#00ff88"}}>ACTIVE</span></div>
+                </div>
+                <div style={{width:"100%",height:24,background:"repeating-linear-gradient(90deg,#1a1a1a 0px,#1a1a1a 10px,#000 10px,#000 11px)",borderRadius:3,marginTop:4}}/>
+              </div>
             </div>
           </div>
         </div>
       )}
 
       {/* ── SCREENS ── */}
-      {tab==="board"  && <BoardScreen  key={resetKeys.board}  onNudge={onNudge} lang={lang}/>}
-      {tab==="market" && <MarketScreen key={resetKeys.market} onNudge={onNudge} lang={lang}
-        followedShops={followedShops} onFollowShop={handleFollowShop}
-        likedItems={likedItems} onLikeItem={handleLikeItem}
-        likedShops={likedShops} onLikeShop={handleLikeShop}
-        blockedShops={blockedShops} onBlockShop={handleBlockShop}
-        jumpTo={marketJump} onJumpClear={() => setMarketJump(null)}/>}
-      {tab==="gov"    && <GovScreen    key={resetKeys.gov}    onNudge={onNudge} lang={lang}/>}
-      {tab==="proc"   && <ProcScreen   key={resetKeys.proc}   onNudge={onNudge} lang={lang}/>}
-      {tab==="my"     && <MyScreen     key={resetKeys.my}     citizenId={citizenId} onNudge={onNudge} onLogout={onLogout} lang={lang}
-        followedShops={followedShops} likedItems={likedItems} likedShops={likedShops}
-        blockedShops={blockedShops}
-        onUnblockShop={shopName => setBlockedShops(p=>{const n={...p};delete n[shopName];return n;})}
-        onNavigateMarket={navigateToMarket}/>}
+      <div ref={contentRef} key={screenKey} className="screen-fade"
+        style={{flex:1,display:"flex",flexDirection:"column",overflowY:"auto",position:"relative"}}>
+        {tab==="board"  && <BoardScreen  key={resetKeys.board}  onNudge={onNudge} lang={lang}/>}
+        {tab==="market" && <MarketScreen key={resetKeys.market} onNudge={onNudge} lang={lang}
+          followedShops={followedShops} onFollowShop={handleFollowShop}
+          likedItems={likedItems} onLikeItem={handleLikeItem}
+          likedShops={likedShops} onLikeShop={handleLikeShop}
+          blockedShops={blockedShops} onBlockShop={handleBlockShop}
+          jumpTo={marketJump} onJumpClear={() => setMarketJump(null)}/>}
+        {tab==="gov"    && <GovScreen    key={resetKeys.gov}    onNudge={onNudge} lang={lang}/>}
+        {tab==="proc"   && <ProcScreen   key={resetKeys.proc}   onNudge={onNudge} lang={lang}/>}
+        {tab==="my"     && <MyScreen     key={resetKeys.my}     citizenId={citizenId} onNudge={onNudge} onLogout={onLogout} lang={lang}
+          followedShops={followedShops} likedItems={likedItems} likedShops={likedShops}
+          blockedShops={blockedShops}
+          onUnblockShop={shopName => setBlockedShops(p=>{const n={...p};delete n[shopName];return n;})}
+          onNavigateMarket={navigateToMarket}/>}
+      </div>
 
-      {/* ── BOTTOM NAV ── */}
-      <div style={{position:"fixed",bottom:0,left:"50%",transform:"translateX(-50%)",width:390,background:"#0a0f1e",borderTop:"1px solid rgba(0,255,136,0.2)",display:"flex",zIndex:200,boxShadow:"0 -4px 24px rgba(0,0,0,0.6),0 -1px 0 rgba(0,255,136,0.1)"}}>
+      {/* ⑪ BOTTOM NAV — リキッドグラス風 */}
+      <div style={{position:"fixed",bottom:0,left:"50%",transform:"translateX(-50%)",width:390,background:"rgba(6,9,20,0.65)",borderTop:"1px solid rgba(0,255,136,0.15)",display:"flex",zIndex:200,backdropFilter:"blur(20px) saturate(180%)",WebkitBackdropFilter:"blur(20px) saturate(180%)",boxShadow:"0 -4px 32px rgba(0,0,0,0.5),0 -1px 0 rgba(0,255,136,0.08)"}}>
         {TABS.map((t) => {
           const isActive = tab === t.id;
           const isTapped = tappedTab === t.id;
           return (
-            <button key={t.id} onClick={() => handleTab(t.id)}
+            <button key={t.id} onClick={() => handleTabChange(t.id)}
               style={{flex:1,padding:"9px 0 11px",background:isActive?"rgba(0,255,136,0.04)":"transparent",border:"none",cursor:"pointer",display:"flex",flexDirection:"column",alignItems:"center",gap:3,borderTop:isActive?"1.5px solid #00ff88":"1.5px solid transparent",marginTop:-1.5,fontFamily:"inherit",transition:"all 0.14s"}}>
               <span style={{
                 fontSize:18,

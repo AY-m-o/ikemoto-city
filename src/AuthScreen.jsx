@@ -1,5 +1,5 @@
 import { useState, useCallback } from "react";
-import { C, DOMAINS, CHARTER, SYNC_LOGS, runSequence } from "./constants.js";
+import { C, DOMAINS, CHARTER, runSequence } from "./constants.js";
 import { AuthField, Btn, LogTerminal } from "./components.jsx";
 import { signUp, signIn, resetPassword } from "./supabase.js";
 
@@ -27,8 +27,7 @@ export default function AuthScreen({ onLogin }) {
   const [resetSent,    setResetSent]    = useState(false);
   const [resetError,   setResetError]   = useState("");
 
-  // ── ログイン ──────────────────────────────────
-  const handleLogin = useCallback(async () => {
+  const handleLogin = async () => {
     setAuthError("");
     if (!email.trim()) { setAuthError("メールアドレスを入力してください。"); return; }
     if (password.length < 6) { setAuthError("パスワードは6文字以上必要です。"); return; }
@@ -37,13 +36,27 @@ export default function AuthScreen({ onLogin }) {
     setSyncLogs([]);
     try {
       const { user, citizenId } = await signIn(email, password);
-      runSequence(SYNC_LOGS, setSyncLogs, () => onLogin(citizenId, user.id));
+      // ① 0.3秒ずつ行を追加、全行表示後2秒で遷移
+      const lines = [
+        "市民データベース接続中…",
+        "市民ID照合中…",
+        "生体認証スキャン完了",
+        "アクセス権限: 確認済み",
+        "池本市デジタル市役所へようこそ",
+      ];
+      for (let i = 0; i < lines.length; i++) {
+        await new Promise(resolve => setTimeout(resolve, i === 0 ? 150 : 300));
+        setSyncLogs(prev => [...prev, lines[i]]);
+      }
+      // 全行表示後2秒待ってから遷移
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      onLogin(citizenId, user.id);
     } catch (err) {
       setSyncing(false);
       setLoading(false);
       setAuthError("ログインに失敗しました。メールアドレスまたはパスワードが正しくありません。");
     }
-  }, [email, password, onLogin]);
+  };
 
   // ── パスワードリセット ────────────────────────
   const handleReset = useCallback(async () => {
@@ -164,16 +177,21 @@ export default function AuthScreen({ onLogin }) {
           </div>
         )}
 
-        {/* ── AUTH SEQUENCE ANIMATION ── */}
+        {/* ── AUTH SEQUENCE ANIMATION（⑤） ── */}
         {syncing && (
           <div style={{animation:"fadeIn 0.3s ease"}}>
             <div style={{textAlign:"center",marginBottom:20}}>
               <div style={{fontSize:8,color:"rgba(0,255,136,0.4)",letterSpacing:"0.28em",marginBottom:6,fontFamily:"monospace"}}>// AUTH SEQUENCE</div>
               <div style={{fontSize:11,color:"rgba(0,255,136,0.7)",letterSpacing:"0.2em",fontWeight:600,fontFamily:"monospace",textShadow:"0 0 8px rgba(0,255,136,0.4)"}}>接続認証シーケンス実行中</div>
             </div>
-            <LogTerminal logs={syncLogs} running={true}/>
-            <div style={{textAlign:"center",marginTop:8}}>
-              <span style={{display:"inline-block",animation:"cursorBlink 1s infinite",color:"rgba(0,255,136,0.4)",fontSize:9,fontFamily:"monospace",letterSpacing:"0.1em"}}>SYNCING</span>
+            <div style={{background:"#060b15",border:"1px solid rgba(0,255,136,0.2)",borderRadius:8,padding:"16px 18px",minHeight:140,fontFamily:"'SF Mono','Fira Mono','Courier New',monospace",fontSize:11,lineHeight:2.1,letterSpacing:"0.04em",boxShadow:"inset 0 0 24px rgba(0,0,0,0.5)"}}>
+              {syncLogs.map((line, i) => (
+                <div key={i} style={{color: i === syncLogs.length-1 && line === "池本市デジタル市役所へようこそ" ? "#00ff88" : "rgba(0,255,136,0.75)",textShadow: i === syncLogs.length-1 ? "0 0 8px rgba(0,255,136,0.5)" : "none",display:"flex",alignItems:"center",gap:8}}>
+                  <span style={{color:"rgba(0,255,136,0.35)",flexShrink:0}}>{">"}</span>
+                  <span>{line}</span>
+                  {i === syncLogs.length-1 && <span style={{animation:"cursorBlink 0.7s infinite",color:"#00ff88"}}>▋</span>}
+                </div>
+              ))}
             </div>
           </div>
         )}

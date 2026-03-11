@@ -1,8 +1,10 @@
 import { useState } from "react";
 import { C, DIAGNOSIS_LOGS, ASSET_LOGS, runSequence } from "./constants.js";
 import { Stamp, SectionHead, LogTerminal, Btn } from "./components.jsx";
+import { useI18n } from "./i18n.js";
 
-export default function ProcScreen({ onNudge }) {
+export default function ProcScreen({ onNudge, lang }) {
+  const t = useI18n(lang);
   const [sub, setSub]     = useState(null);
   const [phase, setPhase] = useState("idle"); // idle | running | done
   const [logs, setLogs]   = useState([]);

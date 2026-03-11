@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { C, MARKET_ITEMS, PURCHASE_LOGS, SHOP_META, calcTax, runSequence } from "./constants.js";
 import { Btn, Modal, LogTerminal } from "./components.jsx";
 import { getStripe, parsePriceJPY } from "./stripe.js";
+import { useI18n } from "./i18n.js";
 
 // ダミーレビューデータ
 const DUMMY_REVIEWS = {
@@ -416,13 +417,29 @@ function ItemDetail({ item, shopName, onBack, onNudge, likedItems, onLikeItem })
 // ─────────────────────────────────────────────
 // MARKET SCREEN（店舗一覧 → 店舗詳細 → 商品詳細）
 // ─────────────────────────────────────────────
-export default function MarketScreen({ onNudge, followedShops, onFollowShop, likedItems, onLikeItem, likedShops, onLikeShop, jumpTo, onJumpClear, blockedShops, onBlockShop }) {
+export default function MarketScreen({ onNudge, followedShops, onFollowShop, likedItems, onLikeItem, likedShops, onLikeShop, jumpTo, onJumpClear, blockedShops, onBlockShop, lang }) {
+  const t = useI18n(lang);
   const [selectedShop, setSelectedShop] = useState(null);
   const [selectedItem, setSelectedItem] = useState(null);
   const [shopReport, setShopReport]     = useState(null);
   const [shopReportReason, setShopReportReason] = useState("");
   const [shopReportDone, setShopReportDone]     = useState(false);
   const [shopMenuOpen, setShopMenuOpen]         = useState(null);
+  // ⑦ 入店アニメーション
+  const [shopEntering, setShopEntering]         = useState(false);
+  const [shopEnterTarget, setShopEnterTarget]   = useState(null);
+
+  const handleShopEnter = (shop) => {
+    setShopEntering(true);
+    setShopEnterTarget(shop);
+    setTimeout(() => {
+      setSelectedShop(shop);
+      setShopEntering(false);
+      setShopEnterTarget(null);
+      setShopMenuOpen(null);
+      onNudge();
+    }, 320);
+  };
 
   // props fallback
   const followed  = followedShops || {};
@@ -478,7 +495,7 @@ export default function MarketScreen({ onNudge, followedShops, onFollowShop, lik
             </button>
             <div style={{marginLeft:"auto",position:"relative"}}>
               <button onClick={e=>{e.stopPropagation();setShopMenuOpen(shopMenuOpen===selectedShop.name?null:selectedShop.name);}}
-                style={{background:"rgba(255,255,255,0.12)",border:"1px solid rgba(255,255,255,0.2)",borderRadius:5,padding:"4px 12px",color:"rgba(255,255,255,0.7)",fontSize:12,cursor:"pointer",lineHeight:1,letterSpacing:"0.1em"}}>
+                style={{background:"rgba(255,255,255,0.1)",border:"1px solid rgba(255,255,255,0.18)",borderRadius:5,padding:"4px 12px",color:"rgba(255,255,255,0.7)",fontSize:12,cursor:"pointer",lineHeight:1,letterSpacing:"0.1em",display:"flex",alignItems:"center",justifyContent:"center",minHeight:24}}>
                 ...
               </button>
               {shopMenuOpen===selectedShop.name && (
@@ -515,9 +532,9 @@ export default function MarketScreen({ onNudge, followedShops, onFollowShop, lik
                   : <><span style={{fontSize:13}}>+</span><span>フォロー</span></>}
               </button>
               <button onClick={e=>{e.stopPropagation();onLikeShop&&onLikeShop(selectedShop.name);onNudge();}}
-                style={{minWidth:88,padding:"7px 14px",background:likedS[selectedShop.name]?"rgba(255,60,100,0.15)":"rgba(255,255,255,0.08)",border:"1px solid "+(likedS[selectedShop.name]?"rgba(255,60,100,0.5)":"rgba(255,255,255,0.2)"),borderRadius:20,color:likedS[selectedShop.name]?"#ff6090":"rgba(255,255,255,0.7)",fontSize:9.5,fontWeight:600,cursor:"pointer",fontFamily:"inherit",letterSpacing:"0.08em",display:"flex",alignItems:"center",gap:4,justifyContent:"center",transition:"all 0.2s"}}>
-                <span style={{fontSize:13}}>{likedS[selectedShop.name]?"♥":"♡"}</span>
-                <span>{likedS[selectedShop.name]?"いいね済":"..."}</span>
+                style={{minWidth:88,padding:"7px 14px",background:likedS[selectedShop.name]?"rgba(0,255,136,0.12)":"rgba(255,255,255,0.08)",border:"1px solid "+(likedS[selectedShop.name]?"rgba(0,255,136,0.4)":"rgba(255,255,255,0.2)"),borderRadius:20,color:likedS[selectedShop.name]?"#00ff88":"rgba(255,255,255,0.6)",fontSize:9.5,fontWeight:600,cursor:"pointer",fontFamily:"inherit",letterSpacing:"0.08em",display:"flex",alignItems:"center",gap:4,justifyContent:"center",transition:"all 0.2s"}}>
+                <span style={{fontSize:13}}>{likedS[selectedShop.name]?"◆":"◇"}</span>
+                <span>{likedS[selectedShop.name]?"いいね済":"いいね"}</span>
               </button>
             </div>
           </div>
@@ -526,23 +543,23 @@ export default function MarketScreen({ onNudge, followedShops, onFollowShop, lik
         <div style={{padding:"14px 12px"}}>
           <div style={{fontSize:8,color:C.txL,letterSpacing:"0.16em",marginBottom:10}}>取扱アセット　{selectedShop.items.length} 点</div>
           {selectedShop.items.map(item => (
-            <div key={item.reg} onClick={() => { setSelectedItem(item); onNudge(); }}
-              style={{background:C.card,border:"1px solid "+C.border,borderRadius:8,padding:"12px 13px",marginBottom:9,cursor:"pointer",display:"flex",gap:12,alignItems:"flex-start"}}>
-              <div style={{width:52,height:52,borderRadius:6,background:"linear-gradient(135deg,#1e2e4a,#131e30)",flexShrink:0,display:"flex",alignItems:"center",justifyContent:"center",fontSize:14,color:"rgba(143,168,200,0.2)"}}>&#x25C9;</div>
+            <div key={item.reg} className="pressable" onClick={() => { setSelectedItem(item); onNudge(); }}
+              style={{background:"#111827",border:"1px solid rgba(255,255,255,0.06)",borderRadius:8,padding:"12px 13px",marginBottom:9,cursor:"pointer",display:"flex",gap:12,alignItems:"flex-start"}}>
+              <div style={{width:52,height:52,borderRadius:6,background:"linear-gradient(135deg,#1a2540,#131e30)",flexShrink:0,display:"flex",alignItems:"center",justifyContent:"center",fontSize:14,color:"rgba(0,255,136,0.15)",border:"1px solid rgba(0,255,136,0.08)"}}>&#x25C9;</div>
               <div style={{flex:1,minWidth:0}}>
-                <div style={{fontSize:7.5,color:C.txL,letterSpacing:"0.12em",marginBottom:3}}>{item.dept} / {item.reg}</div>
+                <div className="mono" style={{fontSize:7.5,color:"rgba(156,163,175,0.45)",letterSpacing:"0.12em",marginBottom:3}}>{item.dept} / {item.reg}</div>
                 <div style={{fontSize:12,fontWeight:700,color:C.tx,letterSpacing:"0.03em",marginBottom:5,lineHeight:1.3}}>{item.name}</div>
                 <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
                   <div style={{display:"flex",alignItems:"center",gap:5}}>
-                    <div style={{width:36,height:2.5,background:C.border,borderRadius:2,overflow:"hidden"}}>
+                    <div style={{width:36,height:2,background:"rgba(255,255,255,0.08)",borderRadius:2,overflow:"hidden"}}>
                       <div style={{height:"100%",width:(parseFloat(item.ca)*100)+"%",background:C.green,borderRadius:2}}/>
                     </div>
-                    <span style={{fontSize:8,color:C.green,fontWeight:600}}>CA {item.ca}</span>
+                    <span className="mono" style={{fontSize:8,color:C.green,fontWeight:600}}>CA {item.ca}</span>
                   </div>
-                  <span style={{fontSize:12,fontWeight:700,color:"#00ff88",textShadow:"0 0 8px rgba(0,255,136,0.35)"}}>{item.price}</span>
+                  <span className="mono" style={{fontSize:12,fontWeight:700,color:"#00ff88",textShadow:"0 0 8px rgba(0,255,136,0.35)"}}>{item.price}</span>
                 </div>
               </div>
-              <span style={{color:C.txL,fontSize:14,flexShrink:0}}>&#x203A;</span>
+              <span style={{color:"rgba(156,163,175,0.3)",fontSize:14,flexShrink:0}}>&#x203A;</span>
             </div>
           ))}
         </div>
@@ -556,8 +573,8 @@ export default function MarketScreen({ onNudge, followedShops, onFollowShop, lik
       <div style={{background:C.navy,borderBottom:"1px solid rgba(0,255,136,0.15)",padding:"14px 14px"}}>
         <div style={{display:"flex",alignItems:"center",gap:8}}>
           <div style={{width:2.5,height:13,background:C.green,borderRadius:2,boxShadow:"0 0 6px "+C.green}}/>
-          <span style={{fontSize:10,color:"rgba(0,255,136,0.6)",letterSpacing:"0.2em",fontWeight:600}}>商業区　店舗一覧</span>
-          <span style={{marginLeft:"auto",fontSize:8,color:"rgba(156,163,175,0.3)",letterSpacing:"0.1em"}}>{shops.length} 店舗</span>
+          <span style={{fontSize:10,color:"rgba(0,255,136,0.6)",letterSpacing:"0.2em",fontWeight:600}}>{t.market_list_title}</span>
+          <span style={{marginLeft:"auto",fontSize:8,color:"rgba(156,163,175,0.3)",letterSpacing:"0.1em"}}>{shops.length} {t.market_shops}</span>
         </div>
       </div>
       <div style={{padding:"12px 12px",background:C.bg}}>
@@ -565,28 +582,29 @@ export default function MarketScreen({ onNudge, followedShops, onFollowShop, lik
           const isFollowed = !!followed[shop.name];
           const isLikedShop = !!likedS[shop.name];
           return (
-            <div key={shop.name} style={{borderRadius:12,marginBottom:16,cursor:"pointer",boxShadow:"0 8px 32px rgba(0,0,0,0.4)",position:"relative"}}>
-              {/* 3点ボタン — 右上固定 */}
+            <div key={shop.name} style={{borderRadius:12,marginBottom:16,boxShadow:"0 8px 32px rgba(0,0,0,0.4)",position:"relative"}}>
+              {/* 3点ボタン — 右上固定 ②④ */}
               <button onClick={e=>{e.stopPropagation();setShopMenuOpen(shopMenuOpen===shop.name?null:shop.name);}}
-                style={{position:"absolute",top:8,right:8,zIndex:10,background:"rgba(0,0,0,0.45)",border:"1px solid rgba(255,255,255,0.15)",borderRadius:5,padding:"3px 10px",color:"rgba(255,255,255,0.6)",fontSize:11,cursor:"pointer",lineHeight:1,letterSpacing:"0.12em",fontFamily:"inherit"}}>
+                style={{position:"absolute",top:8,right:8,zIndex:10,background:"rgba(0,0,0,0.45)",border:"1px solid rgba(255,255,255,0.15)",borderRadius:5,padding:"3px 10px",color:"rgba(255,255,255,0.6)",fontSize:11,cursor:"pointer",lineHeight:1,letterSpacing:"0.12em",fontFamily:"inherit",display:"flex",alignItems:"center",justifyContent:"center",minHeight:22}}>
                 ...
               </button>
               {shopMenuOpen===shop.name && (
                 <div style={{position:"absolute",top:36,right:8,background:"#0a0f1e",border:"1px solid rgba(0,255,136,0.2)",borderRadius:8,zIndex:300,minWidth:136,boxShadow:"0 4px 20px rgba(0,0,0,0.7)"}} onClick={e=>e.stopPropagation()}>
                   <button onClick={()=>{setShopMenuOpen(null);setShopReport(shop.name);setShopReportReason("");setShopReportDone(false);}}
                     style={{display:"block",width:"100%",padding:"11px 14px",background:"transparent",border:"none",color:"rgba(156,163,175,0.8)",fontSize:9.5,cursor:"pointer",fontFamily:"inherit",textAlign:"left",letterSpacing:"0.04em",borderBottom:"1px solid rgba(255,255,255,0.05)"}}>
-                    通報する
+                    {t.market_report}
                   </button>
                   <button onClick={()=>{setShopMenuOpen(null);onBlockShop&&onBlockShop(shop.name);}}
                     style={{display:"block",width:"100%",padding:"11px 14px",background:"transparent",border:"none",color:"rgba(255,68,85,0.8)",fontSize:9.5,cursor:"pointer",fontFamily:"inherit",textAlign:"left",letterSpacing:"0.04em"}}>
-                    ブロックする
+                    {t.market_block}
                   </button>
                 </div>
               )}
-              {/* カード本体 */}
-              <div onClick={()=>{setSelectedShop(shop);setShopMenuOpen(null);onNudge();}} style={{borderRadius:12,overflow:"hidden"}}>
-                <div style={{background:shop.grad,padding:"16px 15px 14px",position:"relative",overflow:"hidden"}}>
-                  <div style={{position:"absolute",top:-20,right:-20,width:80,height:80,borderRadius:"50%",background:"rgba(255,255,255,0.05)"}} />
+              {/* カード本体 ⑦ 入店アニメ・① 背景色#111827統一 */}
+              <div onClick={()=>handleShopEnter(shop)}
+                style={{borderRadius:12,overflow:"hidden",transition:"transform 0.32s cubic-bezier(0.4,0,0.2,1), opacity 0.32s ease",transform:shopEntering&&shopEnterTarget?.name===shop.name?"translateX(-100%) scale(0.96)":"translateX(0) scale(1)",opacity:shopEntering&&shopEnterTarget?.name===shop.name?0:1}}>
+                <div style={{background:"#111827",padding:"16px 15px 14px",position:"relative",overflow:"hidden"}}>
+                  <div style={{position:"absolute",top:-20,right:-20,width:80,height:80,borderRadius:"50%",background:"rgba(255,255,255,0.03)"}} />
                   <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start"}}>
                     <div>
                       <div style={{fontSize:7,color:"rgba(255,255,255,0.35)",letterSpacing:"0.2em",marginBottom:5}}>REGISTERED SHOP</div>
@@ -603,8 +621,8 @@ export default function MarketScreen({ onNudge, followedShops, onFollowShop, lik
                   </div>
                 </div>
                 <div style={{background:C.card,border:"1px solid "+C.border,borderTop:"none",padding:"10px 15px",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
-                  <span style={{fontSize:8.5,color:C.txL,letterSpacing:"0.06em"}}>取扱 {shop.count} 点</span>
-                  <span style={{fontSize:8.5,color:C.green,fontWeight:600,letterSpacing:"0.1em",textShadow:"0 0 6px rgba(0,255,136,0.3)"}}>{"店舗を見る \u2192"}</span>
+                    <span style={{fontSize:8.5,color:C.txL,letterSpacing:"0.06em"}}>{t.market_assets} {shop.count} {t.market_items}</span>
+                    <span style={{fontSize:8.5,color:C.green,fontWeight:600,letterSpacing:"0.1em",textShadow:"0 0 6px rgba(0,255,136,0.3)"}}>{t.market_go}</span>
                 </div>
               </div>
             </div>

@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { C, LOGOUT_LOGS, BOARD_ITEMS_INIT, runSequence } from "./constants.js";
 import { SectionHead, LogTerminal, Btn, Field, SubScreenNav } from "./components.jsx";
+import { useI18n } from "./i18n.js";
 
 // ─────────────────────────────────────────────
 // SETTINGS SUB-VIEW
@@ -408,6 +409,7 @@ function LikedView({ onBack, likedItems, likedShops, onNavigateMarket }) {
 // MY SCREEN (root)
 // ─────────────────────────────────────────────
 export default function MyScreen({ citizenId, onNudge, onLogout, followedShops, likedItems, likedShops, onNavigateMarket, blockedShops, onUnblockShop, lang }) {
+  const t = useI18n(lang);
   const [subView, setSubView] = useState(null);
 
   if (subView === "settings")  return <SettingsView  onBack={()=>setSubView(null)} onNudge={onNudge}/>;
@@ -448,9 +450,26 @@ export default function MyScreen({ citizenId, onNudge, onLogout, followedShops, 
     </div>
   );
 
-  // EVIグラフデータ（折れ線）
   const eviData = [0.62,0.71,0.68,0.80,0.75,0.84,0.91];
   const labels  = ["月","火","水","木","金","土","日"];
+
+  // ⑧ EVIカウントアップ（0→実際の値、1秒）
+  const [eviDisplay, setEviDisplay] = useState(0);
+  useEffect(() => {
+    const target = eviData[eviData.length - 1];
+    const dur = 1000;
+    const steps = 40;
+    const step = target / steps;
+    let current = 0;
+    let count = 0;
+    const interval = setInterval(() => {
+      count++;
+      current = Math.min(step * count, target);
+      setEviDisplay(Math.round(current * 100) / 100);
+      if (count >= steps) clearInterval(interval);
+    }, dur / steps);
+    return () => clearInterval(interval);
+  }, []);
 
   // 参加中プロジェクト（充足のもの）
   const joinedProjects = BOARD_ITEMS_INIT.filter(b => b.status === "充足");
@@ -508,7 +527,7 @@ export default function MyScreen({ citizenId, onNudge, onLogout, followedShops, 
           })()}
           <div style={{display:"flex",justifyContent:"space-between",marginTop:6}}>
             <span style={{fontSize:8.5,color:C.txL,letterSpacing:"0.08em"}}>今週の推移</span>
-            <span style={{fontSize:10,color:C.green,fontWeight:700,letterSpacing:"0.06em"}}>最新：{eviData[eviData.length-1]}</span>
+            <span style={{fontSize:10,color:C.green,fontWeight:700,letterSpacing:"0.06em"}}>最新：{eviDisplay.toFixed(2)}</span>
           </div>
         </div>
 

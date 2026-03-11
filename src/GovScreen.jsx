@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { C } from "./constants.js";
 import { SectionHead } from "./components.jsx";
+import { useI18n } from "./i18n.js";
 
 const MAYOR_POSTS = [
   {
@@ -28,7 +29,8 @@ const MAYOR_POSTS = [
   },
 ];
 
-export default function GovScreen({ onNudge }) {
+export default function GovScreen({ onNudge, lang }) {
+  const t = useI18n(lang);
   const [openPost, setOpenPost] = useState(null);
   const [commentInputs, setCommentInputs] = useState({});
   const [postedComments, setPostedComments] = useState({});
@@ -47,7 +49,7 @@ export default function GovScreen({ onNudge }) {
   return (
     <div style={{flex:1,overflowY:"auto",paddingBottom:72}} onScroll={onNudge}>
       <div style={{padding:"15px 14px 0"}}>
-        <SectionHead accent={C.navy} label="行政" sub="City Administration"/>
+        <SectionHead accent={C.navy} label={t.gov_title} sub={t.gov_sub}/>
 
         {/* 市政概要 */}
         <div style={{background:C.navy,borderRadius:9,padding:"16px 15px",marginBottom:14,position:"relative",overflow:"hidden"}}>

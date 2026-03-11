@@ -70,10 +70,10 @@ export function RR({ value }) {
 export function SectionHead({ accent, label, sub }) {
   const col = accent || C.green;
   return (
-    <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:16}}>
-      <div style={{width:2,height:16,background:col,borderRadius:2,flexShrink:0,boxShadow:"0 0 10px "+col}}/>
-      <span style={{fontSize:11,color:C.txM,letterSpacing:"0.22em",fontWeight:700,textTransform:"uppercase"}}>{label}</span>
-      {sub&&<span style={{fontSize:8,color:"#4b5563",letterSpacing:"0.08em"}}>{sub}</span>}
+    <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:18}}>
+      <div style={{width:2.5,height:18,background:col,borderRadius:2,flexShrink:0,boxShadow:"0 0 14px "+col}}/>
+      <span style={{fontSize:11,color:C.txM,letterSpacing:"0.24em",fontWeight:800,textTransform:"uppercase",textShadow:"0 0 8px rgba(255,255,255,0.08)"}}>{label}</span>
+      {sub&&<span style={{fontSize:8,color:"#4b5563",letterSpacing:"0.1em",fontWeight:400}}>{sub}</span>}
     </div>
   );
 }
@@ -161,11 +161,11 @@ export function Btn({ label, onClick, variant="primary", small=false, disabled=f
       onTouchStart={() => setPressed(true)}
       onTouchEnd={() => setPressed(false)}
       style={{
-        padding:small?"8px 18px":"13px 0",
+        padding:small?"9px 20px":"14px 0",
         width:small?"auto":"100%",
         background:disabled?"rgba(0,255,136,0.04)":s.bg,
         border:disabled?"1px solid rgba(0,255,136,0.12)":s.border,
-        borderRadius:6,
+        borderRadius:7,
         color:disabled?"rgba(0,255,136,0.25)":s.color,
         fontSize:small?9:10,
         fontWeight:700,
@@ -190,10 +190,10 @@ export function Modal({ children, onClose }) {
   return (
     <div
       onClick={onClose}
-      style={{position:"fixed",inset:0,zIndex:500,background:"rgba(6,11,21,0.85)",display:"flex",alignItems:"flex-end",justifyContent:"center",animation:"fadeIn 0.2s ease",backdropFilter:"blur(4px)"}}>
+      style={{position:"fixed",inset:0,zIndex:500,background:"rgba(6,11,21,0.88)",display:"flex",alignItems:"flex-end",justifyContent:"center",animation:"fadeIn 0.2s ease",backdropFilter:"blur(6px)"}}>
       <div
         onClick={(e)=>e.stopPropagation()}
-        style={{background:C.card,width:"100%",maxWidth:390,borderRadius:"16px 16px 0 0",padding:"20px 16px 36px",animation:"slideUp 0.25s ease",maxHeight:"88vh",overflowY:"auto",scrollbarWidth:"none",border:"1px solid rgba(0,255,136,0.15)",borderBottom:"none",boxShadow:"0 -8px 40px rgba(0,255,136,0.08)"}}>
+        style={{background:C.card,width:"100%",maxWidth:390,borderRadius:"18px 18px 0 0",padding:"22px 18px 38px",animation:"slideUp 0.25s ease",maxHeight:"88vh",overflowY:"auto",scrollbarWidth:"none",border:"1px solid rgba(0,255,136,0.18)",borderBottom:"none",boxShadow:"0 -8px 48px rgba(0,255,136,0.1),0 -2px 0 rgba(0,255,136,0.06)"}}>
         {children}
       </div>
     </div>
@@ -291,14 +291,38 @@ export const GLOBAL_CSS = `
     cursor:pointer;
     border-radius:12px;
     box-shadow:0 8px 32px rgba(0,0,0,0.4);
-    border:1px solid rgba(255,255,255,0.08)!important;
+    border:1px solid rgba(255,255,255,0.06)!important;
   }
   .card:hover{
-    border-color:rgba(0,255,136,0.35)!important;
-    box-shadow:0 12px 40px rgba(0,0,0,0.55),0 0 20px rgba(0,255,136,0.1)!important;
+    border-color:rgba(0,255,136,0.4)!important;
+    box-shadow:0 14px 44px rgba(0,0,0,0.6),0 0 24px rgba(0,255,136,0.12)!important;
     transform:translateY(-3px);
+  }
+
+  /* ⑦ カード押し込み */
+  .pressable{
+    transition:transform 0.12s ease, box-shadow 0.12s ease;
+    cursor:pointer;
+  }
+  .pressable:active{
+    transform:scale(0.98)!important;
+    box-shadow:0 2px 12px rgba(0,0,0,0.5)!important;
+  }
+
+  /* ⑤ 画面遷移フェード */
+  @keyframes screenFade{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+  .screen-fade{animation:screenFade 0.2s ease-out both;}
+
+  /* ⑥ すりガラスヘッダー */
+  .glass-header{
+    backdrop-filter:blur(12px) saturate(180%);
+    -webkit-backdrop-filter:blur(12px) saturate(180%);
+    background:rgba(10,15,30,0.75)!important;
   }
 
   /* フォロー中ボーダーパルス */
   .follow-active{animation:borderPulse 2s ease-in-out infinite;}
+
+  /* ⑧ 等幅数字 */
+  .mono{font-family:'SF Mono','Fira Mono','Courier New',monospace;}
 `;

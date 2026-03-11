@@ -1,6 +1,7 @@
 import { useState, useRef } from "react";
 import { C, BOARD_ITEMS_INIT, ASSIGN_LOGS, runSequence } from "./constants.js";
 import { Stamp, SectionHead, LogTerminal, Btn, Modal } from "./components.jsx";
+import { useI18n } from "./i18n.js";
 
 // ─────────────────────────────────────────────
 // PROJECT ROOM（チャット画面）
@@ -143,10 +144,13 @@ function ProjectDetail({ item, onBack, onAssign, onRoom, onNudge, alreadyAssigne
 // ─────────────────────────────────────────────
 // BOARD SCREEN（メイン）
 // ─────────────────────────────────────────────
-export default function BoardScreen({ onNudge }) {
+export default function BoardScreen({ onNudge, lang }) {
+  const t = useI18n(lang);
   const [boardItems, setBoardItems] = useState(BOARD_ITEMS_INIT);
-  // 自分がアサイン申請完了したプロジェクトのreg一覧
+  // 自分がアサイン申請制のプロジェクトreg一覧（承認済み）
   const [assignedRegs, setAssignedRegs] = useState([]);
+  // ⑤ 承認待ち（申請中）reg一覧
+  const [pendingRegs, setPendingRegs]   = useState([]);
   const [assignTarget, setAssignTarget] = useState(null);
   const [assignPhase, setAssignPhase] = useState("form");
   const [assignLogs, setAssignLogs] = useState([]);
@@ -155,11 +159,25 @@ export default function BoardScreen({ onNudge }) {
   const [projectRoom, setProjectRoom] = useState(null);
   const [detailItem, setDetailItem] = useState(null);
   const [innerTab, setInnerTab] = useState("board");
-  // ② 通報機能
+  // ③ 通報機能
   const [reportTarget, setReportTarget] = useState(null);
   const [showReport, setShowReport] = useState(false);
   const [reportDone, setReportDone] = useState(false);
   const [reportReason, setReportReason] = useState("");
+  // ⑩ プロジェクト認証演出
+  const [authChecking, setAuthChecking] = useState(false);
+  const [authTarget, setAuthTarget]     = useState(null);
+
+  const handleCardTap = (item) => {
+    setAuthChecking(true);
+    setAuthTarget(item);
+    setTimeout(() => {
+      setAuthChecking(false);
+      setAuthTarget(null);
+      setDetailItem(item);
+      onNudge();
+    }, 500);
+  };
 
   const openReport = (e, label) => {
     e.stopPropagation();
@@ -196,8 +214,11 @@ export default function BoardScreen({ onNudge }) {
     );
   }
 
-  // ③ メッセージタブ: 自分がアサインしたプロジェクトのみ（充足済みは表示しない）
-  const myAssignedProjects = boardItems.filter(b => assignedRegs.includes(b.reg) && b.status !== "充足");
+  // ② メッセージタブ: 承認済みのみ
+  const myAssignedProjects = boardItems.filter(b => assignedRegs.includes(b.reg));
+  // ⑤ 承認待ち
+  const myPendingProjects  = boardItems.filter(b => pendingRegs.includes(b.reg));
+  const totalMsgBadge = myAssignedProjects.length + myPendingProjects.length;
 
   const openAssign = (item) => {
     setAssignTarget(item);
@@ -210,59 +231,106 @@ export default function BoardScreen({ onNudge }) {
   const runAssign = () => {
     setAssignPhase("running");
     runSequence(ASSIGN_LOGS, setAssignLogs, () => {
+      // 申請→承認待ちに追加してモーダルを閉じてメッセージタブへ
+      setPendingRegs(prev => prev.includes(assignTarget.reg) ? prev : [...prev, assignTarget.reg]);
       setAssignPhase("done");
-      // assignedRegs に追加
-      setAssignedRegs(prev => prev.includes(assignTarget.reg) ? prev : [...prev, assignTarget.reg]);
-      setBoardItems((prev) =>
-        prev.map((it) =>
-          it.reg === assignTarget.reg
-            ? { ...it, seats: Math.max(0, it.seats-1), status: it.seats-1 <= 0 ? "充足" : "受付中" }
-            : it
-        )
-      );
-      // ① メッセージタブへ自動遷移
-      setInnerTab("message");
+      // モーダルを少し遅らせて閉じ、メッセージタブへ遷移
+      setTimeout(() => {
+        setAssignTarget(null);
+        setInnerTab("message");
+        onNudge();
+      }, 1500);
     });
+  };
+
+  // ⑤ 承認処理（シミュレート: 山処者ぞっちが承認するイメージ）
+  const approveAssign = (reg) => {
+    setPendingRegs(prev => prev.filter(r => r !== reg));
+    setAssignedRegs(prev => prev.includes(reg) ? prev : [...prev, reg]);
+    setBoardItems(prev =>
+      prev.map(it =>
+        it.reg === reg
+          ? { ...it, seats: Math.max(0, it.seats-1), status: it.seats-1 <= 0 ? "充足" : "受付中" }
+          : it
+      )
+    );
+    onNudge();
+  };
+
+  // ⑤ 拒否処理
+  const rejectAssign = (reg) => {
+    setPendingRegs(prev => prev.filter(r => r !== reg));
+    onNudge();
   };
 
   // 内部タブバー
   const InnerTabBar = () => (
     <div style={{display:"flex",borderBottom:"1px solid "+C.border,background:C.card}}>
-      {[["board","掲示板"],["message","メッセージ"]].map(([id,label]) => (
+      {[["board", t.board_board_tab],["message", t.board_msg_tab]].map(([id,label]) => (
         <button key={id} onClick={() => setInnerTab(id)}
           style={{flex:1,padding:"10px 0",background:"transparent",border:"none",cursor:"pointer",fontFamily:"inherit",fontSize:9.5,letterSpacing:"0.08em",fontWeight:innerTab===id?600:400,color:innerTab===id?C.green:C.txL,borderBottom:innerTab===id?"2px solid "+C.green:"2px solid transparent",transition:"all 0.15s"}}>
-          {label}{id==="message" && myAssignedProjects.length > 0 && (
-            <span style={{marginLeft:5,background:C.green,color:"#fff",fontSize:7,padding:"1px 5px",borderRadius:10,fontWeight:700}}>{myAssignedProjects.length}</span>
+          {label}{id==="message" && totalMsgBadge > 0 && (
+            <span style={{marginLeft:5,background:myPendingProjects.length>0?"#ff9900":C.green,color:"#000",fontSize:7,padding:"1px 5px",borderRadius:10,fontWeight:700}}>{totalMsgBadge}</span>
           )}
         </button>
       ))}
     </div>
   );
 
-  // メッセージタブ（① 自分がアサインしたプロジェクトのみ）
+  // メッセージタブ（⑤ 承認待ち・承認済みを分かれて表示）
   if (innerTab === "message") {
     return (
       <div style={{flex:1,overflowY:"auto",paddingBottom:72}} onScroll={onNudge}>
         <InnerTabBar/>
         <div style={{padding:"14px 14px 0"}}>
-          <div style={{fontSize:8,color:C.txL,letterSpacing:"0.14em",marginBottom:10}}>MY PROJECT MESSAGES</div>
-          {myAssignedProjects.length === 0 ? (
+
+          {/* ⑤ 承認待ちセクション */}
+          {myPendingProjects.length > 0 && (
+            <>
+              <div style={{fontSize:8,color:"#ff9900",letterSpacing:"0.14em",marginBottom:10}}>⏳ PENDING APPROVAL — {myPendingProjects.length}件</div>
+              {myPendingProjects.map(p => (
+                <div key={p.reg} style={{background:"rgba(255,153,0,0.05)",border:"1px solid rgba(255,153,0,0.3)",borderLeft:"3px solid #ff9900",borderRadius:8,padding:"12px 14px",marginBottom:9}}>
+                  <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:6}}>
+                    <div className="mono" style={{fontSize:8,color:"rgba(255,153,0,0.6)",letterSpacing:"0.12em"}}>{p.dept} / {p.reg}</div>
+                    <span style={{background:"rgba(255,153,0,0.15)",color:"#ff9900",fontSize:7.5,padding:"2px 8px",borderRadius:3,fontWeight:700}}>承認待ち</span>
+                  </div>
+                  <div style={{fontSize:11,fontWeight:600,color:C.tx,letterSpacing:"0.03em",lineHeight:1.3,marginBottom:8}}>{p.title}</div>
+                  <div style={{fontSize:8.5,color:C.txM,marginBottom:10}}>起案者：{p.lead}が山処を確認中です。</div>
+                  <div style={{display:"flex",gap:8}}>
+                    <button onClick={() => approveAssign(p.reg)}
+                      style={{flex:1,padding:"8px 0",background:"rgba(0,255,136,0.12)",border:"1px solid rgba(0,255,136,0.4)",borderRadius:6,color:"#00ff88",fontSize:9.5,fontWeight:700,cursor:"pointer",fontFamily:"inherit",letterSpacing:"0.06em"}}>
+                      ✓ 承認する
+                    </button>
+                    <button onClick={() => rejectAssign(p.reg)}
+                      style={{flex:1,padding:"8px 0",background:"rgba(255,68,85,0.08)",border:"1px solid rgba(255,68,85,0.3)",borderRadius:6,color:"rgba(255,68,85,0.8)",fontSize:9.5,fontWeight:600,cursor:"pointer",fontFamily:"inherit",letterSpacing:"0.06em"}}>
+                      ✕ 却下
+                    </button>
+                  </div>
+                </div>
+              ))}
+              {myAssignedProjects.length > 0 && <div style={{height:4}}/>}
+            </>
+          )}
+
+          {/* 承認済みプロジェクト */}
+          <div style={{fontSize:8,color:C.txL,letterSpacing:"0.14em",marginBottom:10}}>{t.board_my_msg}</div>
+          {myAssignedProjects.length === 0 && myPendingProjects.length === 0 ? (
             <div style={{background:C.card,border:"1px solid "+C.border,borderRadius:8,padding:"22px 16px",textAlign:"center"}}>
-              <div style={{fontSize:9.5,color:C.txL,letterSpacing:"0.08em",marginBottom:6}}>参加中のプロジェクトルームはありません</div>
-              <div style={{fontSize:8.5,color:C.txL,letterSpacing:"0.06em",lineHeight:1.7}}>掲示板からプロジェクトにアサイン申請すると<br/>こちらにメッセージルームが表示されます</div>
+              <div style={{fontSize:9.5,color:C.txL,letterSpacing:"0.08em",marginBottom:6}}>{t.board_no_room}</div>
+              <div style={{fontSize:8.5,color:C.txL,letterSpacing:"0.06em",lineHeight:1.7}}>{t.board_no_room_sub}</div>
             </div>
           ) : (
             myAssignedProjects.map(p => (
-              <div key={p.reg} onClick={() => { setProjectRoom({ reg:p.reg, title:p.title }); onNudge(); }}
+              <div key={p.reg} className="pressable" onClick={() => { setProjectRoom({ reg:p.reg, title:p.title }); onNudge(); }}
                 style={{background:C.card,border:"1px solid "+C.border,borderLeft:"3px solid "+C.green,borderRadius:8,padding:"12px 14px",marginBottom:9,cursor:"pointer"}}>
                 <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:6}}>
-                  <div style={{fontSize:8,color:C.txL,letterSpacing:"0.12em"}}>{p.dept} / {p.reg}</div>
-                  <span style={{background:"rgba(46,107,79,0.1)",color:C.green,fontSize:7.5,padding:"2px 7px",borderRadius:3,fontWeight:600}}>参加中</span>
+                  <div className="mono" style={{fontSize:8,color:C.txL,letterSpacing:"0.12em"}}>{p.dept} / {p.reg}</div>
+                  <span style={{background:"rgba(0,255,136,0.1)",color:C.green,fontSize:7.5,padding:"2px 7px",borderRadius:3,fontWeight:600}}>参加中</span>
                 </div>
                 <div style={{fontSize:11,fontWeight:600,color:C.tx,letterSpacing:"0.03em",lineHeight:1.3,marginBottom:5}}>{p.title}</div>
                 <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
                   <div style={{fontSize:8.5,color:C.txL}}>起案者：{p.lead}</div>
-                  <span style={{fontSize:9,color:C.green,fontWeight:600}}>チャットへ →</span>
+                  <span style={{fontSize:9,color:C.green,fontWeight:600}}>{t.board_chat_to}</span>
                 </div>
               </div>
             ))
@@ -278,11 +346,10 @@ export default function BoardScreen({ onNudge }) {
       <div style={{flex:1,overflowY:"auto",paddingBottom:72}} onScroll={onNudge}>
         <InnerTabBar/>
         <div style={{padding:"15px 14px 0"}}>
-          <SectionHead accent={C.navy} label="共創掲示板" sub="Co-creation Board"/>
+          <SectionHead accent={C.navy} label={t.board_title} sub={t.board_sub}/>
           <div style={{background:C.card,border:"1px solid "+C.border,borderLeft:"2.5px solid "+C.green,borderRadius:7,padding:"10px 13px",marginBottom:14}}>
             <div style={{fontSize:9.5,color:C.txM,lineHeight:1.75,letterSpacing:"0.04em"}}>
-              本掲示板への参加は、スキルのアサイン（配属）によってのみ行われます。<br/>
-              <span style={{color:C.txL}}>金銭の授受は発生しません。すべての従事は市民としての任意の意思決定に基づきます。</span>
+              {t.board_note}
             </div>
           </div>
 
@@ -290,9 +357,14 @@ export default function BoardScreen({ onNudge }) {
             const assigned = assignedRegs.includes(item.reg);
             return (
               <div key={item.reg} className="card"
-                onClick={() => { setDetailItem(item); onNudge(); }}
+                onClick={() => handleCardTap(item)}
                 style={{background:C.card,border:"1px solid "+(item.status==="充足"?C.borderD:C.border),borderRadius:8,padding:"12px 13px",marginBottom:9,position:"relative",overflow:"hidden",cursor:"pointer"}}>
-                <Stamp/>
+                {/* ⑩ 認証チェック演出オーバーレイ */}
+                {authChecking && authTarget?.reg===item.reg && (
+                  <div style={{position:"absolute",inset:0,background:"rgba(0,10,6,0.85)",zIndex:50,display:"flex",alignItems:"center",justifyContent:"center",borderRadius:8,backdropFilter:"blur(2px)"}}>
+                    <div style={{fontFamily:"monospace",fontSize:9,color:"#00ff88",letterSpacing:"0.14em",textShadow:"0 0 8px rgba(0,255,136,0.6)",animation:"cursorBlink 0.5s infinite"}}>認証コード確認中…</div>
+                  </div>
+                )}
                 <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:7}}>
                   <div style={{display:"flex",gap:5,flexWrap:"wrap"}}>
                     <span style={{background:item.status==="充足"?"#eee":C.navy,color:item.status==="充足"?C.txL:"#e4eaf4",fontSize:8,padding:"2px 7px",borderRadius:3,letterSpacing:"0.1em",fontWeight:600}}>{item.dept}</span>
@@ -364,6 +436,27 @@ export default function BoardScreen({ onNudge }) {
 
           {assignPhase === "done" && (
             <>
+              <div style={{background:"rgba(0,255,136,0.07)",border:"1px solid rgba(0,255,136,0.3)",borderRadius:7,padding:"11px 13px",marginBottom:12}}>
+                <div style={{fontSize:9,color:C.green,fontWeight:600,letterSpacing:"0.1em",marginBottom:4}}>申請を受け付けました</div>
+                <div style={{fontSize:8.5,color:C.txM,lineHeight:1.7}}>承認結果はメッセージタブに通知されます。</div>
+              </div>
+              {/* ④ 承認/拒否ボタン（自分が起案者の場合を想定したUI） */}
+              <div style={{background:"rgba(255,153,0,0.06)",border:"1px solid rgba(255,153,0,0.2)",borderRadius:7,padding:"10px 13px",marginBottom:12}}>
+                <div style={{fontSize:8,color:"#ff9900",letterSpacing:"0.14em",marginBottom:8}}>起案者として承認する（デモ）</div>
+                <div style={{display:"flex",gap:8}}>
+                  <div style={{flex:1}}><Btn label="承認する" onClick={()=>{
+                    setAssignedRegs(p=>[...p,assignTarget.reg]);
+                    setPendingRegs(p=>p.filter(r=>r!==assignTarget.reg));
+                    setBoardItems(p=>p.map(b=>b.reg===assignTarget.reg?{...b,seats:Math.max(0,b.seats-1)}:b));
+                    setAssignTarget(null);
+                    setInnerTab("message");
+                  }}/></div>
+                  <div style={{flex:1}}><Btn label="拒否する" variant="danger" onClick={()=>{
+                    setPendingRegs(p=>p.filter(r=>r!==assignTarget.reg));
+                    setAssignTarget(null);
+                  }}/></div>
+                </div>
+              </div>
               <div style={{background:"rgba(0,255,136,0.07)",border:"1px solid rgba(0,255,136,0.3)",borderRadius:7,padding:"11px 13px",marginBottom:12}}>
                 <div style={{fontSize:10,color:C.green,fontWeight:700,letterSpacing:"0.08em",marginBottom:2}}>申請が完了しました</div>
                 <div style={{fontSize:9,color:C.txM,letterSpacing:"0.04em",lineHeight:1.7}}>メッセージタブに自動遷移します。</div>
