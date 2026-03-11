@@ -148,18 +148,18 @@ function ItemDetail({ item, shopName, onBack, onNudge, likedItems, onLikeItem })
           <div style={{position:"absolute",top:"50%",left:"50%",transform:"translate(-50%,-50%)",fontSize:48,color:"rgba(255,255,255,0.07)"}}>&#x25C9;</div>
           <button onClick={onBack}
             style={{position:"absolute",top:12,left:12,background:"rgba(0,0,0,0.35)",border:"1px solid rgba(255,255,255,0.15)",borderRadius:5,padding:"5px 11px",color:"rgba(255,255,255,0.8)",fontSize:8.5,cursor:"pointer",fontFamily:"inherit",letterSpacing:"0.1em"}}>
-            {"← "}{shopName || "店舗"}
+            {"\u2190 "}{shopName || "店舗"}
           </button>
-          {/* 3点リーダー（通報）— 戻るボタンの右隣 */}
+          {/* 3点リーダー（通報）— いいねボタンの左横に配置 */}
           <button onClick={() => { setShowReport(true); setReportDone(false); setReportReason(""); }}
-            style={{position:"absolute",top:10,left:110,background:"rgba(0,0,0,0.32)",border:"1px solid rgba(255,255,255,0.14)",borderRadius:20,padding:"5px 10px",cursor:"pointer",color:"rgba(255,255,255,0.6)",fontSize:14,lineHeight:1,zIndex:2}}>
+            style={{position:"absolute",top:10,right:68,background:"rgba(0,0,0,0.32)",border:"1px solid rgba(255,255,255,0.14)",borderRadius:20,padding:"5px 10px",cursor:"pointer",color:"rgba(255,255,255,0.6)",fontSize:14,lineHeight:1,zIndex:2}}>
             ⋯
           </button>
-          {/* いいねボタン — 右上に単独配置 */}
+          {/* いいねボタン — 右上単独配置 */}
           <button onClick={handleLike}
             style={{position:"absolute",top:10,right:10,background:liked?"rgba(46,107,79,0.35)":"rgba(0,0,0,0.3)",border:"1px solid "+(liked?"rgba(100,220,140,0.55)":"rgba(255,255,255,0.15)"),borderRadius:20,padding:"5px 11px",cursor:"pointer",display:"flex",alignItems:"center",gap:5,transition:"all 0.2s",boxShadow:liked?"0 0 12px rgba(46,160,79,0.5)":"none",animation:liked?"likeGlow 0.6s ease":"none",zIndex:2}}>
-            <span style={{fontSize:14,color:liked?"#4cdf90":"rgba(200,220,240,0.5)",transition:"color 0.2s",lineHeight:1}}>◈</span>
-            <span style={{fontSize:9,color:liked?"#7aefb0":"rgba(255,255,255,0.7)",fontWeight:600}}>{liked ? likeCount+1 : likeCount}</span>
+            <span style={{fontSize:14,color:liked?"#4cdf90":"rgba(200,220,240,0.5)",transition:"color 0.2s",lineHeight:1,pointerEvents:"none"}}>◈</span>
+            <span style={{fontSize:9,color:liked?"#7aefb0":"rgba(255,255,255,0.7)",fontWeight:600,pointerEvents:"none"}}>{liked ? likeCount+1 : likeCount}</span>
           </button>
           <div style={{position:"absolute",bottom:10,left:"50%",transform:"translateX(-50%)",display:"flex",gap:5}}>
             {slides.map((_,i) => (
@@ -479,10 +479,12 @@ export default function MarketScreen({ onNudge, followedShops, onFollowShop, lik
                 ))}
               </div>
             </div>
-            {/* ② フォローボタン — ボタン全体がタップ可能 */}
+            {/* フォローボタン — ボタン全体の当たり判定 */}
             <button onClick={e => { e.stopPropagation(); onFollowShop && onFollowShop(selectedShop.name); onNudge(); }}
-              style={{flexShrink:0,minWidth:80,padding:"10px 16px",background:isFollowed?"rgba(46,107,79,0.45)":"rgba(255,255,255,0.14)",border:"1px solid "+(isFollowed?"rgba(100,200,140,0.6)":"rgba(255,255,255,0.28)"),borderRadius:20,color:"#fff",fontSize:9.5,fontWeight:700,cursor:"pointer",fontFamily:"inherit",letterSpacing:"0.08em",transition:"all 0.2s",whiteSpace:"nowrap",display:"flex",alignItems:"center",justifyContent:"center",gap:4}}>
-              {isFollowed ? <><span style={{fontSize:11}}>✓</span><span>フォロー中</span></> : <><span style={{fontSize:13}}>+</span><span>フォロー</span></>}
+              style={{flexShrink:0,minWidth:88,padding:"10px 16px",background:isFollowed?"rgba(46,107,79,0.45)":"rgba(255,255,255,0.14)",border:"1px solid "+(isFollowed?"rgba(100,200,140,0.6)":"rgba(255,255,255,0.28)"),borderRadius:20,color:"#fff",fontSize:9.5,fontWeight:700,cursor:"pointer",fontFamily:"inherit",letterSpacing:"0.08em",transition:"all 0.2s",whiteSpace:"nowrap",display:"flex",alignItems:"center",justifyContent:"center",gap:4,boxShadow:isFollowed?"0 0 10px rgba(46,160,79,0.3)":"none"}}>
+              {isFollowed
+                ? <><span style={{fontSize:11,pointerEvents:"none"}}>✓</span><span style={{pointerEvents:"none"}}>フォロー中</span></>
+                : <><span style={{fontSize:13,pointerEvents:"none"}}>+</span><span style={{pointerEvents:"none"}}>フォロー</span></>}
             </button>
           </div>
         </div>
