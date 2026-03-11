@@ -148,24 +148,33 @@ export default function AuthScreen({ onLogin }) {
         )}
 
         {/* ── LOGIN ── */}
-        {(mode==="login" || syncing) && (
+        {mode==="login" && !syncing && (
           <div>
-            {!syncing && (
-              <>
-                <AuthField label="メールアドレス" value={email} onChangeVal={v=>{setEmail(v);setAuthError("");}} placeholder="you@example.com" type="email"/>
-                <AuthField label="パスワード" value={password} onChangeVal={v=>{setPassword(v);setAuthError("");}} placeholder="6文字以上" type="password"/>
-                {authError && (
-                  <div style={{background:"rgba(184,50,40,0.12)",border:"1px solid rgba(184,50,40,0.4)",borderRadius:6,padding:"9px 12px",marginBottom:12}}>
-                    <div style={{fontSize:8.5,color:"#e57a74",letterSpacing:"0.04em",lineHeight:1.7}}>{authError}</div>
-                  </div>
-                )}
-                <div style={{marginBottom:14}}/>
-                <Btn label={loading?"認証中…":"認証"} onClick={handleLogin} disabled={loading}/>
-                <button onClick={() => setMode("reset")} style={{width:"100%",marginTop:10,background:"transparent",border:"none",color:"rgba(0,255,136,0.35)",fontSize:8.5,cursor:"pointer",fontFamily:"inherit",letterSpacing:"0.06em",textDecoration:"underline"}}>パスワードをお忘れの方</button>
-                <button onClick={()=>{setMode("top");setAuthError("");}} style={{width:"100%",marginTop:4,background:"transparent",border:"none",color:"rgba(156,163,175,0.4)",fontSize:9,cursor:"pointer",fontFamily:"inherit",letterSpacing:"0.1em"}}>← 戻る</button>
-              </>
+            <AuthField label="メールアドレス" value={email} onChangeVal={v=>{setEmail(v);setAuthError("");}} placeholder="you@example.com" type="email"/>
+            <AuthField label="パスワード" value={password} onChangeVal={v=>{setPassword(v);setAuthError("");}} placeholder="6文字以上" type="password"/>
+            {authError && (
+              <div style={{background:"rgba(184,50,40,0.12)",border:"1px solid rgba(184,50,40,0.4)",borderRadius:6,padding:"9px 12px",marginBottom:12}}>
+                <div style={{fontSize:8.5,color:"#e57a74",letterSpacing:"0.04em",lineHeight:1.7}}>{authError}</div>
+              </div>
             )}
-            {syncing && <LogTerminal logs={syncLogs} running={true}/>}
+            <div style={{marginBottom:14}}/>
+            <Btn label={loading?"認証中…":"認証"} onClick={handleLogin} disabled={loading}/>
+            <button onClick={() => setMode("reset")} style={{width:"100%",marginTop:10,background:"transparent",border:"none",color:"rgba(0,255,136,0.35)",fontSize:8.5,cursor:"pointer",fontFamily:"inherit",letterSpacing:"0.06em",textDecoration:"underline"}}>パスワードをお忘れの方</button>
+            <button onClick={()=>{setMode("top");setAuthError("");}} style={{width:"100%",marginTop:4,background:"transparent",border:"none",color:"rgba(156,163,175,0.4)",fontSize:9,cursor:"pointer",fontFamily:"inherit",letterSpacing:"0.1em"}}>← 戻る</button>
+          </div>
+        )}
+
+        {/* ── AUTH SEQUENCE ANIMATION ── */}
+        {syncing && (
+          <div style={{animation:"fadeIn 0.3s ease"}}>
+            <div style={{textAlign:"center",marginBottom:20}}>
+              <div style={{fontSize:8,color:"rgba(0,255,136,0.4)",letterSpacing:"0.28em",marginBottom:6,fontFamily:"monospace"}}>// AUTH SEQUENCE</div>
+              <div style={{fontSize:11,color:"rgba(0,255,136,0.7)",letterSpacing:"0.2em",fontWeight:600,fontFamily:"monospace",textShadow:"0 0 8px rgba(0,255,136,0.4)"}}>接続認証シーケンス実行中</div>
+            </div>
+            <LogTerminal logs={syncLogs} running={true}/>
+            <div style={{textAlign:"center",marginTop:8}}>
+              <span style={{display:"inline-block",animation:"cursorBlink 1s infinite",color:"rgba(0,255,136,0.4)",fontSize:9,fontFamily:"monospace",letterSpacing:"0.1em"}}>SYNCING</span>
+            </div>
           </div>
         )}
 
