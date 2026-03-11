@@ -176,10 +176,12 @@ export default function AppShell({ citizenId, userId, onLogout }) {
   })();
 
   return (
-    <div style={{display:"flex",flexDirection:"column",flex:1,animation:"fadeIn 0.4s ease"}} onClick={closeMenus}>
+    <div style={{display:"flex",flexDirection:"column",flex:1,animation:"fadeIn 0.4s ease",position:"relative"}} onClick={closeMenus}>
+      {/* グリッドパターン背景 */}
+      <div style={{position:"fixed",inset:0,zIndex:0,pointerEvents:"none",backgroundImage:"linear-gradient(rgba(46,107,79,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(46,107,79,0.04) 1px,transparent 1px)",backgroundSize:"32px 32px",animation:"gridPulse 6s ease-in-out infinite"}}/>
 
       {/* ── HEADER ── */}
-      <div style={{background:C.navy,position:"sticky",top:0,zIndex:200,borderBottom:"1px solid "+C.green}}>
+      <div style={{background:"linear-gradient(180deg,#1a2540,#141d33)",position:"sticky",top:0,zIndex:200,borderBottom:"1px solid rgba(46,107,79,0.55)",boxShadow:"0 2px 16px rgba(0,0,0,0.3),0 1px 0 rgba(46,120,79,0.2)"}}>
         <Ticker text={TICKER}/>
         <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"10px 15px 9px"}}>
           <div>
@@ -324,23 +326,23 @@ export default function AppShell({ citizenId, userId, onLogout }) {
         onNavigateMarket={navigateToMarket}/>}
 
       {/* ── BOTTOM NAV ── */}
-      <div style={{position:"fixed",bottom:0,left:"50%",transform:"translateX(-50%)",width:390,background:C.navy,borderTop:"1px solid "+C.green,display:"flex",zIndex:200}}>
+      <div style={{position:"fixed",bottom:0,left:"50%",transform:"translateX(-50%)",width:390,background:"linear-gradient(180deg,#171f38,#111828)",borderTop:"1px solid rgba(46,107,79,0.6)",display:"flex",zIndex:200,boxShadow:"0 -4px 20px rgba(0,0,0,0.4),0 -1px 0 rgba(46,120,79,0.15)"}}>
         {TABS.map((t) => {
           const isActive = tab === t.id;
           const isTapped = tappedTab === t.id;
           return (
             <button key={t.id} onClick={() => handleTab(t.id)}
               style={{flex:1,padding:"9px 0 11px",background:"transparent",border:"none",cursor:"pointer",display:"flex",flexDirection:"column",alignItems:"center",gap:3,borderTop:isActive?"1.5px solid "+C.green:"1.5px solid transparent",marginTop:-1.5,fontFamily:"inherit",transition:"all 0.14s"}}>
-              {/* ⑦ タブアニメーション */}
               <span style={{
-                fontSize:16,
+                fontSize:18,
                 lineHeight:1,
-                color:isActive?"#8fa8c8":"#3a4e68",
-                transform:isTapped?"translateY(-4px)":(isActive?"translateY(-2px)":"translateY(0)"),
-                transition:"transform 0.15s ease-out, color 0.14s",
+                color:isActive?"#8fd4a8":"#3a4e68",
+                transform:isTapped?"translateY(-4px) scale(1.15)":(isActive?"translateY(-2px) scale(1.05)":"translateY(0) scale(1)"),
+                transition:"transform 0.15s ease-out, color 0.14s, filter 0.14s",
                 display:"inline-block",
+                filter:isActive?"drop-shadow(0 0 5px rgba(46,180,79,0.7))":"none",
               }}>{t.icon}</span>
-              <span style={{fontSize:8.5,letterSpacing:"0.08em",fontWeight:500,color:isActive?"#8fa8c8":"#3a4e68",transition:"color 0.14s"}}>{t.label}</span>
+              <span style={{fontSize:8.5,letterSpacing:"0.08em",fontWeight:500,color:isActive?"#8fd4a8":"#3a4e68",transition:"color 0.14s",textShadow:isActive?"0 0 8px rgba(77,220,120,0.4)":"none"}}>{t.label}</span>
             </button>
           );
         })}
