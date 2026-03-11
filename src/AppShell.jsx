@@ -6,6 +6,7 @@ import MarketScreen from "./MarketScreen.jsx";
 import ProcScreen   from "./ProcScreen.jsx";
 import GovScreen    from "./GovScreen.jsx";
 import MyScreen     from "./MyScreen.jsx";
+import { fetchLikes, fetchFollows, toggleLike, toggleFollow } from "./supabase.js";
 
 const LANGS = ["JP", "EN", "\u97d3", "\u4e2d", "ES"];
 
@@ -43,7 +44,7 @@ function SearchTag({ type }) {
   return <span style={{background:bg,color,fontSize:7.5,padding:"1.5px 7px",borderRadius:3,letterSpacing:"0.08em",fontWeight:600,flexShrink:0}}>{label}</span>;
 }
 
-export default function AppShell({ citizenId, onLogout }) {
+export default function AppShell({ citizenId, userId, onLogout }) {
   const [tab, setTab]           = useState("board");
   const [showId, setShowId]     = useState(false);
   const [rr, setRR]             = useState(4821);
@@ -52,36 +53,75 @@ export default function AppShell({ citizenId, onLogout }) {
   const [showNotif, setShowNotif]       = useState(false);
   const [readNotif, setReadNotif]       = useState(false);
   const [resetKeys, setResetKeys]       = useState({ board:0, market:0, gov:0, proc:0, my:0 });
-  // ③ 検索
+  // 検索
   const [showSearch, setShowSearch] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  // ⑦ タブアニメ
+  // タブアニメ
   const [tappedTab, setTappedTab] = useState(null);
-  // ② ソーシャルstate
+  // ② ソーシャルstate（Supabase連携）
   const [followedShops, setFollowedShops] = useState({});
   const [likedItems,    setLikedItems]    = useState({});
-  // マーケットへのディープリンク（マイページから店舗・アセット直接遷移）
-  const [marketJump,    setMarketJump]    = useState(null); // { shop, itemName? }  
+  // マーケットへのディープリンク
+  const [marketJump, setMarketJump] = useState(null);
 
-  // マイページから商業叀に遷移
+  // ── Supabaseからいいね・フォローをロード ─────────
+  useEffect(() => {
+    if (!userId) return;
+    fetchLikes(userId).then(data => setLikedItems(data));
+    fetchFollows(userId).then(data => setFollowedShops(data));
+  }, [userId]);
+
+  // マイページから商業区に遷移
   const navigateToMarket = (shop, itemName) => {
     setMarketJump({ shop, itemName: itemName || null });
     setTab("market");
     onNudge();
   };
 
-  const handleFollowShop = (shopName) => {
-    setFollowedShops(p => {
-      if (p[shopName]) { const n = {...p}; delete n[shopName]; return n; }
-      return { ...p, [shopName]: true };
-    });
+  const handleFollowShop = async (shopName) => {
+    if (!userId) {
+      // ゲストモード：ローカルのみ
+      setFollowedShops(p => {
+        if (p[shopName]) { const n={...p}; delete n[shopName]; return n; }
+        return { ...p, [shopName]: true };
+      });
+      return;
+    }
+    try {
+      const isNowFollowing = await toggleFollow(userId, shopName);
+      setFollowedShops(p => {
+        if (isNowFollowing) return { ...p, [shopName]: true };
+        const n = {...p}; delete n[shopName]; return n;
+      });
+    } catch {
+      // DB失敗時はローカルのみ更新
+      setFollowedShops(p => {
+        if (p[shopName]) { const n={...p}; delete n[shopName]; return n; }
+        return { ...p, [shopName]: true };
+      });
+    }
   };
 
-  const handleLikeItem = (itemName, shop) => {
-    setLikedItems(p => {
-      if (p[itemName]) { const n = {...p}; delete n[itemName]; return n; }
-      return { ...p, [itemName]: { shop } };
-    });
+  const handleLikeItem = async (itemName, shop) => {
+    if (!userId) {
+      setLikedItems(p => {
+        if (p[itemName]) { const n={...p}; delete n[itemName]; return n; }
+        return { ...p, [itemName]: { shop } };
+      });
+      return;
+    }
+    try {
+      const isNowLiked = await toggleLike(userId, itemName, shop);
+      setLikedItems(p => {
+        if (isNowLiked) return { ...p, [itemName]: { shop } };
+        const n = {...p}; delete n[itemName]; return n;
+      });
+    } catch {
+      setLikedItems(p => {
+        if (p[itemName]) { const n={...p}; delete n[itemName]; return n; }
+        return { ...p, [itemName]: { shop } };
+      });
+    }
   };
 
   const onNudge = useCallback(() => setRR((v) => nudge(v)), []);
