@@ -63,6 +63,14 @@ export async function signOut() {
   if (error) throw error;
 }
 
+// パスワードリセットメール送信
+export async function resetPassword(email) {
+  const { error } = await supabase.auth.resetPasswordForEmail(email, {
+    redirectTo: window.location.origin,
+  });
+  if (error) throw error;
+}
+
 // 現在のセッション取得
 export async function getSession() {
   const { data } = await supabase.auth.getSession();

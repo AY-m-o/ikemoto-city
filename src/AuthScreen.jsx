@@ -1,7 +1,7 @@
 import { useState, useCallback } from "react";
 import { C, DOMAINS, CHARTER, SYNC_LOGS, runSequence } from "./constants.js";
 import { AuthField, Btn, LogTerminal } from "./components.jsx";
-import { signUp, signIn } from "./supabase.js";
+import { signUp, signIn, resetPassword } from "./supabase.js";
 
 export default function AuthScreen({ onLogin }) {
   const [mode, setMode]               = useState("top"); // top|login|reg1|reg2|reg3
@@ -21,6 +21,12 @@ export default function AuthScreen({ onLogin }) {
   const [idLogs,   setIdLogs]   = useState([]);
   const [genRunning, setGenRunning] = useState(false);
 
+  // パスワードリセット
+  const [resetEmail,   setResetEmail]   = useState("");
+  const [resetLoading, setResetLoading] = useState(false);
+  const [resetSent,    setResetSent]    = useState(false);
+  const [resetError,   setResetError]   = useState("");
+
   // ── ログイン ──────────────────────────────────
   const handleLogin = useCallback(async () => {
     setAuthError("");
@@ -38,6 +44,21 @@ export default function AuthScreen({ onLogin }) {
       setAuthError("ログインに失敗しました。メールアドレスまたはパスワードが正しくありません。");
     }
   }, [email, password, onLogin]);
+
+  // ── パスワードリセット ────────────────────────
+  const handleReset = useCallback(async () => {
+    setResetError("");
+    if (!resetEmail.trim()) { setResetError("メールアドレスを入力してください。"); return; }
+    setResetLoading(true);
+    try {
+      await resetPassword(resetEmail);
+      setResetSent(true);
+    } catch (err) {
+      setResetError("送信に失敗しました。メールアドレスを確認してください。");
+    } finally {
+      setResetLoading(false);
+    }
+  }, [resetEmail]);
 
   // ── 新規登録 Step3 ────────────────────────────
   const handleReg3 = useCallback(async () => {
@@ -140,10 +161,40 @@ export default function AuthScreen({ onLogin }) {
                 )}
                 <div style={{marginBottom:14}}/>
                 <Btn label={loading?"認証中…":"認証"} onClick={handleLogin} disabled={loading}/>
-                <button onClick={()=>{setMode("top");setAuthError("");}} style={{width:"100%",marginTop:8,background:"transparent",border:"none",color:"rgba(143,168,200,0.4)",fontSize:9,cursor:"pointer",fontFamily:"inherit",letterSpacing:"0.1em"}}>← 戻る</button>
+                <button onClick={() => setMode("reset")} style={{width:"100%",marginTop:10,background:"transparent",border:"none",color:"rgba(0,255,136,0.35)",fontSize:8.5,cursor:"pointer",fontFamily:"inherit",letterSpacing:"0.06em",textDecoration:"underline"}}>パスワードをお忘れの方</button>
+                <button onClick={()=>{setMode("top");setAuthError("");}} style={{width:"100%",marginTop:4,background:"transparent",border:"none",color:"rgba(156,163,175,0.4)",fontSize:9,cursor:"pointer",fontFamily:"inherit",letterSpacing:"0.1em"}}>← 戻る</button>
               </>
             )}
             {syncing && <LogTerminal logs={syncLogs} running={true}/>}
+          </div>
+        )}
+
+        {/* ── PASSWORD RESET ── */}
+        {mode==="reset" && (
+          <div>
+            <div style={{color:"rgba(0,255,136,0.4)",fontSize:8,letterSpacing:"0.2em",marginBottom:16,textAlign:"center",fontFamily:"monospace"}}>// PASSWORD RESET</div>
+            {!resetSent ? (
+              <>
+                <AuthField label="登録メールアドレス" value={resetEmail} onChangeVal={v=>{setResetEmail(v);setResetError("");}} placeholder="you@example.com" type="email"/>
+                {resetError && (
+                  <div style={{background:"rgba(255,68,85,0.1)",border:"1px solid rgba(255,68,85,0.3)",borderRadius:6,padding:"9px 12px",marginBottom:12}}>
+                    <div style={{fontSize:8.5,color:"#ff9090",letterSpacing:"0.04em"}}>{resetError}</div>
+                  </div>
+                )}
+                <div style={{marginBottom:12}}/>
+                <Btn label={resetLoading?"送信中…":"リセットメールを送信"} onClick={handleReset} disabled={resetLoading}/>
+                <button onClick={()=>{setMode("login");setResetError("");setResetSent(false);}} style={{width:"100%",marginTop:8,background:"transparent",border:"none",color:"rgba(156,163,175,0.4)",fontSize:9,cursor:"pointer",fontFamily:"inherit",letterSpacing:"0.1em"}}>← ログインに戻る</button>
+              </>
+            ) : (
+              <>
+                <div style={{background:"rgba(0,255,136,0.06)",border:"1px solid rgba(0,255,136,0.2)",borderRadius:8,padding:"16px 14px",marginBottom:16,textAlign:"center"}}>
+                  <div style={{fontSize:14,marginBottom:8}}>✓</div>
+                  <div style={{fontSize:10,color:"#00ff88",fontWeight:600,letterSpacing:"0.08em",marginBottom:6}}>送信完了</div>
+                  <div style={{fontSize:9,color:"rgba(156,163,175,0.8)",lineHeight:1.7}}>{resetEmail} にリセットリンクを送信しました。</div>
+                </div>
+                <button onClick={()=>{setMode("login");setResetSent(false);setResetEmail("");}} style={{width:"100%",background:"transparent",border:"none",color:"rgba(0,255,136,0.4)",fontSize:9,cursor:"pointer",fontFamily:"inherit",letterSpacing:"0.1em"}}>← ログインに戻る</button>
+              </>
+            )}
           </div>
         )}
 

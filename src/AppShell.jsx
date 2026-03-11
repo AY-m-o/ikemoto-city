@@ -24,15 +24,29 @@ const CITIZENS = [
   { id:"IK-2026-0063", name:"Mika",  domain:"\u5efa\u7bc9\u30fb\u7a7a\u9593" },
 ];
 
-// SVG通知ベルアイコン（⑧リデザイン）
+// ⑥ 言語切替翻訳データ
+const I18N = {
+  "JP": { gov:"\u6c60\u672c\u5e02\u3000\u30c7\u30b8\u30bf\u30eb\u5e02\u5f79\u6240", sub:"IKEMOTO CITY DIGITAL GOVERNMENT",
+          board:"\u63b2\u793a\u677f", market:"\u5546\u696d\u533a", gov_tab:"\u884c\u653f", proc:"\u624b\u7d9a\u304d", my:"\u30de\u30a4\u30da\u30fc\u30b8" },
+  "EN": { gov:"Ikemoto City  Digital Office", sub:"IKEMOTO CITY DIGITAL GOVERNMENT",
+          board:"BOARD", market:"MARKET", gov_tab:"GOV", proc:"PROC", my:"MY PAGE" },
+  "\u97d3":  { gov:"\uc774\ucf00\ubaa8\ud1a0\uc2dc  \ub514\uc9c0\ud138\uc2dc\uccad", sub:"IKEMOTO CITY DIGITAL GOVERNMENT",
+          board:"\uac8c\uc2dc\ud310", market:"\uc2dc\uc7a5", gov_tab:"\ud589\uc815", proc:"\uc808\ucc28", my:"\ub9c8\uc774\ud398\uc774\uc9c0" },
+  "\u4e2d":  { gov:"\u6c60\u672c\u5e02  \u6570\u5b57\u5e02\u653f\u5385", sub:"IKEMOTO CITY DIGITAL GOVERNMENT",
+          board:"\u516c\u544a\u680f", market:"\u5546\u4e1a\u533a", gov_tab:"\u884c\u653f", proc:"\u624b\u7eed", my:"\u6211\u7684\u9875\u9762" },
+  "ES": { gov:"Ciudad Ikemoto  Oficina Digital", sub:"IKEMOTO CITY DIGITAL GOVERNMENT",
+          board:"TABL\u00d3N", market:"MERCADO", gov_tab:"GOB", proc:"TR\u00c1MITE", my:"MI P\u00c1G" },
+};
+
+// SVG\u901a\u77e5\u30d9\u30eb\u30a2\u30a4\u30b3\u30f3\uff08\u2468\u30ea\u30c7\u30b6\u30a4\u30f3\uff09
 function BellIcon({ hasUnread }) {
   return (
     <svg width="15" height="16" viewBox="0 0 15 16" fill="none" xmlns="http://www.w3.org/2000/svg" style={{display:"block"}}>
-      <path d="M7.5 1.5C7.5 1.5 4 3.5 4 8V11.5H11V8C11 3.5 7.5 1.5 7.5 1.5Z" stroke="rgba(100,140,180,0.75)" strokeWidth="1.2" fill="rgba(46,107,79,0.08)"/>
-      <path d="M4 11.5H11L11.8 13H3.2L4 11.5Z" stroke="rgba(100,140,180,0.6)" strokeWidth="1" fill="rgba(20,40,60,0.5)"/>
-      <path d="M6.2 13.5C6.2 13.5 6.5 14.8 7.5 14.8C8.5 14.8 8.8 13.5 8.8 13.5" stroke="rgba(100,140,180,0.6)" strokeWidth="1" fill="none"/>
-      <rect x="5.5" y="0.5" width="4" height="1.5" rx="0.75" fill="rgba(46,107,79,0.35)" stroke="rgba(46,107,79,0.5)" strokeWidth="0.5"/>
-      {hasUnread && <circle cx="11.5" cy="2" r="2" fill="#e05050" stroke="rgba(13,30,48,0.9)" strokeWidth="1"/>}
+      <path d="M7.5 1.5C7.5 1.5 4 3.5 4 8V11.5H11V8C11 3.5 7.5 1.5 7.5 1.5Z" stroke="rgba(0,255,136,0.55)" strokeWidth="1.8" fill="rgba(0,255,136,0.04)" strokeLinejoin="round"/>
+      <path d="M4 11.5H11L11.8 13H3.2L4 11.5Z" stroke="rgba(0,255,136,0.45)" strokeWidth="1.6" fill="rgba(0,20,10,0.5)" strokeLinejoin="round"/>
+      <path d="M6.2 13.5C6.2 13.5 6.5 14.8 7.5 14.8C8.5 14.8 8.8 13.5 8.8 13.5" stroke="rgba(0,255,136,0.45)" strokeWidth="1.5" fill="none" strokeLinecap="round"/>
+      <rect x="5.5" y="0.5" width="4" height="1.5" rx="0.75" fill="rgba(0,255,136,0.15)" stroke="rgba(0,255,136,0.3)" strokeWidth="0.5"/>
+      {hasUnread && <circle cx="11.5" cy="2" r="2" fill="#ff4455" stroke="rgba(6,11,21,0.9)" strokeWidth="1"/>}
     </svg>
   );
 }
@@ -61,6 +75,7 @@ export default function AppShell({ citizenId, userId, onLogout }) {
   // ② ソーシャルstate（Supabase連携）
   const [followedShops, setFollowedShops] = useState({});
   const [likedItems,    setLikedItems]    = useState({});
+  const [blockedShops,  setBlockedShops]  = useState({});
   // マーケットへのディープリンク
   const [marketJump, setMarketJump] = useState(null);
 
@@ -118,6 +133,10 @@ export default function AppShell({ citizenId, userId, onLogout }) {
     }
   };
 
+  const handleBlockShop = (shopName) => {
+    setBlockedShops(p => ({...p, [shopName]: true}));
+  };
+
   const onNudge = useCallback(() => setRR((v) => nudge(v)), []);
 
   useEffect(() => {
@@ -172,15 +191,15 @@ export default function AppShell({ citizenId, userId, onLogout }) {
   return (
     <div style={{display:"flex",flexDirection:"column",flex:1,animation:"fadeIn 0.4s ease",position:"relative"}} onClick={closeMenus}>
       {/* グリッドパターン背景 */}
-      <div style={{position:"fixed",inset:0,zIndex:0,pointerEvents:"none",backgroundImage:"linear-gradient(#1f2937 1px,transparent 1px),linear-gradient(90deg,#1f2937 1px,transparent 1px)",backgroundSize:"32px 32px",opacity:0.3,animation:"gridPulse 8s ease-in-out infinite"}}/>
+      <div style={{position:"fixed",inset:0,zIndex:-1,pointerEvents:"none",backgroundImage:"linear-gradient(#1f2937 1px,transparent 1px),linear-gradient(90deg,#1f2937 1px,transparent 1px)",backgroundSize:"32px 32px",opacity:0.3,animation:"gridPulse 8s ease-in-out infinite"}}/>
 
       {/* ── HEADER ── */}
       <div style={{background:"#0a0f1e",position:"sticky",top:0,zIndex:200,borderBottom:"1px solid rgba(0,255,136,0.2)",boxShadow:"0 2px 20px rgba(0,0,0,0.6),0 0 0 0 rgba(0,255,136,0.1)"}}>
         <Ticker text={TICKER}/>
         <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"10px 15px 9px"}}>
           <div>
-            <div style={{color:"rgba(0,255,136,0.3)",fontSize:7.5,letterSpacing:"0.26em",marginBottom:2,fontWeight:300,fontFamily:"monospace"}}>IKEMOTO CITY DIGITAL GOVERNMENT</div>
-            <div style={{color:"#f9fafb",fontSize:14,fontWeight:700,letterSpacing:"0.1em",textShadow:"0 0 20px rgba(0,255,136,0.15)"}}>池本市　デジタル市役所</div>
+            <div style={{color:"rgba(0,255,136,0.3)",fontSize:7.5,letterSpacing:"0.26em",marginBottom:2,fontWeight:300,fontFamily:"monospace"}}>{I18N[lang].sub}</div>
+            <div style={{color:"#f9fafb",fontSize:14,fontWeight:700,letterSpacing:"0.1em",textShadow:"0 0 20px rgba(0,255,136,0.15)"}}>{I18N[lang].gov}</div>
           </div>
           <div style={{display:"flex",gap:5,alignItems:"center",position:"relative"}} onClick={e => e.stopPropagation()}>
 
@@ -312,11 +331,14 @@ export default function AppShell({ citizenId, userId, onLogout }) {
       {tab==="market" && <MarketScreen key={resetKeys.market} onNudge={onNudge}
         followedShops={followedShops} onFollowShop={handleFollowShop}
         likedItems={likedItems} onLikeItem={handleLikeItem}
+        blockedShops={blockedShops} onBlockShop={handleBlockShop}
         jumpTo={marketJump} onJumpClear={() => setMarketJump(null)}/>}
       {tab==="gov"    && <GovScreen    key={resetKeys.gov}    onNudge={onNudge}/>}
       {tab==="proc"   && <ProcScreen   key={resetKeys.proc}   onNudge={onNudge}/>}
       {tab==="my"     && <MyScreen     key={resetKeys.my}     citizenId={citizenId} onNudge={onNudge} onLogout={onLogout}
         followedShops={followedShops} likedItems={likedItems}
+        blockedShops={blockedShops}
+        onUnblockShop={shopName => setBlockedShops(p=>{const n={...p};delete n[shopName];return n;})}
         onNavigateMarket={navigateToMarket}/>}
 
       {/* ── BOTTOM NAV ── */}
