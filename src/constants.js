@@ -75,11 +75,11 @@ export const DOMAINS = ["グラフィック","映像・写真","建築・空間"
 export const MARKET_CATS = ["すべて","服飾","映像","造形","ライセンス","音響","文書"];
 
 export const TABS = [
-  { id:"board",  label:"掲示板",    icon:"📋" },
-  { id:"market", label:"商業区",    icon:"🏪" },
-  { id:"gov",    label:"行政",      icon:"🏛" },
-  { id:"proc",   label:"手続き",    icon:"📝" },
-  { id:"my",     label:"マイページ", icon:"👤" },
+  { id:"board",  label:"掲示板",    icon:"⊞" },
+  { id:"market", label:"商業区",    icon:"◫" },
+  { id:"gov",    label:"行政",      icon:"▣" },
+  { id:"proc",   label:"手続き",    icon:"⊕" },
+  { id:"my",     label:"マイページ", icon:"◉" },
 ];
 
 export const BOARD_ITEMS_INIT = [

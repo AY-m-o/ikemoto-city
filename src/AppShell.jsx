@@ -79,47 +79,41 @@ export default function AppShell({ citizenId, userId, onLogout }) {
   };
 
   const handleFollowShop = async (shopName) => {
-    if (!userId) {
-      // ゲストモード：ローカルのみ
-      setFollowedShops(p => {
-        if (p[shopName]) { const n={...p}; delete n[shopName]; return n; }
-        return { ...p, [shopName]: true };
-      });
-      return;
-    }
+    // まずlocalを即座にトグル（Optimistic Update）
+    let wasFollowed = false;
+    setFollowedShops(p => {
+      wasFollowed = !!p[shopName];
+      if (wasFollowed) { const n = {...p}; delete n[shopName]; return n; }
+      return { ...p, [shopName]: true };
+    });
+    if (!userId) return; // ゲストはローカルのみ
     try {
-      const isNowFollowing = await toggleFollow(userId, shopName);
-      setFollowedShops(p => {
-        if (isNowFollowing) return { ...p, [shopName]: true };
-        const n = {...p}; delete n[shopName]; return n;
-      });
+      await toggleFollow(userId, shopName);
     } catch {
-      // DB失敗時はローカルのみ更新
+      // DB失敗→ロールバック
       setFollowedShops(p => {
-        if (p[shopName]) { const n={...p}; delete n[shopName]; return n; }
-        return { ...p, [shopName]: true };
+        if (wasFollowed) return { ...p, [shopName]: true };
+        const n = {...p}; delete n[shopName]; return n;
       });
     }
   };
 
   const handleLikeItem = async (itemName, shop) => {
-    if (!userId) {
-      setLikedItems(p => {
-        if (p[itemName]) { const n={...p}; delete n[itemName]; return n; }
-        return { ...p, [itemName]: { shop } };
-      });
-      return;
-    }
+    // まずlocalを即座にトグル（Optimistic Update）
+    let wasLiked = false;
+    setLikedItems(p => {
+      wasLiked = !!p[itemName];
+      if (wasLiked) { const n = {...p}; delete n[itemName]; return n; }
+      return { ...p, [itemName]: { shop } };
+    });
+    if (!userId) return; // ゲストはローカルのみ
     try {
-      const isNowLiked = await toggleLike(userId, itemName, shop);
-      setLikedItems(p => {
-        if (isNowLiked) return { ...p, [itemName]: { shop } };
-        const n = {...p}; delete n[itemName]; return n;
-      });
+      await toggleLike(userId, itemName, shop);
     } catch {
+      // DB失敗→ロールバック
       setLikedItems(p => {
-        if (p[itemName]) { const n={...p}; delete n[itemName]; return n; }
-        return { ...p, [itemName]: { shop } };
+        if (wasLiked) return { ...p, [itemName]: { shop } };
+        const n = {...p}; delete n[itemName]; return n;
       });
     }
   };

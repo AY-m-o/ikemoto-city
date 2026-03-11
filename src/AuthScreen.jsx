@@ -104,11 +104,11 @@ export default function AuthScreen({ onLogin }) {
               </div>
               <div style={{display:"flex",flexDirection:"column",gap:7}}>
                 {[
-                  { icon:"📋", label:"掲示板",    desc:"共創プロジェクトへのアサイン申請" },
-                  { icon:"🏪", label:"商業区",    desc:"アセットの閲覧・物質化申請（購入）" },
-                  { icon:"🏛", label:"行政",      desc:"市政・財政・広報情報の閲覧" },
-                  { icon:"📝", label:"手続き",    desc:"表現者認可・アセット出力許可申請" },
-                  { icon:"👤", label:"マイページ", desc:"市民証・EVI・参加プロジェクトの確認" },
+                  { icon:"⊞", label:"掲示板",    desc:"共創プロジェクトへのアサイン申請" },
+                  { icon:"◫", label:"商業区",    desc:"アセットの閲覧・物質化申請（購入）" },
+                  { icon:"▣", label:"行政",      desc:"市政・財政・広報情報の閲覧" },
+                  { icon:"⊕", label:"手続き",    desc:"表現者認可・アセット出力許可申請" },
+                  { icon:"◉", label:"マイページ", desc:"市民証・EVI・参加プロジェクトの確認" },
                 ].map(f => (
                   <div key={f.label} style={{display:"flex",alignItems:"center",gap:9}}>
                     <span style={{fontSize:12,color:"rgba(143,168,200,0.4)",width:18,flexShrink:0,textAlign:"center"}}>{f.icon}</span>
