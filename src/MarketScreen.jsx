@@ -289,7 +289,7 @@ function ItemDetail({ item, shopName, onBack, onNudge, likedItems, onLikeItem })
           <div style={{background:C.card,border:"1px solid "+C.border,borderRadius:8,padding:"13px 14px",marginBottom:14}}>
             <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
               <span style={{fontSize:10,fontWeight:700,color:C.tx}}>登録価格</span>
-              <span style={{fontSize:20,fontWeight:700,color:C.tx,letterSpacing:"0.04em"}}>{item.price}</span>
+              <span style={{fontSize:24,fontWeight:700,color:"#00ff88",letterSpacing:"0.04em",textShadow:"0 0 12px rgba(0,255,136,0.4)"}}>{item.price}</span>
             </div>
           </div>
 
@@ -389,7 +389,7 @@ function ItemDetail({ item, shopName, onBack, onNudge, likedItems, onLikeItem })
                 <div style={{height:1,background:C.border,margin:"8px 0"}}/>
                 <div style={{display:"flex",justifyContent:"space-between"}}>
                   <span style={{fontSize:10,color:C.tx,fontWeight:700}}>登録価格</span>
-                  <span style={{fontSize:12,color:C.tx,fontWeight:700}}>{item.price}</span>
+                  <span style={{fontSize:13,color:"#00ff88",fontWeight:700,textShadow:"0 0 8px rgba(0,255,136,0.35)"}}>{item.price}</span>
                 </div>
               </div>
               <Btn label="物質化申請を実行する" onClick={runPurchase}/>
@@ -530,7 +530,7 @@ export default function MarketScreen({ onNudge, followedShops, onFollowShop, lik
                     </div>
                     <span style={{fontSize:8,color:C.green,fontWeight:600}}>CA {item.ca}</span>
                   </div>
-                  <span style={{fontSize:11,fontWeight:700,color:C.tx}}>{item.price}</span>
+                  <span style={{fontSize:12,fontWeight:700,color:"#00ff88",textShadow:"0 0 8px rgba(0,255,136,0.35)"}}>{item.price}</span>
                 </div>
               </div>
               <span style={{color:C.txL,fontSize:14,flexShrink:0}}>&#x203A;</span>
@@ -555,7 +555,7 @@ export default function MarketScreen({ onNudge, followedShops, onFollowShop, lik
         {shops.map(shop => {
           const isFollowed = !!followed[shop.name];
           return (
-            <div key={shop.name} style={{borderRadius:12,marginBottom:12,cursor:"pointer",boxShadow:"0 2px 12px rgba(0,0,0,0.3)",position:"relative"}}>
+            <div key={shop.name} style={{borderRadius:12,marginBottom:16,cursor:"pointer",boxShadow:"0 8px 32px rgba(0,0,0,0.4)",position:"relative"}}>
               {/* 3点ボタン */}
               <button onClick={e=>{e.stopPropagation();setShopMenuOpen(shopMenuOpen===shop.name?null:shop.name);}}
                 style={{position:"absolute",top:8,right:8,zIndex:10,background:"rgba(0,0,0,0.45)",border:"1px solid rgba(255,255,255,0.15)",borderRadius:20,padding:"3px 10px",color:"rgba(255,255,255,0.6)",fontSize:14,cursor:"pointer",lineHeight:1}}>

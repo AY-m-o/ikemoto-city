@@ -194,12 +194,11 @@ export default function AppShell({ citizenId, userId, onLogout }) {
       <div style={{position:"fixed",inset:0,zIndex:-1,pointerEvents:"none",backgroundImage:"linear-gradient(#1f2937 1px,transparent 1px),linear-gradient(90deg,#1f2937 1px,transparent 1px)",backgroundSize:"32px 32px",opacity:0.3,animation:"gridPulse 8s ease-in-out infinite"}}/>
 
       {/* ── HEADER ── */}
-      <div style={{background:"#0a0f1e",position:"sticky",top:0,zIndex:200,borderBottom:"1px solid rgba(0,255,136,0.2)",boxShadow:"0 2px 20px rgba(0,0,0,0.6),0 0 0 0 rgba(0,255,136,0.1)"}}>
-        <Ticker text={TICKER}/>
-        <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"10px 15px 9px"}}>
+      <div style={{background:"#0a0f1e",position:"sticky",top:0,zIndex:200,borderBottom:"1px solid rgba(0,255,136,0.2)",boxShadow:"0 4px 24px rgba(0,0,0,0.7),0 0 0 0 rgba(0,255,136,0.1)"}}>
+        <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"14px 18px 13px"}}>
           <div>
-            <div style={{color:"rgba(0,255,136,0.3)",fontSize:7.5,letterSpacing:"0.26em",marginBottom:2,fontWeight:300,fontFamily:"monospace"}}>{I18N[lang].sub}</div>
-            <div style={{color:"#f9fafb",fontSize:14,fontWeight:700,letterSpacing:"0.1em",textShadow:"0 0 20px rgba(0,255,136,0.15)"}}>{I18N[lang].gov}</div>
+            <div style={{color:"rgba(0,255,136,0.3)",fontSize:8,letterSpacing:"0.28em",marginBottom:3,fontWeight:300,fontFamily:"monospace"}}>{I18N[lang].sub}</div>
+            <div style={{color:"#f9fafb",fontSize:16,fontWeight:700,letterSpacing:"0.12em",textShadow:"0 0 24px rgba(0,255,136,0.2)"}}>{I18N[lang].gov}</div>
           </div>
           <div style={{display:"flex",gap:5,alignItems:"center",position:"relative"}} onClick={e => e.stopPropagation()}>
 

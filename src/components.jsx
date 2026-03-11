@@ -70,10 +70,10 @@ export function RR({ value }) {
 export function SectionHead({ accent, label, sub }) {
   const col = accent || C.green;
   return (
-    <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:12}}>
-      <div style={{width:2.5,height:14,background:col,borderRadius:2,flexShrink:0,boxShadow:"0 0 8px "+col}}/>
-      <span style={{fontSize:10,color:C.txM,letterSpacing:"0.18em",fontWeight:700,textTransform:"uppercase"}}>{label}</span>
-      {sub&&<span style={{fontSize:8.5,color:C.txL,letterSpacing:"0.08em"}}>{sub}</span>}
+    <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:16}}>
+      <div style={{width:2,height:16,background:col,borderRadius:2,flexShrink:0,boxShadow:"0 0 10px "+col}}/>
+      <span style={{fontSize:11,color:C.txM,letterSpacing:"0.22em",fontWeight:700,textTransform:"uppercase"}}>{label}</span>
+      {sub&&<span style={{fontSize:8,color:"#4b5563",letterSpacing:"0.08em"}}>{sub}</span>}
     </div>
   );
 }
@@ -161,22 +161,22 @@ export function Btn({ label, onClick, variant="primary", small=false, disabled=f
       onTouchStart={() => setPressed(true)}
       onTouchEnd={() => setPressed(false)}
       style={{
-        padding:small?"7px 16px":"12px 0",
+        padding:small?"8px 18px":"13px 0",
         width:small?"auto":"100%",
-        background:disabled?"rgba(0,255,136,0.05)":s.bg,
-        border:disabled?"1px solid rgba(0,255,136,0.15)":s.border,
-        borderRadius:8,
-        color:disabled?"rgba(0,255,136,0.3)":s.color,
+        background:disabled?"rgba(0,255,136,0.04)":s.bg,
+        border:disabled?"1px solid rgba(0,255,136,0.12)":s.border,
+        borderRadius:6,
+        color:disabled?"rgba(0,255,136,0.25)":s.color,
         fontSize:small?9:10,
         fontWeight:700,
-        letterSpacing:"0.14em",
+        letterSpacing:"0.16em",
         textTransform:"uppercase",
         cursor:disabled?"default":"pointer",
         fontFamily:"inherit",
         transition:"all 0.15s",
         boxShadow:pressed&&!disabled ? s.shadowPress : (disabled?"none":s.shadow),
         transform:pressed&&!disabled?"scale(0.97)":"scale(1)",
-        textShadow:variant==="primary"&&!disabled?"0 0 8px rgba(0,255,136,0.6)":"none",
+        textShadow:variant==="primary"&&!disabled?"0 0 10px rgba(0,255,136,0.7)":"none",
       }}>
       {label}
     </button>
@@ -270,7 +270,7 @@ export const GLOBAL_CSS = `
   *{box-sizing:border-box;}
   ::-webkit-scrollbar{width:0;}
   input,textarea{outline:none;box-sizing:border-box;}
-  ::placeholder{color:rgba(107,114,128,0.6);}
+  ::placeholder{color:rgba(75,85,99,0.7);}
 
   @keyframes slideDown{from{opacity:0;transform:translateY(-10px);}to{opacity:1;transform:translateY(0);}}
   @keyframes slideUp{from{opacity:0;transform:translateY(30px);}to{opacity:1;transform:translateY(0);}}
@@ -285,9 +285,19 @@ export const GLOBAL_CSS = `
   @keyframes scanLine{0%{top:-4px;}100%{top:100%;}}
   @keyframes cyberFlicker{0%,94%,96%,100%{opacity:1;}95%{opacity:0.75;}}
 
-  /* カード hover グロー */
-  .card{transition:all 0.2s ease;cursor:pointer;border-radius:12px;}
-  .card:hover{border-color:rgba(0,255,136,0.4)!important;box-shadow:0 0 16px rgba(0,255,136,0.12),0 4px 20px rgba(0,0,0,0.4)!important;transform:translateY(-2px);}
+  /* カード base — 深いシャドウ＋繊細なボーダー */
+  .card{
+    transition:all 0.22s ease;
+    cursor:pointer;
+    border-radius:12px;
+    box-shadow:0 8px 32px rgba(0,0,0,0.4);
+    border:1px solid rgba(255,255,255,0.08)!important;
+  }
+  .card:hover{
+    border-color:rgba(0,255,136,0.35)!important;
+    box-shadow:0 12px 40px rgba(0,0,0,0.55),0 0 20px rgba(0,255,136,0.1)!important;
+    transform:translateY(-3px);
+  }
 
   /* フォロー中ボーダーパルス */
   .follow-active{animation:borderPulse 2s ease-in-out infinite;}
