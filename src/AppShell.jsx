@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { C, TICKER, TABS, MARKET_ITEMS, SHOP_META, nudge } from "./constants.js";
-import { Ticker, Stamp, Watermark, RR } from "./components.jsx";
+import { Stamp, Watermark, RR } from "./components.jsx";
 import BoardScreen  from "./BoardScreen.jsx";
 import MarketScreen from "./MarketScreen.jsx";
 import ProcScreen   from "./ProcScreen.jsx";
@@ -75,6 +75,7 @@ export default function AppShell({ citizenId, userId, onLogout }) {
   // ② ソーシャルstate（Supabase連携）
   const [followedShops, setFollowedShops] = useState({});
   const [likedItems,    setLikedItems]    = useState({});
+  const [likedShops,    setLikedShops]    = useState({});
   const [blockedShops,  setBlockedShops]  = useState({});
   // マーケットへのディープリンク
   const [marketJump, setMarketJump] = useState(null);
@@ -135,6 +136,14 @@ export default function AppShell({ citizenId, userId, onLogout }) {
 
   const handleBlockShop = (shopName) => {
     setBlockedShops(p => ({...p, [shopName]: true}));
+  };
+
+  // ② 店舗いいね（ローカルのみ）
+  const handleLikeShop = (shopName) => {
+    setLikedShops(p => {
+      if (p[shopName]) { const n = {...p}; delete n[shopName]; return n; }
+      return { ...p, [shopName]: true };
+    });
   };
 
   const onNudge = useCallback(() => setRR((v) => nudge(v)), []);
@@ -326,16 +335,17 @@ export default function AppShell({ citizenId, userId, onLogout }) {
       )}
 
       {/* ── SCREENS ── */}
-      {tab==="board"  && <BoardScreen  key={resetKeys.board}  onNudge={onNudge}/>}
-      {tab==="market" && <MarketScreen key={resetKeys.market} onNudge={onNudge}
+      {tab==="board"  && <BoardScreen  key={resetKeys.board}  onNudge={onNudge} lang={lang}/>}
+      {tab==="market" && <MarketScreen key={resetKeys.market} onNudge={onNudge} lang={lang}
         followedShops={followedShops} onFollowShop={handleFollowShop}
         likedItems={likedItems} onLikeItem={handleLikeItem}
+        likedShops={likedShops} onLikeShop={handleLikeShop}
         blockedShops={blockedShops} onBlockShop={handleBlockShop}
         jumpTo={marketJump} onJumpClear={() => setMarketJump(null)}/>}
-      {tab==="gov"    && <GovScreen    key={resetKeys.gov}    onNudge={onNudge}/>}
-      {tab==="proc"   && <ProcScreen   key={resetKeys.proc}   onNudge={onNudge}/>}
-      {tab==="my"     && <MyScreen     key={resetKeys.my}     citizenId={citizenId} onNudge={onNudge} onLogout={onLogout}
-        followedShops={followedShops} likedItems={likedItems}
+      {tab==="gov"    && <GovScreen    key={resetKeys.gov}    onNudge={onNudge} lang={lang}/>}
+      {tab==="proc"   && <ProcScreen   key={resetKeys.proc}   onNudge={onNudge} lang={lang}/>}
+      {tab==="my"     && <MyScreen     key={resetKeys.my}     citizenId={citizenId} onNudge={onNudge} onLogout={onLogout} lang={lang}
+        followedShops={followedShops} likedItems={likedItems} likedShops={likedShops}
         blockedShops={blockedShops}
         onUnblockShop={shopName => setBlockedShops(p=>{const n={...p};delete n[shopName];return n;})}
         onNavigateMarket={navigateToMarket}/>}

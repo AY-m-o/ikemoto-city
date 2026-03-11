@@ -211,7 +211,7 @@ export default function BoardScreen({ onNudge }) {
     setAssignPhase("running");
     runSequence(ASSIGN_LOGS, setAssignLogs, () => {
       setAssignPhase("done");
-      // assignedRegs に追加（プライバシー管理）
+      // assignedRegs に追加
       setAssignedRegs(prev => prev.includes(assignTarget.reg) ? prev : [...prev, assignTarget.reg]);
       setBoardItems((prev) =>
         prev.map((it) =>
@@ -220,6 +220,8 @@ export default function BoardScreen({ onNudge }) {
             : it
         )
       );
+      // ① メッセージタブへ自動遷移
+      setInnerTab("message");
     });
   };
 
@@ -362,11 +364,17 @@ export default function BoardScreen({ onNudge }) {
 
           {assignPhase === "done" && (
             <>
-              <div style={{background:"rgba(46,107,79,0.08)",border:"1px solid "+C.green,borderRadius:7,padding:"11px 13px",marginBottom:12}}>
-                <div style={{fontSize:10,color:C.green,fontWeight:600,letterSpacing:"0.08em",marginBottom:2}}>申請が完了しました</div>
-                <div style={{fontSize:9,color:C.txM,letterSpacing:"0.04em",lineHeight:1.7}}>メッセージタブからプロジェクトルームに入れます。</div>
+              <div style={{background:"rgba(0,255,136,0.07)",border:"1px solid rgba(0,255,136,0.3)",borderRadius:7,padding:"11px 13px",marginBottom:12}}>
+                <div style={{fontSize:10,color:C.green,fontWeight:700,letterSpacing:"0.08em",marginBottom:2}}>申請が完了しました</div>
+                <div style={{fontSize:9,color:C.txM,letterSpacing:"0.04em",lineHeight:1.7}}>メッセージタブに自動遷移します。</div>
               </div>
-              <Btn label="プロジェクトルームへ" onClick={() => { setAssignTarget(null); setProjectRoom({ reg:assignTarget.reg, title:assignTarget.title }); onNudge(); }}/>
+              <Btn label="プロジェクトルームへ" onClick={() => {
+                const reg = assignTarget.reg;
+                const title = assignTarget.title;
+                setAssignTarget(null);
+                setProjectRoom({ reg, title });
+                onNudge();
+              }}/>
               <div style={{height:8}}/>
               <Btn label="閉じる" onClick={() => setAssignTarget(null)} variant="ghost"/>
             </>

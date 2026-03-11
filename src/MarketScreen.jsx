@@ -416,18 +416,19 @@ function ItemDetail({ item, shopName, onBack, onNudge, likedItems, onLikeItem })
 // ─────────────────────────────────────────────
 // MARKET SCREEN（店舗一覧 → 店舗詳細 → 商品詳細）
 // ─────────────────────────────────────────────
-export default function MarketScreen({ onNudge, followedShops, onFollowShop, likedItems, onLikeItem, jumpTo, onJumpClear, blockedShops, onBlockShop }) {
+export default function MarketScreen({ onNudge, followedShops, onFollowShop, likedItems, onLikeItem, likedShops, onLikeShop, jumpTo, onJumpClear, blockedShops, onBlockShop }) {
   const [selectedShop, setSelectedShop] = useState(null);
   const [selectedItem, setSelectedItem] = useState(null);
-  const [shopReport, setShopReport]     = useState(null);   // 通報中の店舗名
+  const [shopReport, setShopReport]     = useState(null);
   const [shopReportReason, setShopReportReason] = useState("");
   const [shopReportDone, setShopReportDone]     = useState(false);
-  const [shopMenuOpen, setShopMenuOpen]         = useState(null); // 店舗カードの3点メニュー
+  const [shopMenuOpen, setShopMenuOpen]         = useState(null);
 
   // props fallback
-  const followed = followedShops || {};
-  const liked    = likedItems    || {};
-  const blocked  = blockedShops  || {};
+  const followed  = followedShops || {};
+  const liked     = likedItems    || {};
+  const likedS    = likedShops    || {};
+  const blocked   = blockedShops  || {};
 
   const shops = [...new Set(MARKET_ITEMS.map(i => i.shop))].map(shopName => {
     const items = MARKET_ITEMS.filter(i => i.shop === shopName);
@@ -468,31 +469,32 @@ export default function MarketScreen({ onNudge, followedShops, onFollowShop, lik
       <div style={{flex:1,overflowY:"auto",paddingBottom:72}} onScroll={onNudge}>
         {/* バナー */}
         <div style={{background:selectedShop.grad,padding:"20px 16px 16px",position:"relative",overflow:"hidden"}}>
-          <div style={{position:"absolute",top:-30,right:-30,width:120,height:120,borderRadius:"50%",background:"rgba(255,255,255,0.05)"}}/>
-          {/* 3点コントロール（通報・ブロック） */}
-          {"\u2003"}
-          <div style={{position:"relative",display:"inline-block"}}>
-            <button onClick={e=>{e.stopPropagation();setShopMenuOpen(shopMenuOpen===selectedShop.name?null:selectedShop.name);}}
-              style={{background:"rgba(255,255,255,0.12)",border:"1px solid rgba(255,255,255,0.2)",borderRadius:5,padding:"4px 10px",color:"rgba(255,255,255,0.7)",fontSize:14,cursor:"pointer",marginBottom:14,lineHeight:1}}>
-              ⋯
+          <div style={{position:"absolute",top:-30,right:-30,width:120,height:120,borderRadius:"50%",background:"rgba(255,255,255,0.05)"}}/>         
+          {/* 戻るボタン + 3点メニュー — 一行に */}
+          <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:14}}>
+            <button onClick={()=>{setSelectedShop(null);onNudge();}}
+              style={{background:"rgba(255,255,255,0.12)",border:"1px solid rgba(255,255,255,0.2)",borderRadius:5,padding:"4px 10px",color:"rgba(255,255,255,0.8)",fontSize:8.5,cursor:"pointer",fontFamily:"inherit",letterSpacing:"0.1em"}}>
+              {"\u2190 店舗一覧"}
             </button>
-            {shopMenuOpen===selectedShop.name && (
-              <div style={{position:"absolute",top:"calc(100% + 4px)",left:0,background:"#0a0f1e",border:"1px solid rgba(0,255,136,0.2)",borderRadius:8,zIndex:300,minWidth:130,boxShadow:"0 4px 20px rgba(0,0,0,0.6)"}}>
-                <button onClick={e=>{e.stopPropagation();setShopMenuOpen(null);setShopReport(selectedShop.name);setShopReportReason("");setShopReportDone(false);}}
-                  style={{display:"block",width:"100%",padding:"10px 14px",background:"transparent",border:"none",color:"rgba(156,163,175,0.8)",fontSize:9.5,cursor:"pointer",fontFamily:"inherit",textAlign:"left",letterSpacing:"0.04em",borderBottom:"1px solid rgba(255,255,255,0.05)"}}>
-                  ⚠️ 通報する
-                </button>
-                <button onClick={e=>{e.stopPropagation();setShopMenuOpen(null);onBlockShop&&onBlockShop(selectedShop.name);setSelectedShop(null);}}
-                  style={{display:"block",width:"100%",padding:"10px 14px",background:"transparent",border:"none",color:"rgba(255,68,85,0.8)",fontSize:9.5,cursor:"pointer",fontFamily:"inherit",textAlign:"left",letterSpacing:"0.04em"}}>
-                  🚫 ブロックする
-                </button>
-              </div>
-            )}
+            <div style={{marginLeft:"auto",position:"relative"}}>
+              <button onClick={e=>{e.stopPropagation();setShopMenuOpen(shopMenuOpen===selectedShop.name?null:selectedShop.name);}}
+                style={{background:"rgba(255,255,255,0.12)",border:"1px solid rgba(255,255,255,0.2)",borderRadius:5,padding:"4px 12px",color:"rgba(255,255,255,0.7)",fontSize:12,cursor:"pointer",lineHeight:1,letterSpacing:"0.1em"}}>
+                ...
+              </button>
+              {shopMenuOpen===selectedShop.name && (
+                <div style={{position:"absolute",top:"calc(100% + 4px)",right:0,background:"#0a0f1e",border:"1px solid rgba(0,255,136,0.2)",borderRadius:8,zIndex:300,minWidth:136,boxShadow:"0 4px 20px rgba(0,0,0,0.7)"}} onClick={e=>e.stopPropagation()}>
+                  <button onClick={e=>{e.stopPropagation();setShopMenuOpen(null);setShopReport(selectedShop.name);setShopReportReason("");setShopReportDone(false);}}
+                    style={{display:"block",width:"100%",padding:"11px 14px",background:"transparent",border:"none",color:"rgba(156,163,175,0.8)",fontSize:9.5,cursor:"pointer",fontFamily:"inherit",textAlign:"left",letterSpacing:"0.04em",borderBottom:"1px solid rgba(255,255,255,0.05)"}}>
+                    通報する
+                  </button>
+                  <button onClick={e=>{e.stopPropagation();setShopMenuOpen(null);onBlockShop&&onBlockShop(selectedShop.name);setSelectedShop(null);}}
+                    style={{display:"block",width:"100%",padding:"11px 14px",background:"transparent",border:"none",color:"rgba(255,68,85,0.8)",fontSize:9.5,cursor:"pointer",fontFamily:"inherit",textAlign:"left",letterSpacing:"0.04em"}}>
+                    ブロックする
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
-          <button onClick={()=>{setSelectedShop(null);onNudge();}}
-            style={{background:"rgba(255,255,255,0.12)",border:"1px solid rgba(255,255,255,0.2)",borderRadius:5,padding:"4px 10px",color:"rgba(255,255,255,0.8)",fontSize:8.5,cursor:"pointer",fontFamily:"inherit",letterSpacing:"0.1em",marginBottom:14}}>
-            {"← 店舗一覧"}
-          </button>
           <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start"}}>
             <div style={{flex:1,marginRight:10}}>
               <div style={{fontSize:7.5,color:"rgba(255,255,255,0.4)",letterSpacing:"0.2em",marginBottom:4}}>REGISTERED SHOP</div>
@@ -504,13 +506,20 @@ export default function MarketScreen({ onNudge, followedShops, onFollowShop, lik
                 ))}
               </div>
             </div>
-            {/* フォローボタン — ボタン全体の当たり判定 */}
-            <button onClick={e => { e.stopPropagation(); onFollowShop && onFollowShop(selectedShop.name); onNudge(); }}
-              style={{flexShrink:0,minWidth:88,padding:"10px 16px",background:isFollowed?"rgba(46,107,79,0.45)":"rgba(255,255,255,0.14)",border:"1px solid "+(isFollowed?"rgba(100,200,140,0.6)":"rgba(255,255,255,0.28)"),borderRadius:20,color:"#fff",fontSize:9.5,fontWeight:700,cursor:"pointer",fontFamily:"inherit",letterSpacing:"0.08em",transition:"all 0.2s",whiteSpace:"nowrap",display:"flex",alignItems:"center",justifyContent:"center",gap:4,boxShadow:isFollowed?"0 0 10px rgba(46,160,79,0.3)":"none"}}>
-              {isFollowed
-                ? <><span style={{fontSize:11,pointerEvents:"none"}}>✓</span><span style={{pointerEvents:"none"}}>フォロー中</span></>
-                : <><span style={{fontSize:13,pointerEvents:"none"}}>+</span><span style={{pointerEvents:"none"}}>フォロー</span></>}
-            </button>
+            {/* フォロー + いいねボタン 横並び */}
+            <div style={{display:"flex",flexDirection:"column",gap:8,alignItems:"flex-end"}}>
+              <button onClick={e=>{e.stopPropagation();onFollowShop&&onFollowShop(selectedShop.name);onNudge();}}
+                style={{minWidth:88,padding:"9px 16px",background:isFollowed?"rgba(0,255,136,0.15)":"rgba(255,255,255,0.14)",border:"1px solid "+(isFollowed?"rgba(0,255,136,0.5)":"rgba(255,255,255,0.28)"),borderRadius:20,color:"#fff",fontSize:9.5,fontWeight:700,cursor:"pointer",fontFamily:"inherit",letterSpacing:"0.08em",transition:"all 0.2s",whiteSpace:"nowrap",display:"flex",alignItems:"center",justifyContent:"center",gap:4,boxShadow:isFollowed?"0 0 12px rgba(0,255,136,0.3)":"none"}}>
+                {isFollowed
+                  ? <><span style={{fontSize:11}}>&#10003;</span><span>フォロー中</span></>
+                  : <><span style={{fontSize:13}}>+</span><span>フォロー</span></>}
+              </button>
+              <button onClick={e=>{e.stopPropagation();onLikeShop&&onLikeShop(selectedShop.name);onNudge();}}
+                style={{minWidth:88,padding:"7px 14px",background:likedS[selectedShop.name]?"rgba(255,60,100,0.15)":"rgba(255,255,255,0.08)",border:"1px solid "+(likedS[selectedShop.name]?"rgba(255,60,100,0.5)":"rgba(255,255,255,0.2)"),borderRadius:20,color:likedS[selectedShop.name]?"#ff6090":"rgba(255,255,255,0.7)",fontSize:9.5,fontWeight:600,cursor:"pointer",fontFamily:"inherit",letterSpacing:"0.08em",display:"flex",alignItems:"center",gap:4,justifyContent:"center",transition:"all 0.2s"}}>
+                <span style={{fontSize:13}}>{likedS[selectedShop.name]?"♥":"♡"}</span>
+                <span>{likedS[selectedShop.name]?"いいね済":"..."}</span>
+              </button>
+            </div>
           </div>
         </div>
 
@@ -554,29 +563,30 @@ export default function MarketScreen({ onNudge, followedShops, onFollowShop, lik
       <div style={{padding:"12px 12px",background:C.bg}}>
         {shops.map(shop => {
           const isFollowed = !!followed[shop.name];
+          const isLikedShop = !!likedS[shop.name];
           return (
             <div key={shop.name} style={{borderRadius:12,marginBottom:16,cursor:"pointer",boxShadow:"0 8px 32px rgba(0,0,0,0.4)",position:"relative"}}>
-              {/* 3点ボタン */}
+              {/* 3点ボタン — 右上固定 */}
               <button onClick={e=>{e.stopPropagation();setShopMenuOpen(shopMenuOpen===shop.name?null:shop.name);}}
-                style={{position:"absolute",top:8,right:8,zIndex:10,background:"rgba(0,0,0,0.45)",border:"1px solid rgba(255,255,255,0.15)",borderRadius:20,padding:"3px 10px",color:"rgba(255,255,255,0.6)",fontSize:14,cursor:"pointer",lineHeight:1}}>
-                ⋯
+                style={{position:"absolute",top:8,right:8,zIndex:10,background:"rgba(0,0,0,0.45)",border:"1px solid rgba(255,255,255,0.15)",borderRadius:5,padding:"3px 10px",color:"rgba(255,255,255,0.6)",fontSize:11,cursor:"pointer",lineHeight:1,letterSpacing:"0.12em",fontFamily:"inherit"}}>
+                ...
               </button>
               {shopMenuOpen===shop.name && (
-                <div style={{position:"absolute",top:36,right:8,background:"#0a0f1e",border:"1px solid rgba(0,255,136,0.2)",borderRadius:8,zIndex:300,minWidth:130,boxShadow:"0 4px 20px rgba(0,0,0,0.7)"}} onClick={e=>e.stopPropagation()}>
+                <div style={{position:"absolute",top:36,right:8,background:"#0a0f1e",border:"1px solid rgba(0,255,136,0.2)",borderRadius:8,zIndex:300,minWidth:136,boxShadow:"0 4px 20px rgba(0,0,0,0.7)"}} onClick={e=>e.stopPropagation()}>
                   <button onClick={()=>{setShopMenuOpen(null);setShopReport(shop.name);setShopReportReason("");setShopReportDone(false);}}
-                    style={{display:"block",width:"100%",padding:"10px 14px",background:"transparent",border:"none",color:"rgba(156,163,175,0.8)",fontSize:9.5,cursor:"pointer",fontFamily:"inherit",textAlign:"left",letterSpacing:"0.04em",borderBottom:"1px solid rgba(255,255,255,0.05)"}}>
-                    ⚠ 通報する
+                    style={{display:"block",width:"100%",padding:"11px 14px",background:"transparent",border:"none",color:"rgba(156,163,175,0.8)",fontSize:9.5,cursor:"pointer",fontFamily:"inherit",textAlign:"left",letterSpacing:"0.04em",borderBottom:"1px solid rgba(255,255,255,0.05)"}}>
+                    通報する
                   </button>
                   <button onClick={()=>{setShopMenuOpen(null);onBlockShop&&onBlockShop(shop.name);}}
-                    style={{display:"block",width:"100%",padding:"10px 14px",background:"transparent",border:"none",color:"rgba(255,68,85,0.8)",fontSize:9.5,cursor:"pointer",fontFamily:"inherit",textAlign:"left",letterSpacing:"0.04em"}}>
-                    ✕ ブロックする
+                    style={{display:"block",width:"100%",padding:"11px 14px",background:"transparent",border:"none",color:"rgba(255,68,85,0.8)",fontSize:9.5,cursor:"pointer",fontFamily:"inherit",textAlign:"left",letterSpacing:"0.04em"}}>
+                    ブロックする
                   </button>
                 </div>
               )}
               {/* カード本体 */}
               <div onClick={()=>{setSelectedShop(shop);setShopMenuOpen(null);onNudge();}} style={{borderRadius:12,overflow:"hidden"}}>
                 <div style={{background:shop.grad,padding:"16px 15px 14px",position:"relative",overflow:"hidden"}}>
-                  <div style={{position:"absolute",top:-20,right:-20,width:80,height:80,borderRadius:"50%",background:"rgba(255,255,255,0.05)"}}/>
+                  <div style={{position:"absolute",top:-20,right:-20,width:80,height:80,borderRadius:"50%",background:"rgba(255,255,255,0.05)"}} />
                   <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start"}}>
                     <div>
                       <div style={{fontSize:7,color:"rgba(255,255,255,0.35)",letterSpacing:"0.2em",marginBottom:5}}>REGISTERED SHOP</div>

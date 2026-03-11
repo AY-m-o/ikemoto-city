@@ -304,11 +304,11 @@ function ContactView({ onBack }) {
       <div style={{padding:"16px 14px 0"}}>
         <div style={{background:C.card,border:"1px solid "+C.border,borderRadius:8,padding:"18px 16px",marginBottom:12}}>
           <div style={{fontSize:9,color:C.txL,letterSpacing:"0.12em",marginBottom:8}}>お問い合わせ先</div>
-          <div style={{fontSize:14,fontWeight:700,color:C.navy,letterSpacing:"0.04em",marginBottom:6}}>info@city-ikemoto.jp</div>
+          <div style={{fontSize:14,fontWeight:700,color:"#00ff88",letterSpacing:"0.04em",marginBottom:6}}>info@city-ikemoto.jp</div>
           <div style={{fontSize:9,color:C.txM,lineHeight:1.7}}>受付時間：平日 09:00–18:00（市民アクセス時間）</div>
         </div>
-        <div style={{background:"rgba(46,107,79,0.07)",border:"1px solid rgba(46,107,79,0.2)",borderRadius:7,padding:"12px 14px"}}>
-          <div style={{fontSize:9,color:C.txM,lineHeight:1.75}}>メールに市民IDとお問い合わせ内容を記載の上ご連絡ください。返信は最大５営業日以内に対応いたします。</div>
+        <div style={{background:"rgba(0,255,136,0.04)",border:"1px solid rgba(0,255,136,0.15)",borderRadius:7,padding:"12px 14px"}}>
+          <div style={{fontSize:9,color:C.txM,lineHeight:1.75}}>メールに市民IDとお問い合わせ内容を記載の上ご連絡ください。返信は最大5営業日以内に対応いたします。</div>
         </div>
       </div>
     </div>
@@ -333,14 +333,14 @@ function FollowingView({ onBack, followedShops, onNavigateMarket }) {
             onClick={() => { onNavigateMarket && onNavigateMarket(shopName); }}
             style={{background:C.card,border:"1px solid "+C.border,borderLeft:"3px solid "+C.green,borderRadius:8,padding:"13px 14px",marginBottom:9,cursor:"pointer",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
             <div style={{display:"flex",alignItems:"center",gap:10}}>
-              <div style={{width:34,height:34,borderRadius:7,background:"linear-gradient(135deg,rgba(46,107,79,0.3),rgba(26,57,44,0.5))",display:"flex",alignItems:"center",justifyContent:"center",fontSize:12,color:C.green,border:"1px solid rgba(46,107,79,0.3)",flexShrink:0}}>◫</div>
+              <div style={{width:34,height:34,borderRadius:7,background:"linear-gradient(135deg,rgba(0,255,136,0.15),rgba(0,100,60,0.3))",display:"flex",alignItems:"center",justifyContent:"center",fontSize:12,color:C.green,border:"1px solid rgba(0,255,136,0.2)",flexShrink:0}}>&#9647;</div>
               <div>
                 <div style={{fontSize:12,fontWeight:700,color:C.tx,letterSpacing:"0.04em"}}>{shopName}</div>
                 <div style={{fontSize:8,color:C.txL,marginTop:3}}>商業区登録店舗</div>
               </div>
             </div>
             <div style={{display:"flex",alignItems:"center",gap:5}}>
-              <span style={{background:"rgba(46,107,79,0.1)",color:C.green,fontSize:7.5,padding:"2px 7px",borderRadius:3,fontWeight:600}}>フォロー中</span>
+              <span style={{background:"rgba(0,255,136,0.1)",color:C.green,fontSize:7.5,padding:"2px 7px",borderRadius:3,fontWeight:600}}>フォロー中</span>
               <span style={{color:C.txL,fontSize:14}}>&#x203A;</span>
             </div>
           </div>
@@ -350,24 +350,48 @@ function FollowingView({ onBack, followedShops, onNavigateMarket }) {
   );
 }
 
-// いいね済みアセットページ
-function LikedView({ onBack, likedItems, onNavigateMarket }) {
+
+// いいね済みページ（アセット + 店舗）
+function LikedView({ onBack, likedItems, likedShops, onNavigateMarket }) {
   const entries = Object.entries(likedItems || {});
+  const shopEntries = Object.keys(likedShops || {});
   return (
     <div style={{flex:1,display:"flex",flexDirection:"column",overflowY:"auto",paddingBottom:72}}>
-      <SubScreenNav label="いいね済みアセット" onBack={onBack}/>
+      <SubScreenNav label="いいね済み" onBack={onBack}/>
       <div style={{padding:"14px 14px 0"}}>
+        {/* いいね済み店舗 */}
+        {shopEntries.length > 0 && (
+          <>
+            <div style={{fontSize:8,color:C.txL,letterSpacing:"0.14em",marginBottom:10}}>♥ LIKED SHOPS — {shopEntries.length}店舗</div>
+            {shopEntries.map(shopName => (
+              <div key={shopName}
+                onClick={() => { onNavigateMarket && onNavigateMarket(shopName); }}
+                style={{background:C.card,border:"1px solid "+C.border,borderLeft:"3px solid #ff6090",borderRadius:8,padding:"12px 14px",marginBottom:9,cursor:"pointer",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+                <div style={{display:"flex",alignItems:"center",gap:10}}>
+                  <div style={{width:32,height:32,borderRadius:7,background:"rgba(255,60,100,0.12)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:14,color:"#ff6090",flexShrink:0}}>♥</div>
+                  <div>
+                    <div style={{fontSize:12,fontWeight:700,color:C.tx,letterSpacing:"0.04em"}}>{shopName}</div>
+                    <div style={{fontSize:8,color:C.txL,marginTop:2}}>店舗を見る →</div>
+                  </div>
+                </div>
+                <span style={{color:C.txL,fontSize:14}}>&#x203A;</span>
+              </div>
+            ))}
+            <div style={{height:6}}/>
+          </>
+        )}
+        {/* いいね済みアセット */}
         <div style={{fontSize:8,color:C.txL,letterSpacing:"0.14em",marginBottom:10}}>LIKED ASSETS — {entries.length}件</div>
-        {entries.length === 0 ? (
+        {entries.length === 0 && shopEntries.length === 0 ? (
           <div style={{background:C.card,border:"1px solid "+C.border,borderRadius:8,padding:"22px 16px",textAlign:"center"}}>
-            <div style={{fontSize:9.5,color:C.txL,marginBottom:5}}>いいねしたアセットはありません</div>
-            <div style={{fontSize:8.5,color:C.txL}}>商業区でアセットの詳細ページで◈を押してみましょう</div>
+            <div style={{fontSize:9.5,color:C.txL,marginBottom:5}}>いいねしたアイテムはありません</div>
+            <div style={{fontSize:8.5,color:C.txL}}>商業区で店舗・アセットにいいねしてみましょう</div>
           </div>
         ) : entries.map(([name, data]) => (
           <div key={name}
             onClick={() => { onNavigateMarket && onNavigateMarket(data.shop, name); }}
             style={{background:C.card,border:"1px solid "+C.border,borderLeft:"3px solid "+C.green,borderRadius:8,padding:"13px 14px",marginBottom:9,cursor:"pointer",display:"flex",alignItems:"center",gap:10}}>
-            <div style={{width:34,height:34,borderRadius:7,background:"rgba(46,107,79,0.15)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:16,color:C.green,flexShrink:0,border:"1px solid rgba(46,107,79,0.25)"}}>◈</div>
+            <div style={{width:34,height:34,borderRadius:7,background:"rgba(0,255,136,0.1)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:16,color:C.green,flexShrink:0,border:"1px solid rgba(0,255,136,0.2)"}}>◈</div>
             <div style={{flex:1}}>
               <div style={{fontSize:12,fontWeight:700,color:C.tx,letterSpacing:"0.03em",lineHeight:1.3}}>{name}</div>
               <div style={{fontSize:8,color:C.txL,marginTop:3}}>{data.shop}</div>
@@ -383,9 +407,8 @@ function LikedView({ onBack, likedItems, onNavigateMarket }) {
 // ─────────────────────────────────────────────
 // MY SCREEN (root)
 // ─────────────────────────────────────────────
-export default function MyScreen({ citizenId, onNudge, onLogout, followedShops, likedItems, onNavigateMarket, blockedShops, onUnblockShop }) {
+export default function MyScreen({ citizenId, onNudge, onLogout, followedShops, likedItems, likedShops, onNavigateMarket, blockedShops, onUnblockShop, lang }) {
   const [subView, setSubView] = useState(null);
-  const [projectRoom, setProjectRoom] = useState(null);
 
   if (subView === "settings")  return <SettingsView  onBack={()=>setSubView(null)} onNudge={onNudge}/>;
   if (subView === "inquiry")   return <InquiryView   onBack={()=>setSubView(null)} onNudge={onNudge}/>;
@@ -396,9 +419,8 @@ export default function MyScreen({ citizenId, onNudge, onLogout, followedShops, 
   if (subView === "terms")     return <LegalView onBack={()=>setSubView(null)} title="利用規約" content={TERMS_TEXT}/>;
   if (subView === "commerce")  return <LegalView onBack={()=>setSubView(null)} title="特定商取引法に基づく表記" content={COMMERCE_TEXT}/>;
   if (subView === "contact")   return <ContactView onBack={()=>setSubView(null)}/>;
-  // ① フォロー中・いいね済みサブページ
   if (subView === "following") return <FollowingView onBack={()=>setSubView(null)} followedShops={followedShops} onNavigateMarket={onNavigateMarket}/>;
-  if (subView === "liked")     return <LikedView     onBack={()=>setSubView(null)} likedItems={likedItems}     onNavigateMarket={onNavigateMarket}/>;
+  if (subView === "liked")     return <LikedView     onBack={()=>setSubView(null)} likedItems={likedItems} likedShops={likedShops} onNavigateMarket={onNavigateMarket}/>;
   if (subView === "blocked")   return (
     <div style={{flex:1,display:"flex",flexDirection:"column",overflowY:"auto",paddingBottom:72}}>
       <SubScreenNav label="ブロックリスト" onBack={()=>setSubView(null)}/>

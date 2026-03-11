@@ -5,8 +5,8 @@ export const C = {
   navy:"#0a0f1e",    navyD:"#060b15",  navyL:"#111827",
   green:"#00ff88",   greenL:"#33ffaa", greenD:"#00cc6a",
   red:"#ff4455",     bg:"#0a0f1e",     card:"#111827",
-  border:"#1f2937",  borderD:"#374151",
-  tx:"#f9fafb",      txM:"#9ca3af",    txL:"#6b7280",
+  border:"rgba(255,255,255,0.06)",  borderD:"rgba(255,255,255,0.12)",
+  tx:"#f9fafb",      txM:"#9ca3af",    txL:"#4b5563",
 };
 
 // ─────────────────────────────────────────────
