@@ -287,25 +287,15 @@ export default function BoardScreen({ onNudge, lang }) {
           {/* ⑤ 承認待ちセクション */}
           {myPendingProjects.length > 0 && (
             <>
-              <div style={{fontSize:8,color:"#ff9900",letterSpacing:"0.14em",marginBottom:10}}>⏳ PENDING APPROVAL — {myPendingProjects.length}件</div>
+              <div style={{fontSize:8,color:"#ff9900",letterSpacing:"0.14em",marginBottom:10}}>PENDING APPROVAL — {myPendingProjects.length}件</div>
               {myPendingProjects.map(p => (
                 <div key={p.reg} style={{background:"rgba(255,153,0,0.05)",border:"1px solid rgba(255,153,0,0.3)",borderLeft:"3px solid #ff9900",borderRadius:8,padding:"12px 14px",marginBottom:9}}>
                   <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:6}}>
                     <div className="mono" style={{fontSize:8,color:"rgba(255,153,0,0.6)",letterSpacing:"0.12em"}}>{p.dept} / {p.reg}</div>
                     <span style={{background:"rgba(255,153,0,0.15)",color:"#ff9900",fontSize:7.5,padding:"2px 8px",borderRadius:3,fontWeight:700}}>承認待ち</span>
                   </div>
-                  <div style={{fontSize:11,fontWeight:600,color:C.tx,letterSpacing:"0.03em",lineHeight:1.3,marginBottom:8}}>{p.title}</div>
-                  <div style={{fontSize:8.5,color:C.txM,marginBottom:10}}>起案者：{p.lead}が山処を確認中です。</div>
-                  <div style={{display:"flex",gap:8}}>
-                    <button onClick={() => approveAssign(p.reg)}
-                      style={{flex:1,padding:"8px 0",background:"rgba(0,255,136,0.12)",border:"1px solid rgba(0,255,136,0.4)",borderRadius:6,color:"#00ff88",fontSize:9.5,fontWeight:700,cursor:"pointer",fontFamily:"inherit",letterSpacing:"0.06em"}}>
-                      ✓ 承認する
-                    </button>
-                    <button onClick={() => rejectAssign(p.reg)}
-                      style={{flex:1,padding:"8px 0",background:"rgba(255,68,85,0.08)",border:"1px solid rgba(255,68,85,0.3)",borderRadius:6,color:"rgba(255,68,85,0.8)",fontSize:9.5,fontWeight:600,cursor:"pointer",fontFamily:"inherit",letterSpacing:"0.06em"}}>
-                      ✕ 却下
-                    </button>
-                  </div>
+                  <div style={{fontSize:11,fontWeight:600,color:C.tx,letterSpacing:"0.03em",lineHeight:1.3,marginBottom:6}}>{p.title}</div>
+                  <div style={{fontSize:8.5,color:C.txM}}>起案者 {p.lead} が申請内容を確認しています。承認結果をお待ちください。</div>
                 </div>
               ))}
               {myAssignedProjects.length > 0 && <div style={{height:4}}/>}
