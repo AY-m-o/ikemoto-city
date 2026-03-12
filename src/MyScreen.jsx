@@ -28,8 +28,8 @@ function SettingsView({ onBack, onNudge }) {
         <div style={{background:C.card,border:"1px solid "+C.border,borderRadius:8,padding:"14px 14px",marginBottom:14}}>
           <div style={{fontSize:9,color:C.txL,letterSpacing:"0.18em",fontWeight:600,marginBottom:12}}>通知設定</div>
           {[
-            { key:"assign", label:"アサイン申請の更新", sub:"承認・却下の通知" },
-            { key:"market", label:"商業区の新着アセット", sub:"推奨アセットの通知" },
+            { key:"assign", label:"参加申請の更新", sub:"承認・却下の通知" },
+            { key:"market", label:"商業区の新着作品", sub:"推奨作品の通知" },
             { key:"system", label:"システム通達", sub:"行政からの重要通知" },
           ].map((n) => (
             <div key={n.key} style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:12}}>
@@ -63,7 +63,7 @@ function InquiryView({ onBack, onNudge }) {
   const [body, setBody] = useState("");
   const [done, setDone] = useState(false);
 
-  const cats = ["行政サービスについて","アセット登録・申請","掲示板・アサインについて","技術的な問題","その他"];
+  const cats = ["行政サービスについて","作品登録・申請","掲示板・参加申請について","技術的な問題","その他"];
 
   if (done) return (
     <div style={{flex:1,display:"flex",flexDirection:"column",overflowY:"auto",paddingBottom:72}}>
@@ -176,7 +176,7 @@ const TERMS_TEXT = `利用規約（施行日：2026年4月1日）
 第3条（禁止事項）
 虚偽情報の登録。他の市民への誹謗中傷。アプリ外での金銭の授受。著作権を侵害するコンテンツの出品。その他法令に違反する行為。
 
-第4条（アセットの出品）
+第4条（作品の出品）
 出品者は著作権を保有するコンテンツのみ出品できます。売上からインフラ維持税（1.5%）が徴収されます。決済はStripeを通じて処理されます。
 
 第5条（免責事項）
@@ -198,7 +198,7 @@ const COMMERCE_TEXT = `特定商取引法に基づく表記
 メール：info@city-ikemoto.jp
 
 販売価格：
-各アセットページに表示の価格（インフラ維持税1.5%が加算されます）
+各作品ページに表示の価格（インフラ維持税1.5%が加算されます）
 
 支払方法：
 クレジットカード（Stripe）
@@ -213,18 +213,18 @@ const COMMERCE_TEXT = `特定商取引法に基づく表記
 デジタル商品は購入後の返品不可。物理商品は未発送の場合のみキャンセル可。`;
 
 const GUIDE_TABS = [
-  { icon:"⊞", name:"掲示板", desc:"共創プロジェクトへの参加申請ができます。各プロジェクトをタップすると詳細・概要・必要スキルを確認できます。「アサインを申請する」ボタンでプロジェクトに参加し、プロジェクトルームでメンバーとチャットできます。メッセージタブから参加中のプロジェクトルームに直接アクセスできます。" },
-  { icon:"◫", name:"商業区", desc:"市内店舗のアセット（作品・製品・ライセンス）を閲覧・購入できます。店舗一覧から店舗を選ぶと商品一覧が表示され、商品をタップすると詳細（スペック・CA指数・価格）を確認できます。「物質化申請」ボタンで購入手続きができます。" },
+  { icon:"⊞", name:"掲示板", desc:"共創プロジェクトへの参加申請ができます。各プロジェクトをタップすると詳細・概要・必要スキルを確認できます。「参加申請する」ボタンでプロジェクトに参加し、プロジェクトルームでメンバーとチャットできます。メッセージタブから参加中のプロジェクトルームに直接アクセスできます。" },
+  { icon:"▫", name:"商業区", desc:"市内店舗の作品（制作物・製品・ライセンス）を閲覧・購入できます。店舗一覧から店舗を選ぶと商品一覧が表示され、商品をタップすると詳細（スペック・CA指数・価格）を確認できます。「物質化申請」ボタンで購入手続きができます。" },
   { icon:"▣", name:"行政", desc:"池本市の行政情報を閲覧できます。市政概要・市長室からのメッセージ・財政報告・市議会報告書・広報局のお知らせを確認できます。" },
-  { icon:"⊕", name:"手続き", desc:"市民としての各種申請手続きを行います。アセット出力許可申請・表現者認可申請などが利用できます。申請後は処理ログがリアルタイムで表示されます。" },
+  { icon:"⊕", name:"手続き", desc:"市民としての各種申請手続きを行います。作品出力許可申請・表現者認可申請などが利用できます。申請後は処理ログがリアルタイムで表示されます。" },
   { icon:"◉", name:"マイページ", desc:"市民証・EVI（存在価値係数）グラフ・参加中プロジェクト・設定などを確認できます。サポートページからガイドブックとFAQにアクセスできます。" },
 ];
 
 const FAQ_ITEMS = [
   { q:"市民IDとは何ですか？", a:"池本市に登録された市民を識別する固有のIDです。IK-YYYY-XXXX の形式で発行されます。ログイン時に使用します。" },
-  { q:"アセットを購入するにはどうすればよいですか？", a:"商業区タブから店舗を選び、商品詳細ページの「物質化申請」ボタンから購入手続きができます。インフラ維持税（1.5%）が加算されます。" },
-  { q:"プロジェクトに参加するには？", a:"掲示板タブからプロジェクトを選び、詳細ページの「アサインを申請する」ボタンから申請できます。担当スキルを選択してください。起案者の承認後、プロジェクトルームに参加できます。" },
-  { q:"EVI（存在価値係数）とは？", a:"市民の活動量・貢献度を数値化したスコアです。プロジェクト参加・アセット登録・手続き完了などの行動によって変動します。" },
+  { q:"作品を購入するにはどうすればよいですか？", a:"商業区タブから店舗を選び、商品詳細ページの「物質化申請」ボタンから購入手続きができます。インフラ維持税（1.5%）が加算されます。" },
+  { q:"プロジェクトに参加するには？", a:"掲示板タブからプロジェクトを選び、詳細ページの「参加申請する」ボタンから申請できます。担当スキルを選択してください。起案者の承認後、プロジェクトルームに参加できます。" },
+  { q:"EVI（存在価値係数）とは？", a:"市民の活動量・貢献度を数値化したスコアです。プロジェクト参加・作品登録・手続き完了などの行動によって変動します。" },
   { q:"表現者認可申請は何が必要ですか？", a:"手続きタブの「表現者認可申請」から申請できます。本名・生年月日・住所・口座番号・身分証のアップロードが必要です。" },
   { q:"お問い合わせはどこからできますか？", a:"マイページ → 法的情報 → お問い合わせ からメールでご連絡いただけます。メールアドレスは info@city-ikemoto.jp です。" },
 ];
@@ -386,7 +386,7 @@ function LikedView({ onBack, likedItems, likedShops, onNavigateMarket }) {
         {entries.length === 0 && shopEntries.length === 0 ? (
           <div style={{background:C.card,border:"1px solid "+C.border,borderRadius:8,padding:"22px 16px",textAlign:"center"}}>
             <div style={{fontSize:9.5,color:C.txL,marginBottom:5}}>いいねしたアイテムはありません</div>
-            <div style={{fontSize:8.5,color:C.txL}}>商業区で店舗・アセットにいいねしてみましょう</div>
+            <div style={{fontSize:8.5,color:C.txL}}>商業区で店舗・作品にいいねしてみましょう</div>
           </div>
         ) : entries.map(([name, data]) => (
           <div key={name}
@@ -535,8 +535,8 @@ export default function MyScreen({ citizenId, onNudge, onLogout, followedShops, 
         <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:9,marginBottom:14}}>
           {[
             { label:"CA指数", val:"0.888", sub:"Compatibility Alignment" },
-            { label:"アサイン数", val:"3", sub:"累計従事プロジェクト" },
-            { label:"登録アセット", val:"2", sub:"封印済資産" },
+            { label:"参加プロジェクト数", val:"3", sub:"累計従事プロジェクト" },
+            { label:"登録作品", val:"2", sub:"市台帳登録済資産" },
             { label:"市民歴", val:"12日", sub:"市制施行からの経過" },
           ].map((s) => (
             <div key={s.label} style={{background:C.card,border:"1px solid "+C.border,borderRadius:8,padding:"11px 12px"}}>
@@ -552,7 +552,7 @@ export default function MyScreen({ citizenId, onNudge, onLogout, followedShops, 
         {joinedProjects.length === 0 ? (
           <div style={{background:C.card,border:"1px solid "+C.border,borderRadius:8,padding:"14px",marginBottom:14,textAlign:"center"}}>
             <div style={{fontSize:9.5,color:C.txL,letterSpacing:"0.08em"}}>まだ参加中のプロジェクトはありません</div>
-            <div style={{fontSize:8.5,color:C.txL,letterSpacing:"0.06em",marginTop:5}}>掲示板からプロジェクトにアサインしてください</div>
+            <div style={{fontSize:8.5,color:C.txL,letterSpacing:"0.06em",marginTop:5}}>掲示板からプロジェクトに参加申請してください</div>
           </div>
         ) : (
           joinedProjects.map(p => (
@@ -587,7 +587,7 @@ export default function MyScreen({ citizenId, onNudge, onLogout, followedShops, 
               <div style={{fontSize:11,fontWeight:700,color:C.tx,marginBottom:2}}>いいね済み</div>
               <div style={{fontSize:8.5,color:C.txL}}>{Object.keys(likedItems||{}).length}件</div>
             </div>
-            <span style={{fontSize:8,color:C.green,fontWeight:600}}>アセット一覧 ›</span>
+            <span style={{fontSize:8,color:C.green,fontWeight:600}}>作品一覧 ›</span>
           </div>
         </div>
 

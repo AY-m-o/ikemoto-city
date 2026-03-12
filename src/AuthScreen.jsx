@@ -134,14 +134,14 @@ export default function AuthScreen({ onLogin }) {
             <div style={{background:"rgba(0,255,136,0.03)",border:"1px solid rgba(0,255,136,0.12)",borderRadius:10,padding:"16px 15px",marginBottom:10}}>
               <div style={{color:"rgba(0,255,136,0.4)",fontSize:8,letterSpacing:"0.24em",marginBottom:10,fontFamily:"monospace"}}>// ABOUT IKEMOTO CITY</div>
               <div style={{fontSize:9.5,color:"rgba(200,220,240,0.75)",lineHeight:1.85,letterSpacing:"0.04em",marginBottom:12}}>
-                池本市は、仮想空間と現実空間を創造で結ぶ実験都市です。市民として登録し、プロジェクトに参加・アセットを制作・購入することで都市の成長に貢献できます。
+                池本市は、仮想空間と現実空間を創造で結ぶ実験都市です。市民として登録し、プロジェクトに参加・作品を制作・購入することで都市の成長に貢献できます。
               </div>
               <div style={{display:"flex",flexDirection:"column",gap:7}}>
                 {[
-                  { icon:"⊞", label:"掲示板",    desc:"共創プロジェクトへのアサイン申請" },
-                  { icon:"◫", label:"商業区",    desc:"アセットの閲覧・物質化申請（購入）" },
+                  { icon:"⊞", label:"掲示板",    desc:"共創プロジェクトへの参加申請" },
+                  { icon:"▫", label:"商業区",    desc:"作品の閲覧・物質化申請（購入）" },
                   { icon:"▣", label:"行政",      desc:"市政・財政・広報情報の閲覧" },
-                  { icon:"⊕", label:"手続き",    desc:"表現者認可・アセット出力許可申請" },
+                  { icon:"⊕", label:"手続き",    desc:"表現者認可・作品出力許可申請" },
                   { icon:"◉", label:"マイページ", desc:"市民証・EVI・参加プロジェクトの確認" },
                 ].map(f => (
                   <div key={f.label} style={{display:"flex",alignItems:"center",gap:9}}>

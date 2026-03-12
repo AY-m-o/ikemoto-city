@@ -10,13 +10,13 @@ const MAYOR_POSTS = [
     body:"第三区の再開発プロジェクトが順調に進行しています。現在、11名の市民クリエイターが参加中です。竣工予定は2026年5月を見込んでいます。引き続き、市民の皆さまのご参加をお待ちしております。",
     comments:[
       { id:1, from:"Kento", time:"09:14", text:"先日の説明会に参加しました。非常にワクワクするプロジェクトですね！" },
-      { id:2, from:"Saki",  time:"10:32", text:"グラフィック担当としてアサインしています。完成が楽しみです。" },
+      { id:2, from:"Saki",  time:"10:32", text:"グラフィック担当として参加申請しました。完成が楽しみです。" },
     ]
   },
   {
     id:2, date:"2026.03.06",
     title:"2026年上半期 市民表彰について",
-    body:"2026年上半期の活動において特に貢献した市民を表彰します。対象は、プロジェクト完遂数・アセット登録数・EVI指数の複合評価で選定されます。詳細は広報局からのお知らせをご確認ください。",
+    body:"2026年上半期の活動において特に貢献した市民を表彰します。対象は、プロジェクト完遂数・登録作品数・EVI指数の複合評価で選定されます。詳細は広報局からのお知らせをご確認ください。",
     comments:[
       { id:1, from:"Reo", time:"14:20", text:"EVI指数が評価基準に含まれているのは良い取り組みですね。" },
     ]
@@ -67,7 +67,7 @@ export default function GovScreen({ onNudge, lang }) {
             {k:"総税収（月次）",v:"¥4,832万",up:true},
             {k:"インフラ維持税収入",v:"¥724,800",up:false},
             {k:"市内取引総額",v:"¥3億2,150万",up:true},
-            {k:"登録アセット数",v:"16件",up:true},
+            {k:"登録作品数",v:"16件",up:true},
             {k:"市民登録数",v:"31名",up:true},
             {k:"プロジェクト完了数（月次）",v:"2件",up:false},
           ].map(({k,v,up}) => (
@@ -80,7 +80,7 @@ export default function GovScreen({ onNudge, lang }) {
             </div>
           ))}
           <div style={{marginTop:10,padding:"8px 10px",background:"rgba(46,107,79,0.07)",border:"1px solid rgba(46,107,79,0.2)",borderRadius:6}}>
-            <div style={{fontSize:8,color:C.txM,lineHeight:1.7}}>前月比 +7.2%。商業区のアセット取引数増加が主因。インフラ維持税率は現行1.5%を維持。</div>
+            <div style={{fontSize:8,color:C.txM,lineHeight:1.7}}>前月比 +7.2%。商業区の作品取引数増加が主因。インフラ維持税率は現行1.5%を維持。</div>
           </div>
         </div>
 
@@ -89,7 +89,7 @@ export default function GovScreen({ onNudge, lang }) {
         {[
           {month:"2026.03", title:"第12回市議会定期報告", tags:["商業区データ更新","CA指数基準見直し"]},
           {month:"2026.02", title:"第11回市議会定期報告", tags:["現実転写プロトコル改定"]},
-          {month:"2026.01", title:"第10回市議会臨時報告", tags:["商業区再編","封印法正定"]},
+          {month:"2026.01", title:"第10回市議会臨時報告", tags:["商業区再編","市資産登録規約制定"]},
         ].map((r) => (
           <div key={r.month} style={{background:C.card,border:"1px solid "+C.border,borderRadius:7,padding:"12px 14px",marginBottom:8}}>
             <div style={{fontSize:8,color:C.txL,letterSpacing:"0.12em",marginBottom:4}}>{r.month}</div>
@@ -105,7 +105,7 @@ export default function GovScreen({ onNudge, lang }) {
         {/* 広報局 */}
         <SectionHead accent={C.navy} label="広報局" sub="Public Relations"/>
         {[
-          {date:"2026.03.09", label:"重要通達", title:"商業区アセット登録件数が16件に到達しました"},
+          {date:"2026.03.09", label:"重要通達", title:"商業区登録作品数が16件に到達しました"},
           {date:"2026.03.07", label:"お知らせ", title:"インフラ維持税率の定期見直しについて"},
           {date:"2026.03.04", label:"重要通達", title:"第三区再開発プロジェクトの進捗報告"},
           {date:"2026.02.28", label:"お知らせ", title:"2026年上半期 第五回市民白書の公開について"},

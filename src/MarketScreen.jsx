@@ -9,12 +9,12 @@ const DUMMY_REVIEWS = {
   default: [
     { id:1, from:"Kento", rating:5, time:"2026.03.07", text:"期待なり。スペック通りで完成度が高く、CA指数が実際利用とマッチしていました。" },
     { id:2, from:"Mika",  rating:4, time:"2026.03.05", text:"デザインの品質が高いです。少しカスタマイズしやすいとさらに良かったです。" },
-    { id:3, from:"Reo",   rating:5, time:"2026.02.28", text:"他の店舗にはないユニークな作風で心指されました。次のアセットも期待しています。" },
+    { id:3, from:"Reo",   rating:5, time:"2026.02.28", text:"他の店舗にはないユニークな作風で心指されました。次の作品も期待しています。" },
   ]
 };
 
 const DUMMY_COMMENTS = [
-  { id:1, from:"Saki",  time:"09:14", text:"このアセットすごく気に入っています！商業区で一番お気に入りです。" },
+  { id:1, from:"Saki",  time:"09:14", text:"この作品すごく気に入っています！商業区で一番お気に入りです。" },
   { id:2, from:"Kento", time:"11:30", text:"このライセンス形態は凍定するプロジェクトに展開しやすくて良いですね。" },
 ];
 
@@ -310,7 +310,7 @@ function ItemDetail({ item, shopName, onBack, onNudge, likedItems, onLikeItem })
             </>
           ) : (
             <div style={{background:"rgba(26,37,64,0.6)",border:"1px solid "+C.border,borderRadius:8,padding:"13px 16px",marginBottom:8,textAlign:"center"}}>
-              <div style={{fontSize:9.5,color:C.txL,letterSpacing:"0.04em",lineHeight:1.8}}>このアセットはWebサイトにて</div>
+              <div style={{fontSize:9.5,color:C.txL,letterSpacing:"0.04em",lineHeight:1.8}}>この作品はWebサイトにて</div>
               <div style={{fontSize:9.5,color:C.txL,letterSpacing:"0.04em",lineHeight:1.8}}>ご購入いただけます</div>
               <div style={{marginTop:8,fontSize:8,color:C.txL,letterSpacing:"0.06em"}}>city-ikemoto.jp/market</div>
             </div>
@@ -541,7 +541,7 @@ export default function MarketScreen({ onNudge, followedShops, onFollowShop, lik
         </div>
 
         <div style={{padding:"14px 12px"}}>
-          <div style={{fontSize:8,color:C.txL,letterSpacing:"0.16em",marginBottom:10}}>取扱アセット　{selectedShop.items.length} 点</div>
+          <div style={{fontSize:8,color:C.txL,letterSpacing:"0.16em",marginBottom:10}}>取扱作品　{selectedShop.items.length} 点</div>
           {selectedShop.items.map(item => (
             <div key={item.reg} className="pressable" onClick={() => { setSelectedItem(item); onNudge(); }}
               style={{background:"#111827",border:"1px solid rgba(255,255,255,0.06)",borderRadius:8,padding:"12px 13px",marginBottom:9,cursor:"pointer",display:"flex",gap:12,alignItems:"flex-start"}}>

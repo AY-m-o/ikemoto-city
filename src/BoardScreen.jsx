@@ -89,7 +89,7 @@ function ProjectDetail({ item, onBack, onAssign, onRoom, onNudge, alreadyAssigne
       <div style={{background:C.navy,padding:"14px 16px 16px",borderBottom:"1px solid rgba(46,107,79,0.3)"}}>
         <button onClick={onBack} style={{background:"transparent",border:"none",color:"rgba(143,168,200,0.6)",fontSize:9,cursor:"pointer",fontFamily:"inherit",letterSpacing:"0.1em",padding:0,marginBottom:10}}>← 掲示板へ戻る</button>
         <div style={{display:"flex",gap:6,flexWrap:"wrap",marginBottom:8}}>
-          <span style={{background:item.status==="充足"?"rgba(100,100,120,0.4)":"rgba(46,107,79,0.25)",color:item.status==="充足"?"rgba(200,210,220,0.7)":"#3d8a65",fontSize:8,padding:"2px 9px",borderRadius:3,letterSpacing:"0.1em",fontWeight:600}}>{item.status==="充足"?"充足・待機中":"アサイン受付中"}</span>
+          <span style={{background:item.status==="充足"?"rgba(100,100,120,0.4)":"rgba(46,107,79,0.25)",color:item.status==="充足"?"rgba(200,210,220,0.7)":"#3d8a65",fontSize:8,padding:"2px 9px",borderRadius:3,letterSpacing:"0.1em",fontWeight:600}}>{item.status==="充足"?"充足・待機中":"参加申請受付中"}</span>
           <span style={{background:"rgba(255,255,255,0.08)",color:"rgba(143,168,200,0.6)",fontSize:8,padding:"2px 9px",borderRadius:3,letterSpacing:"0.1em"}}>{item.dept}</span>
           {alreadyAssigned && (
             <span style={{background:"rgba(46,107,79,0.3)",color:"#4caf7d",fontSize:8,padding:"2px 9px",borderRadius:3,letterSpacing:"0.1em",fontWeight:600}}>参加中</span>
@@ -124,11 +124,11 @@ function ProjectDetail({ item, onBack, onAssign, onRoom, onNudge, alreadyAssigne
           ))}
         </div>
 
-        {/* アクション：自分がアサイン済みの場合のみルームへ。充足済み（未アサイン）は導線なし */}
+        {/* アクション：自分が参加済みの場合のみルームへ。充足済み（未参加）は導線なし */}
         {alreadyAssigned ? (
           <Btn label="プロジェクトルームへ" onClick={() => onRoom(item)}/>
         ) : item.status !== "充足" ? (
-          <Btn label="アサインを申請する" onClick={() => onAssign(item)}/>
+          <Btn label="参加申請する" onClick={() => onAssign(item)}/>
         ) : (
           <div style={{background:C.bg,border:"1px solid "+C.borderD,borderRadius:7,padding:"11px 14px",marginBottom:8}}>
             <div style={{fontSize:9,color:C.txL,letterSpacing:"0.06em",textAlign:"center"}}>このプロジェクトは募集を締め切りました</div>
@@ -147,7 +147,7 @@ function ProjectDetail({ item, onBack, onAssign, onRoom, onNudge, alreadyAssigne
 export default function BoardScreen({ onNudge, lang, citizenId }) {
   const t = useI18n(lang);
   const [boardItems, setBoardItems] = useState(BOARD_ITEMS_INIT);
-  // 自分がアサイン申請制のプロジェクトreg一覧（承認済み）
+  // 自分が参加申請制のプロジェクトreg一覧（承認済み）
   const [assignedRegs, setAssignedRegs] = useState([]);
   // ⑤ 承認待ち（申請中）reg一覧
   const [pendingRegs, setPendingRegs]   = useState([]);
@@ -385,7 +385,7 @@ export default function BoardScreen({ onNudge, lang, citizenId }) {
                   <div style={{display:"flex",gap:5,flexWrap:"wrap"}}>
                     <span style={{background:item.status==="充足"?"#eee":C.navy,color:item.status==="充足"?C.txL:"#e4eaf4",fontSize:8,padding:"2px 7px",borderRadius:3,letterSpacing:"0.1em",fontWeight:600}}>{item.dept}</span>
                     <span style={{background:item.status==="充足"?"#f0f0f0":"rgba(46,107,79,0.1)",color:item.status==="充足"?C.txL:C.green,fontSize:8,padding:"2px 7px",borderRadius:3,letterSpacing:"0.1em",fontWeight:500}}>
-                      {item.status==="充足" ? "充足・待機中" : "アサイン受付中"}
+                      {item.status==="充足" ? "充足・待機中" : "参加申請受付中"}
                     </span>
                     {assigned && <span style={{background:"rgba(46,107,79,0.15)",color:"#4caf7d",fontSize:8,padding:"2px 7px",borderRadius:3,letterSpacing:"0.1em",fontWeight:600}}>参加中</span>}
                   </div>
@@ -417,7 +417,7 @@ export default function BoardScreen({ onNudge, lang, citizenId }) {
         <Modal onClose={() => { if (assignPhase !== "running") setAssignTarget(null); }}>
           <div style={{marginBottom:14,display:"flex",justifyContent:"space-between",alignItems:"flex-start"}}>
             <div>
-              <div style={{fontSize:8,color:C.txL,letterSpacing:"0.14em",marginBottom:4}}>アサイン申請</div>
+              <div style={{fontSize:8,color:C.txL,letterSpacing:"0.14em",marginBottom:4}}>参加申請</div>
               <div style={{fontSize:13,fontWeight:700,color:C.tx,lineHeight:1.35}}>{assignTarget.title}</div>
             </div>
             {assignPhase !== "running" && (
@@ -442,7 +442,7 @@ export default function BoardScreen({ onNudge, lang, citizenId }) {
               <div style={{background:"rgba(46,107,79,0.07)",border:"1px solid rgba(46,107,79,0.2)",borderRadius:6,padding:"9px 12px",marginBottom:14}}>
                 <div style={{fontSize:8.5,color:C.txM,letterSpacing:"0.04em",lineHeight:1.7}}>申請後、起案者による承認が行われます。承認結果は市民活動ログに記録されます。</div>
               </div>
-              <Btn label="アサインを申請する" onClick={runAssign} disabled={!selectedSkill}/>
+              <Btn label="参加申請する" onClick={runAssign} disabled={!selectedSkill}/>
             </>
           )}
 

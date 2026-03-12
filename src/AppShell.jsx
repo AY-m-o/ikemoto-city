@@ -57,7 +57,7 @@ function BellIcon({ hasUnread }) {
 
 // 検索結果の種別ラベル
 function SearchTag({ type }) {
-  const map = { asset:["アセット","rgba(46,107,79,0.15)","#3d8a65"], shop:["\u5e97\u8217","rgba(50,80,140,0.15)","#6080c0"], citizen:["\u5e02\u6c11","rgba(100,60,140,0.15)","#9060c0"] };
+  const map = { asset:["作品","rgba(46,107,79,0.15)","#3d8a65"], shop:["店舗","rgba(50,80,140,0.15)","#6080c0"], citizen:["市民","rgba(100,60,140,0.15)","#9060c0"] };
   const [label, bg, color] = map[type] || ["","",""];
   return <span style={{background:bg,color,fontSize:7.5,padding:"1.5px 7px",borderRadius:3,letterSpacing:"0.08em",fontWeight:600,flexShrink:0}}>{label}</span>;
 }
@@ -338,7 +338,7 @@ export default function AppShell({ citizenId, userId, onLogout }) {
                 type="text"
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
-                placeholder="アセット・店舗・市民を検索"
+                placeholder="作品・店舗・市民を検索"
                 style={{width:"100%",padding:"9px 12px 9px 32px",background:"rgba(255,255,255,0.06)",border:"1px solid rgba(46,107,79,0.3)",borderRadius:8,color:"#dde8f5",fontSize:11,fontFamily:"inherit",outline:"none",letterSpacing:"0.04em",boxSizing:"border-box",caretColor:C.green}}
               />
             </div>

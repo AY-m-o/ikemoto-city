@@ -75,8 +75,8 @@ export default function ProcScreen({ onNudge, lang }) {
 
         {[
           { id:"creator", label:"表現者認可申請",   sub:"クリエイター登録",     desc:"市の産業区分との整合性を診断し、表現者として公式に登録します。" },
-          { id:"asset",   label:"資産出力許可申請",   sub:"作品の市資産登録",   desc:"登録した作品を市の資産台帳に封印・管理する手続きを行います。" },
-          { id:"connect", label:"売上受取設定",         sub:"Stripe Connect登録",  desc:"アセットの売上を受け取るために決済アカウントを登録します。購入者の支払いからインフラ維持税〨1.5%）を差し引いた金額が直接振り込まれます。" },
+          { id:"asset",   label:"作品出力許可申請",   sub:"作品の市資産登録",   desc:"登録した作品を市の資産台帳に登録・管理する手続きを行います。" },
+          { id:"connect", label:"売上受取設定",         sub:"Stripe Connect登録",  desc:"作品の売上を受け取るために決済アカウントを登録します。購入者の支払いからインフラ維持税（1.5%）を差し引いた金額が直接振り込まれます。" },
         ].map((p) => (
           <div key={p.id} className="card" onClick={()=>setSub(p.id)} style={{background:C.card,border:"1px solid "+C.border,borderRadius:8,padding:"14px 14px",marginBottom:10,position:"relative",overflow:"hidden",cursor:"pointer"}}>
             <Stamp/>
@@ -99,7 +99,7 @@ export default function ProcScreen({ onNudge, lang }) {
 
         <div style={{background:C.card,border:"1px solid "+C.border,borderLeft:"2.5px solid "+C.green,borderRadius:7,padding:"12px 14px",marginBottom:16}}>
           <div style={{fontSize:9.5,color:C.txM,lineHeight:1.8,letterSpacing:"0.04em"}}>
-            アセット購入時の売上が登録の口座に直接振り込まれます。<br/>
+            作品購入時の売上が登録の口座に直接振り込まれます。<br/>
             <span style={{color:C.txL}}>インフラ維持税（1.5%）を差し引いた公駒金額がお支払いされます。</span>
           </div>
         </div>
@@ -221,12 +221,12 @@ export default function ProcScreen({ onNudge, lang }) {
                 <div style={{fontSize:11,fontWeight:600,color:C.tx,marginBottom:12}}>Step 4：最終確認</div>
                 <div style={{background:C.card,border:"1px solid "+C.border,borderLeft:"2.5px solid "+C.green,borderRadius:7,padding:"12px 13px",marginBottom:16}}>
                   <div style={{fontSize:9.5,color:C.txM,lineHeight:1.75,letterSpacing:"0.04em"}}>
-                    資産台帳への封印処理を実行します。登録後の変更には別途申請が必要です。
+                    資産台帳への登録処理を実行します。登録後の変更には別途申請が必要です。
                   </div>
                 </div>
                 <div style={{display:"flex",gap:8}}>
                   <div style={{flex:1}}><Btn label="戻る" onClick={()=>setAssetStep(3)} variant="ghost"/></div>
-                  <div style={{flex:2}}><Btn label="封印処理を開始" onClick={()=>run(ASSET_LOGS)}/></div>
+                  <div style={{flex:2}}><Btn label="登録処理を開始" onClick={()=>run(ASSET_LOGS)}/></div>
                 </div>
               </div>
             )}
@@ -244,7 +244,7 @@ export default function ProcScreen({ onNudge, lang }) {
             <div style={{background:"rgba(46,107,79,0.08)",border:"1px solid "+C.green,borderRadius:7,padding:"12px 13px",marginBottom:14}}>
               <div style={{fontSize:10,color:C.green,fontWeight:600,letterSpacing:"0.08em",marginBottom:3}}>処理が完了しました</div>
               <div style={{fontSize:9.5,color:C.txM,letterSpacing:"0.04em",lineHeight:1.7}}>
-                {sub==="creator" ? "申請内容は正常に記録されました。承認通知は後日通達されます。" : "資産は市の台帳に正常に封印・記録されました。"}
+                {sub==="creator" ? "申請内容は正常に記録されました。承認通知は後日通達されます。" : "資産は市の台帳に正常に登録・記録されました。"}
               </div>
             </div>
             <Btn label="手続き一覧へ戻る" onClick={reset} variant="ghost"/>
