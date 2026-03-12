@@ -314,7 +314,7 @@ export default function AppShell({ citizenId, userId, onLogout }) {
               onMouseUp={cancelLongPress}
               onTouchStart={startLongPress}
               onTouchEnd={cancelLongPress}
-              style={{height:28,background:showId?"rgba(0,255,136,0.12)":"rgba(255,255,255,0.04)",border:"1px solid "+(showId?"rgba(0,255,136,0.5)":"rgba(255,255,255,0.08)"),borderRadius:6,padding:"0 10px",cursor:"pointer",color:showId?"#00ff88":"rgba(156,163,175,0.7)",fontSize:9,letterSpacing:"0.08em",fontWeight:600,fontFamily:"inherit",transition:"all 0.18s",whiteSpace:"nowrap",flexShrink:0,display:"flex",alignItems:"center",boxShadow:showId?"0 0 10px rgba(0,255,136,0.25)":"none",textShadow:showId?"0 0 6px rgba(0,255,136,0.5)":"none"}}>
+              style={{height:28,background:showId?"rgba(0,255,136,0.12)":"rgba(255,255,255,0.04)",border:"1px solid "+(showId?"rgba(0,255,136,0.5)":"rgba(255,255,255,0.08)"),borderRadius:6,padding:"0 10px",cursor:"pointer",color:showId?"#00ff88":"#ffffff",fontSize:9,letterSpacing:"0.08em",fontWeight:600,fontFamily:"inherit",transition:"all 0.18s",whiteSpace:"nowrap",flexShrink:0,display:"flex",alignItems:"center",boxShadow:showId?"0 0 10px rgba(0,255,136,0.25)":"none",textShadow:showId?"0 0 6px rgba(0,255,136,0.5)":"none"}}>
               {showId ? "x" : "◈ 市民証"}
             </button>
           </div>
@@ -432,7 +432,7 @@ export default function AppShell({ citizenId, userId, onLogout }) {
       </div>
 
       {/* BOTTOM NAV — リキッドグラス風 */}
-      <div style={{position:"fixed",bottom:0,left:"50%",transform:"translateX(-50%)",width:390,background:"rgba(10,15,30,0.7)",borderTop:"1px solid rgba(0,255,136,0.25)",display:"flex",zIndex:200,backdropFilter:"blur(20px) saturate(180%)",WebkitBackdropFilter:"blur(20px) saturate(180%)",boxShadow:"0 -4px 32px rgba(0,0,0,0.5),inset 0 1px 0 rgba(0,255,136,0.1)"}}>
+      <div style={{position:"fixed",bottom:0,left:"50%",transform:"translateX(-50%)",width:390,background:"rgba(10,15,30,0.85)",borderTop:"1px solid rgba(0,255,136,0.15)",display:"flex",zIndex:200,backdropFilter:"blur(20px)",WebkitBackdropFilter:"blur(20px)",boxShadow:"0 -4px 32px rgba(0,0,0,0.5)"}}>
         {TABS.map((t) => {
           const isActive = tab === t.id;
           const isTapped = tappedTab === t.id;
