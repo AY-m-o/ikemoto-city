@@ -80,7 +80,7 @@ export default function App() {
   return (
     <div style={{minHeight:"100vh",background:"#0f1828",display:"flex",justifyContent:"center",alignItems:"flex-start"}}>
       <style>{GLOBAL_CSS}</style>
-      <div style={{fontFamily:"'Noto Sans JP','Yu Gothic','YuGothic',sans-serif",background:loggedIn?C.bg:C.navy,minHeight:"100vh",width:"100%",maxWidth:390,display:"flex",flexDirection:"column",boxShadow:"0 0 60px rgba(0,0,0,0.35)",position:"relative",overflow:"hidden"}}>
+      <div style={{fontFamily:"'Noto Sans JP','Yu Gothic','YuGothic',sans-serif",background:loggedIn?C.bg:C.navy,minHeight:"100vh",width:"100%",maxWidth:390,display:"flex",flexDirection:"column",boxShadow:"0 0 60px rgba(0,0,0,0.35)",position:"relative",overflow:"clip"}}>
         {/* EULA同意画面（未同意の場合は必ず表示） */}
         {!eulaAgreed && <EULAScreen onAgree={() => { localStorage.setItem("ik_eula_agreed","1"); setEulaAgreed(true); }}/>}
 
