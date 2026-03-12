@@ -412,6 +412,30 @@ export default function MyScreen({ citizenId, onNudge, onLogout, followedShops, 
   const t = useI18n(lang);
   const [subView, setSubView] = useState(null);
 
+  // ⑧ EVIカウントアップ — フックはすべての早期returnより前に置く（Rules of Hooks）
+  const eviData = [0.62,0.71,0.68,0.80,0.75,0.84,0.91];
+  const labels  = ["月","火","水","木","金","土","日"];
+  const [eviDisplay, setEviDisplay] = useState(0);
+  useEffect(() => {
+    if (subView !== null) return; // メインビューのみ実行
+    const target = eviData[eviData.length - 1];
+    const dur = 1000;
+    const steps = 40;
+    const step = target / steps;
+    let current = 0;
+    let count = 0;
+    const interval = setInterval(() => {
+      count++;
+      current = Math.min(step * count, target);
+      setEviDisplay(Math.round(current * 100) / 100);
+      if (count >= steps) clearInterval(interval);
+    }, dur / steps);
+    return () => clearInterval(interval);
+  }, [subView]);
+
+  // 参加中プロジェクト（充足のもの）
+  const joinedProjects = BOARD_ITEMS_INIT.filter(b => b.status === "充足");
+
   if (subView === "settings")  return <SettingsView  onBack={()=>setSubView(null)} onNudge={onNudge}/>;
   if (subView === "inquiry")   return <InquiryView   onBack={()=>setSubView(null)} onNudge={onNudge}/>;
   if (subView === "logout")    return <LogoutView    onBack={()=>setSubView(null)} onLogout={onLogout} onNudge={onNudge}/>;
@@ -450,32 +474,8 @@ export default function MyScreen({ citizenId, onNudge, onLogout, followedShops, 
     </div>
   );
 
-  const eviData = [0.62,0.71,0.68,0.80,0.75,0.84,0.91];
-  const labels  = ["月","火","水","木","金","土","日"];
-
-  // ⑧ EVIカウントアップ（0→実際の値、1秒）
-  const [eviDisplay, setEviDisplay] = useState(0);
-  useEffect(() => {
-    const target = eviData[eviData.length - 1];
-    const dur = 1000;
-    const steps = 40;
-    const step = target / steps;
-    let current = 0;
-    let count = 0;
-    const interval = setInterval(() => {
-      count++;
-      current = Math.min(step * count, target);
-      setEviDisplay(Math.round(current * 100) / 100);
-      if (count >= steps) clearInterval(interval);
-    }, dur / steps);
-    return () => clearInterval(interval);
-  }, []);
-
-  // 参加中プロジェクト（充足のもの）
-  const joinedProjects = BOARD_ITEMS_INIT.filter(b => b.status === "充足");
-
   return (
-    <div style={{flex:1,overflowY:"auto",paddingBottom:72}} onScroll={onNudge}>
+    <div style={{flex:1,overflowY:"auto",paddingBottom:72,background:"#0a0f1e",color:"#f9fafb"}} onScroll={onNudge}>
       <div style={{padding:"15px 14px 0"}}>
         {/* 市民証ミニカード */}
         <div style={{background:C.navy,borderRadius:9,padding:"14px 15px",marginBottom:14,position:"relative",overflow:"hidden"}}>
