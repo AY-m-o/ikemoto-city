@@ -364,9 +364,9 @@ export default function BoardScreen({ onNudge, lang }) {
                     {assigned && <span style={{background:"rgba(46,107,79,0.15)",color:"#4caf7d",fontSize:8,padding:"2px 7px",borderRadius:3,letterSpacing:"0.1em",fontWeight:600}}>参加中</span>}
                   </div>
                   <span style={{fontSize:8,color:C.txL,letterSpacing:"0.1em",flexShrink:0}}>{item.reg}</span>
-                  {/* ② 通報ボタン */}
+                  {/* 通報ボタン */}
                   <button onClick={e => openReport(e, item.title)}
-                    style={{background:"transparent",border:"none",color:C.txL+"99",fontSize:16,cursor:"pointer",padding:"0 2px",lineHeight:1,flexShrink:0}}>
+                    style={{background:"transparent",border:"none",color:C.txL+"99",fontSize:16,cursor:"pointer",padding:"0 2px",lineHeight:1,flexShrink:0,display:"flex",alignItems:"center",justifyContent:"center"}}>
                     ⋯
                   </button>
                 </div>

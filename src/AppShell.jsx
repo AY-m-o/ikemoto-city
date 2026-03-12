@@ -38,20 +38,21 @@ const I18N = {
           board:"TABL\u00d3N", market:"MERCADO", gov_tab:"GOB", proc:"TR\u00c1MITE", my:"MI P\u00c1G" },
 };
 
-// ③ ベルアイコン（白・細線・赤い点バッジのみ）
+// ベルアイコン（白・細線・赤い点バッジのみ）
 function BellIcon({ hasUnread }) {
   return (
     <div style={{position:"relative",width:15,height:16,display:"flex",alignItems:"center",justifyContent:"center"}}>
       <svg width="15" height="16" viewBox="0 0 15 16" fill="none" xmlns="http://www.w3.org/2000/svg" style={{display:"block"}}>
-        <path d="M7.5 1.5C7.5 1.5 4 3.5 4 8V11.5H11V8C11 3.5 7.5 1.5 7.5 1.5Z" stroke="rgba(255,255,255,0.65)" strokeWidth="1.2" fill="none" strokeLinejoin="round"/>
-        <path d="M4 11.5H11L11.8 13H3.2L4 11.5Z" stroke="rgba(255,255,255,0.55)" strokeWidth="1.2" fill="none" strokeLinejoin="round"/>
-        <path d="M6.2 13.5C6.2 13.5 6.5 14.8 7.5 14.8C8.5 14.8 8.8 13.5 8.8 13.5" stroke="rgba(255,255,255,0.5)" strokeWidth="1.2" fill="none" strokeLinecap="round"/>
-        <line x1="7.5" y1="0.5" x2="7.5" y2="1.8" stroke="rgba(255,255,255,0.45)" strokeWidth="1.2" strokeLinecap="round"/>
+        <path d="M7.5 1.5C7.5 1.5 4 3.5 4 8V11.5H11V8C11 3.5 7.5 1.5 7.5 1.5Z" stroke="#ffffff" strokeWidth="1.2" fill="none" strokeLinejoin="round"/>
+        <path d="M4 11.5H11L11.8 13H3.2L4 11.5Z" stroke="#ffffff" strokeWidth="1.2" fill="none" strokeLinejoin="round"/>
+        <path d="M6.2 13.5C6.2 13.5 6.5 14.8 7.5 14.8C8.5 14.8 8.8 13.5 8.8 13.5" stroke="#ffffff" strokeWidth="1.2" fill="none" strokeLinecap="round"/>
+        <line x1="7.5" y1="0.5" x2="7.5" y2="1.8" stroke="#ffffff" strokeWidth="1.2" strokeLinecap="round"/>
       </svg>
       {hasUnread && <div style={{position:"absolute",top:1,right:0,width:5,height:5,borderRadius:"50%",background:"#ff4455",boxShadow:"0 0 4px rgba(255,68,85,0.8)",border:"1px solid rgba(6,11,21,0.9)"}}/>}
     </div>
   );
 }
+
 
 // 検索結果の種別ラベル
 function SearchTag({ type }) {
