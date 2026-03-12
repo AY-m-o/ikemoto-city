@@ -18,7 +18,7 @@ function SettingsView({ onBack, onNudge }) {
   };
 
   return (
-    <div style={{flex:1,display:"flex",flexDirection:"column",overflowY:"auto",paddingBottom:72}}>
+    <div style={{flex:1,display:"flex",flexDirection:"column",overflowY:"auto",paddingBottom:72,background:"#0a0f1e",color:"#f9fafb"}}>
       <SubScreenNav label="パラメータ設定" onBack={onBack}/>
       <div style={{padding:"16px 14px 0"}}>
         <div style={{background:C.card,border:"1px solid "+C.border,borderRadius:8,padding:"14px 14px",marginBottom:12}}>
@@ -66,7 +66,7 @@ function InquiryView({ onBack, onNudge }) {
   const cats = ["行政サービスについて","作品登録・申請","掲示板・参加申請について","技術的な問題","その他"];
 
   if (done) return (
-    <div style={{flex:1,display:"flex",flexDirection:"column",overflowY:"auto",paddingBottom:72}}>
+    <div style={{flex:1,display:"flex",flexDirection:"column",overflowY:"auto",paddingBottom:72,background:"#0a0f1e",color:"#f9fafb"}}>
       <SubScreenNav label="行政への意見具申" onBack={onBack}/>
       <div style={{padding:"16px 14px 0"}}>
         <div style={{background:"rgba(46,107,79,0.08)",border:"1px solid "+C.green,borderRadius:8,padding:"18px 16px",marginBottom:14}}>
@@ -79,7 +79,7 @@ function InquiryView({ onBack, onNudge }) {
   );
 
   return (
-    <div style={{flex:1,display:"flex",flexDirection:"column",overflowY:"auto",paddingBottom:72}} onScroll={onNudge}>
+    <div style={{flex:1,display:"flex",flexDirection:"column",overflowY:"auto",paddingBottom:72,background:"#0a0f1e",color:"#f9fafb"}} onScroll={onNudge}>
       <SubScreenNav label="行政への意見具申" onBack={onBack}/>
       <div style={{padding:"16px 14px 0"}}>
         <div style={{background:C.card,border:"1px solid "+C.border,borderRadius:8,padding:"14px 14px",marginBottom:12}}>
@@ -116,7 +116,7 @@ function LogoutView({ onBack, onLogout, onNudge }) {
   };
 
   return (
-    <div style={{flex:1,display:"flex",flexDirection:"column",overflowY:"auto",paddingBottom:72}}>
+    <div style={{flex:1,display:"flex",flexDirection:"column",overflowY:"auto",paddingBottom:72,background:"#0a0f1e",color:"#f9fafb"}}>
       {phase === "confirm" && <SubScreenNav label="ログアウト" onBack={onBack}/>}
       <div style={{padding:"16px 14px 0"}}>
         <SectionHead accent={C.red} label="ログアウト" sub="端末接続の切断"/>
@@ -232,7 +232,7 @@ const FAQ_ITEMS = [
 function GuideView({ onBack }) {
   const [open, setOpen] = useState(null);
   return (
-    <div style={{flex:1,display:"flex",flexDirection:"column",overflowY:"auto",paddingBottom:72}}>
+    <div style={{flex:1,display:"flex",flexDirection:"column",overflowY:"auto",paddingBottom:72,background:"#0a0f1e",color:"#f9fafb"}}>
       <SubScreenNav label="市民ガイドブック" onBack={onBack}/>
       <div style={{padding:"14px 14px 0"}}>
         <div style={{background:C.card,border:"1px solid "+C.border,borderLeft:"2.5px solid "+C.green,borderRadius:7,padding:"10px 13px",marginBottom:14}}>
@@ -262,7 +262,7 @@ function GuideView({ onBack }) {
 function FaqView({ onBack }) {
   const [open, setOpen] = useState(null);
   return (
-    <div style={{flex:1,display:"flex",flexDirection:"column",overflowY:"auto",paddingBottom:72}}>
+    <div style={{flex:1,display:"flex",flexDirection:"column",overflowY:"auto",paddingBottom:72,background:"#0a0f1e",color:"#f9fafb"}}>
       <SubScreenNav label="よくある質問" onBack={onBack}/>
       <div style={{padding:"14px 14px 0"}}>
         {FAQ_ITEMS.map((f,i) => (
@@ -287,7 +287,7 @@ function FaqView({ onBack }) {
 
 function LegalView({ onBack, title, content }) {
   return (
-    <div style={{flex:1,display:"flex",flexDirection:"column",overflowY:"auto",paddingBottom:72}}>
+    <div style={{flex:1,display:"flex",flexDirection:"column",overflowY:"auto",paddingBottom:72,background:"#0a0f1e",color:"#f9fafb"}}>
       <SubScreenNav label={title} onBack={onBack}/>
       <div style={{padding:"16px 14px 0"}}>
         <div style={{background:C.card,border:"1px solid "+C.border,borderRadius:8,padding:"16px 14px"}}>
@@ -300,7 +300,7 @@ function LegalView({ onBack, title, content }) {
 
 function ContactView({ onBack }) {
   return (
-    <div style={{flex:1,display:"flex",flexDirection:"column",overflowY:"auto",paddingBottom:72}}>
+    <div style={{flex:1,display:"flex",flexDirection:"column",overflowY:"auto",paddingBottom:72,background:"#0a0f1e",color:"#f9fafb"}}>
       <SubScreenNav label="お問い合わせ" onBack={onBack}/>
       <div style={{padding:"16px 14px 0"}}>
         <div style={{background:C.card,border:"1px solid "+C.border,borderRadius:8,padding:"18px 16px",marginBottom:12}}>
@@ -320,7 +320,7 @@ function ContactView({ onBack }) {
 function FollowingView({ onBack, followedShops, onNavigateMarket }) {
   const shops = Object.keys(followedShops || {});
   return (
-    <div style={{flex:1,display:"flex",flexDirection:"column",overflowY:"auto",paddingBottom:72}}>
+    <div style={{flex:1,display:"flex",flexDirection:"column",overflowY:"auto",paddingBottom:72,background:"#0a0f1e",color:"#f9fafb"}}>
       <SubScreenNav label="フォロー中の店舗" onBack={onBack}/>
       <div style={{padding:"14px 14px 0"}}>
         <div style={{fontSize:8,color:C.txL,letterSpacing:"0.14em",marginBottom:10}}>FOLLOWING — {shops.length}店舗</div>
@@ -357,7 +357,7 @@ function LikedView({ onBack, likedItems, likedShops, onNavigateMarket }) {
   const entries = Object.entries(likedItems || {});
   const shopEntries = Object.keys(likedShops || {});
   return (
-    <div style={{flex:1,display:"flex",flexDirection:"column",overflowY:"auto",paddingBottom:72}}>
+    <div style={{flex:1,display:"flex",flexDirection:"column",overflowY:"auto",paddingBottom:72,background:"#0a0f1e",color:"#f9fafb"}}>
       <SubScreenNav label="いいね済み" onBack={onBack}/>
       <div style={{padding:"14px 14px 0"}}>
         {/* いいね済み店舗 */}
@@ -424,7 +424,7 @@ export default function MyScreen({ citizenId, onNudge, onLogout, followedShops, 
   if (subView === "following") return <FollowingView onBack={()=>setSubView(null)} followedShops={followedShops} onNavigateMarket={onNavigateMarket}/>;
   if (subView === "liked")     return <LikedView     onBack={()=>setSubView(null)} likedItems={likedItems} likedShops={likedShops} onNavigateMarket={onNavigateMarket}/>;
   if (subView === "blocked")   return (
-    <div style={{flex:1,display:"flex",flexDirection:"column",overflowY:"auto",paddingBottom:72}}>
+    <div style={{flex:1,display:"flex",flexDirection:"column",overflowY:"auto",paddingBottom:72,background:"#0a0f1e",color:"#f9fafb"}}>
       <SubScreenNav label="ブロックリスト" onBack={()=>setSubView(null)}/>
       <div style={{padding:"16px 14px 0"}}>
         <div style={{fontSize:8,color:C.txL,letterSpacing:"0.18em",marginBottom:12}}>ブロック中の店舗 // BLOCKED SHOPS</div>
