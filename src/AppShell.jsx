@@ -258,18 +258,18 @@ export default function AppShell({ citizenId, userId, onLogout }) {
 
             {/* ③ 検索アイコン */}
             <button onClick={() => { setShowSearch(v => !v); setShowLangMenu(false); setShowNotif(false); setSearchQuery(""); }}
-              style={{height:28,width:28,background:showSearch?"rgba(0,255,136,0.1)":"rgba(255,255,255,0.04)",border:"1px solid "+(showSearch?"rgba(0,255,136,0.5)":"rgba(255,255,255,0.08)"),borderRadius:6,padding:0,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,transition:"all 0.18s",boxShadow:showSearch?"0 0 8px rgba(0,255,136,0.3)":"none"}}>
+              style={{height:28,width:28,background:showSearch?"rgba(0,255,136,0.1)":"rgba(255,255,255,0.04)",border:"1px solid "+(showSearch?"rgba(0,255,136,0.5)":"rgba(255,255,255,0.08)"),borderRadius:6,padding:0,cursor:"pointer",color:"#ffffff",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,transition:"all 0.18s",boxShadow:showSearch?"0 0 8px rgba(0,255,136,0.3)":"none"}}>
               <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
-                <circle cx="5.5" cy="5.5" r="4" stroke="rgba(0,255,136,0.6)" strokeWidth="1.3"/>
-                <line x1="9" y1="9" x2="12" y2="12" stroke="rgba(0,255,136,0.6)" strokeWidth="1.3" strokeLinecap="round"/>
+                <circle cx="5.5" cy="5.5" r="4" stroke="#ffffff" strokeWidth="1.3"/>
+                <line x1="9" y1="9" x2="12" y2="12" stroke="#ffffff" strokeWidth="1.3" strokeLinecap="round"/>
               </svg>
             </button>
 
             {/* 言語ドロップダウン */}
             <div style={{position:"relative"}}>
               <button onClick={() => { setShowLangMenu(v => !v); setShowNotif(false); setShowSearch(false); }}
-                style={{height:28,background:"rgba(255,255,255,0.04)",border:"1px solid rgba(255,255,255,0.08)",borderRadius:6,padding:"0 9px",cursor:"pointer",color:"rgba(0,255,136,0.6)",fontSize:8.5,letterSpacing:"0.08em",fontWeight:600,fontFamily:"inherit",transition:"all 0.18s",display:"flex",alignItems:"center",gap:4,whiteSpace:"nowrap",flexShrink:0}}>
-                {lang} <span style={{fontSize:7,opacity:0.5}}>&#x25BC;</span>
+                style={{height:28,background:"rgba(255,255,255,0.04)",border:"1px solid rgba(255,255,255,0.08)",borderRadius:6,padding:"0 9px",cursor:"pointer",color:"#ffffff",fontSize:8.5,letterSpacing:"0.08em",fontWeight:600,fontFamily:"inherit",transition:"all 0.18s",display:"flex",alignItems:"center",gap:4,whiteSpace:"nowrap",flexShrink:0}}>
+                {lang} <span style={{fontSize:7,opacity:0.6}}>&#x25BC;</span>
               </button>
               {showLangMenu && (
                 <div style={{position:"absolute",top:"calc(100% + 4px)",right:0,background:"#0a0f1e",border:"1px solid rgba(0,255,136,0.2)",borderRadius:8,overflow:"hidden",zIndex:400,minWidth:64,boxShadow:"0 4px 24px rgba(0,0,0,0.6),0 0 12px rgba(0,255,136,0.05)"}}>
