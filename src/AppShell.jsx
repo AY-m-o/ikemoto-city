@@ -286,7 +286,7 @@ export default function AppShell({ citizenId, userId, onLogout }) {
             {/* 通知ベル */}
             <div style={{position:"relative"}}>
               <button onClick={() => { setShowNotif(v => !v); setShowLangMenu(false); setShowSearch(false); if (!readNotif) setReadNotif(true); }}
-                style={{height:28,width:28,background:showNotif?"rgba(0,255,136,0.1)":"rgba(255,255,255,0.04)",border:"1px solid "+(showNotif?"rgba(0,255,136,0.4)":"rgba(255,255,255,0.08)"),borderRadius:6,padding:0,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,transition:"all 0.18s",boxShadow:showNotif?"0 0 8px rgba(0,255,136,0.25)":"none"}}>
+                style={{height:28,width:28,background:showNotif?"rgba(0,255,136,0.1)":"rgba(255,255,255,0.04)",border:"1px solid "+(showNotif?"rgba(0,255,136,0.4)":"rgba(255,255,255,0.08)"),borderRadius:6,padding:0,cursor:"pointer",color:"#ffffff",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,transition:"all 0.18s",boxShadow:showNotif?"0 0 8px rgba(0,255,136,0.25)":"none"}}>
                 <BellIcon hasUnread={!readNotif}/>
               </button>
               {showNotif && (
