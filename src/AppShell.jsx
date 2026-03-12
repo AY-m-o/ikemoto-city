@@ -419,7 +419,7 @@ export default function AppShell({ citizenId, userId, onLogout }) {
 
       {/* ── SCREENS ── */}
       <div ref={contentRef} key={screenKey} className="screen-fade"
-        style={{flex:1,display:"flex",flexDirection:"column",overflowY:"auto",position:"relative"}}>
+        style={{flex:1,display:"flex",flexDirection:"column",overflowY:"auto",position:"relative",background:"#0a0f1e",color:"#f9fafb"}}>
         {tab==="board"  && <BoardScreen  key={resetKeys.board}  onNudge={onNudge} lang={lang} citizenId={citizenId}/>}
         {tab==="market" && <MarketScreen key={resetKeys.market} onNudge={onNudge} lang={lang}
           followedShops={followedShops} onFollowShop={handleFollowShop}
