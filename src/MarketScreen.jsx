@@ -496,7 +496,7 @@ export default function MarketScreen({ onNudge, followedShops, onFollowShop, lik
             <div style={{marginLeft:"auto",position:"relative"}}>
               <button onClick={e=>{e.stopPropagation();setShopMenuOpen(shopMenuOpen===selectedShop.name?null:selectedShop.name);}}
                 style={{background:"rgba(255,255,255,0.1)",border:"1px solid rgba(255,255,255,0.18)",borderRadius:5,padding:"4px 12px",color:"rgba(255,255,255,0.7)",fontSize:12,cursor:"pointer",lineHeight:1,letterSpacing:"0.1em",display:"flex",alignItems:"center",justifyContent:"center",minHeight:24}}>
-                ...
+                ···
               </button>
               {shopMenuOpen===selectedShop.name && (
                 <div style={{position:"absolute",top:"calc(100% + 4px)",right:0,background:"#0a0f1e",border:"1px solid rgba(0,255,136,0.2)",borderRadius:8,zIndex:300,minWidth:136,boxShadow:"0 4px 20px rgba(0,0,0,0.7)"}} onClick={e=>e.stopPropagation()}>
@@ -586,7 +586,7 @@ export default function MarketScreen({ onNudge, followedShops, onFollowShop, lik
               {/* 3点ボタン — 右上固定 ②④ */}
               <button onClick={e=>{e.stopPropagation();setShopMenuOpen(shopMenuOpen===shop.name?null:shop.name);}}
                 style={{position:"absolute",top:8,right:8,zIndex:10,background:"rgba(0,0,0,0.45)",border:"1px solid rgba(255,255,255,0.15)",borderRadius:5,padding:"3px 10px",color:"rgba(255,255,255,0.6)",fontSize:11,cursor:"pointer",lineHeight:1,letterSpacing:"0.12em",fontFamily:"inherit",display:"flex",alignItems:"center",justifyContent:"center",minHeight:22}}>
-                ...
+                ···
               </button>
               {shopMenuOpen===shop.name && (
                 <div style={{position:"absolute",top:36,right:8,background:"#0a0f1e",border:"1px solid rgba(0,255,136,0.2)",borderRadius:8,zIndex:300,minWidth:136,boxShadow:"0 4px 20px rgba(0,0,0,0.7)"}} onClick={e=>e.stopPropagation()}>
