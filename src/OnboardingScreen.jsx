@@ -4,7 +4,7 @@ import { C } from "./constants.js";
 const SLIDES = [
   {
     id:0,
-    icon:"池本",
+    icon:"◈",
     accent:"linear-gradient(135deg,#1a293f,#0d1e30)",
     heading:"池本市へようこそ",
     sub:"Welcome to Ikemoto City",
@@ -12,8 +12,8 @@ const SLIDES = [
   },
   {
     id:1,
-    icon:"⋞",
-    accent:"liner-gradient(135deg,#1a3028,#0d1e18)",
+    icon:"⊞",
+    accent:"linear-gradient(135deg,#1a3028,#0d1e18)",
     heading:"共創掲示板",
     sub:"Co-creation Board",
     body:"掲示板には市内のプロジェクトが掲載されています。必要なスキルを選び「アサイン申請」を行うことで参加できます。承認後はプロジェクトルームでメンバーとチャットできます。",
