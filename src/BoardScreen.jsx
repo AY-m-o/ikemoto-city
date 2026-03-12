@@ -276,7 +276,7 @@ export default function BoardScreen({ onNudge, lang, citizenId }) {
         <button key={id} onClick={() => setInnerTab(id)}
           style={{flex:1,padding:"10px 0",background:"transparent",border:"none",cursor:"pointer",fontFamily:"inherit",fontSize:9.5,letterSpacing:"0.08em",fontWeight:innerTab===id?600:400,color:innerTab===id?C.green:C.txL,borderBottom:innerTab===id?"2px solid "+C.green:"2px solid transparent",transition:"all 0.15s"}}>
           {label}{id==="message" && totalMsgBadge > 0 && (
-            <span style={{marginLeft:5,background:myPendingProjects.length>0?"#ff9900":C.green,color:"#000",fontSize:7,padding:"1px 5px",borderRadius:10,fontWeight:700}}>{totalMsgBadge}</span>
+            <span style={{marginLeft:5,background:C.green,color:"#000",fontSize:7,padding:"1px 5px",borderRadius:10,fontWeight:700}}>{totalMsgBadge}</span>
           )}
         </button>
       ))}
