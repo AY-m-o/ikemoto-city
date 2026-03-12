@@ -26,17 +26,18 @@ const CITIZENS = [
 
 // ⑥ 言語切替翻訳データ
 const I18N = {
-  "JP": { gov:"\u6c60\u672c\u5e02\u3000\u30c7\u30b8\u30bf\u30eb\u5e02\u5f79\u6240", sub:"IKEMOTO CITY DIGITAL GOVERNMENT",
+  "JP": { line1:"\u6c60\u672c\u5e02", line2:"\u30c7\u30b8\u30bf\u30eb\u5e02\u5f79\u6240", sub:"IKEMOTO CITY DIGITAL GOVERNMENT",
           board:"\u63b2\u793a\u677f", market:"\u5546\u696d\u533a", gov_tab:"\u884c\u653f", proc:"\u624b\u7d9a\u304d", my:"\u30de\u30a4\u30da\u30fc\u30b8" },
-  "EN": { gov:"Ikemoto City  Digital Office", sub:"IKEMOTO CITY DIGITAL GOVERNMENT",
+  "EN": { line1:"Ikemoto City", line2:"Digital Office", sub:"IKEMOTO CITY DIGITAL GOVERNMENT",
           board:"BOARD", market:"MARKET", gov_tab:"GOV", proc:"PROC", my:"MY PAGE" },
-  "\u97d3":  { gov:"\uc774\ucf00\ubaa8\ud1a0\uc2dc  \ub514\uc9c0\ud138\uc2dc\uccad", sub:"IKEMOTO CITY DIGITAL GOVERNMENT",
+  "\u97d3":  { line1:"\uc774\ucf00\ubaa8\ud1a0\uc2dc", line2:"\ub514\uc9c0\ud138\uc2dc\uccad", sub:"IKEMOTO CITY DIGITAL GOVERNMENT",
           board:"\uac8c\uc2dc\ud310", market:"\uc2dc\uc7a5", gov_tab:"\ud589\uc815", proc:"\uc808\ucc28", my:"\ub9c8\uc774\ud398\uc774\uc9c0" },
-  "\u4e2d":  { gov:"\u6c60\u672c\u5e02  \u6570\u5b57\u5e02\u653f\u5385", sub:"IKEMOTO CITY DIGITAL GOVERNMENT",
+  "\u4e2d":  { line1:"\u6c60\u672c\u5e02", line2:"\u6570\u5b57\u5e02\u653f\u5385", sub:"IKEMOTO CITY DIGITAL GOVERNMENT",
           board:"\u516c\u544a\u680f", market:"\u5546\u4e1a\u533a", gov_tab:"\u884c\u653f", proc:"\u624b\u7eed", my:"\u6211\u7684\u9875\u9762" },
-  "ES": { gov:"Ciudad Ikemoto  Oficina Digital", sub:"IKEMOTO CITY DIGITAL GOVERNMENT",
+  "ES": { line1:"Ciudad Ikemoto", line2:"Oficina Digital", sub:"IKEMOTO CITY DIGITAL GOVERNMENT",
           board:"TABL\u00d3N", market:"MERCADO", gov_tab:"GOB", proc:"TR\u00c1MITE", my:"MI P\u00c1G" },
 };
+
 
 // ベルアイコン（白・細線・赤い点バッジのみ）
 function BellIcon({ hasUnread }) {
@@ -252,7 +253,10 @@ export default function AppShell({ citizenId, userId, onLogout }) {
         <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"14px 18px 13px"}}>
           <div>
             <div style={{color:"rgba(0,255,136,0.3)",fontSize:8,letterSpacing:"0.28em",marginBottom:3,fontWeight:300,fontFamily:"monospace"}}>{I18N[lang].sub}</div>
-            <div style={{color:"#f9fafb",fontSize:16,fontWeight:700,letterSpacing:"0.12em",textShadow:"0 0 24px rgba(0,255,136,0.2)"}}>{I18N[lang].gov}</div>
+            <div style={{color:"#f9fafb",fontSize:16,fontWeight:700,letterSpacing:"0.12em",textShadow:"0 0 24px rgba(0,255,136,0.2)",lineHeight:1.25}}>
+              <div style={{whiteSpace:"nowrap"}}>{I18N[lang].line1}</div>
+              <div style={{whiteSpace:"nowrap"}}>{I18N[lang].line2}</div>
+            </div>
           </div>
           <div style={{display:"flex",gap:5,alignItems:"center",position:"relative"}} onClick={e => e.stopPropagation()}>
 
