@@ -437,7 +437,7 @@ export default function AppShell({ citizenId, userId, onLogout }) {
       </div>
 
       {/* BOTTOM NAV — リキッドグラス風 */}
-      <div style={{position:"fixed",bottom:0,left:"50%",transform:"translateX(-50%)",width:390,background:"rgba(0,0,0,0.1)",backdropFilter:"blur(40px)",WebkitBackdropFilter:"blur(40px)",borderTop:"1px solid rgba(255,255,255,0.1)",display:"flex",zIndex:200}}>
+      <div style={{position:"fixed",bottom:0,left:"50%",transform:"translateX(-50%)",width:390,background:"linear-gradient(to bottom, rgba(255,255,255,0.06) 0%, rgba(0,0,0,0.08) 100%)",backdropFilter:"blur(32px) saturate(200%)",WebkitBackdropFilter:"blur(32px) saturate(200%)",borderTop:"1px solid rgba(255,255,255,0.18)",boxShadow:"0 -1px 0 rgba(255,255,255,0.06) inset, 0 -8px 32px rgba(0,0,0,0.3)",display:"flex",zIndex:200}}>
         {TABS.map((t) => {
           const isActive = tab === t.id;
           const isTapped = tappedTab === t.id;
