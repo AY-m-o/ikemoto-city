@@ -83,17 +83,18 @@ export const TABS = [
 ];
 
 export const BOARD_ITEMS_INIT = [
-  { reg:"REG-IK-001", title:"第三区 公共壁面ビジュアル制作", dept:"建設局", lead:"Kento", skills:["グラフィック","空間設計"], status:"受付中", seats:2,
+  { reg:"REG-IK-001", title:"第三区 公共壁面ビジュアル制作", dept:"建設局", lead:"Kento", leadId:"IK-2026-0142", skills:["グラフィック","空間設計"], status:"受付中", seats:2,
     desc:"池本市第三区の公共壁面に設置するビジュアルアートの制作プロジェクト。区画の歴史と未来像をグラフィックとして表現する。現地調査・コンセプト策定・デザイン制作・施工立会までを担当市民で分業する。" },
-  { reg:"REG-IK-002", title:"市民白書 第二章 映像化", dept:"文化局", lead:"Mio", skills:["映像編集","ナレーション"], status:"受付中", seats:1,
+  { reg:"REG-IK-002", title:"市民白書 第二章 映像化", dept:"文化局", lead:"Mio", leadId:"IK-2026-0093", skills:["映像編集","ナレーション"], status:"受付中", seats:1,
     desc:"池本市が発行する市民白書（第五版）の第二章「市民活動の記録」を映像化するプロジェクト。インタビュー素材の編集、ナレーション収録、字幕制作が主なタスク。完成物は市公式アーカイブに収録される。" },
-  { reg:"REG-IK-003", title:"厚生局 市民情報設計", dept:"厚生局", lead:"Saki", skills:["UI設計","文章"], status:"充足", seats:0,
+  { reg:"REG-IK-003", title:"厚生局 市民情報設計", dept:"厚生局", lead:"Saki", leadId:"IK-2026-0091", skills:["UI設計","文章"], status:"充足", seats:0,
     desc:"厚生局が市民向けに発信する情報の設計・整備プロジェクト。各種申請フォームのUI改善と案内文書のリライトが中心。市民が迷わず手続きを完了できる情報環境を構築することが目的。" },
-  { reg:"REG-IK-004", title:"池本市 公式楽曲の制作と登録", dept:"文化局", lead:"Hiro", skills:["作曲","録音"], status:"受付中", seats:3,
+  { reg:"REG-IK-004", title:"池本市 公式楽曲の制作と登録", dept:"文化局", lead:"Hiro", leadId:"IK-2026-0084", skills:["作曲","録音"], status:"受付中", seats:3,
     desc:"池本市の公式テーマ楽曲を制作・封印・アセット登録するプロジェクト。作曲・編曲・録音・ミキシングの各フェーズで複数の市民が協働する。完成後は市公式音楽ライセンスとして商業区に登録される。" },
-  { reg:"REG-IK-005", title:"情報局 通信インフラ記録整備", dept:"情報局", lead:"Toma", skills:["ライティング","整理"], status:"受付中", seats:2,
+  { reg:"REG-IK-005", title:"情報局 通信インフラ記録整備", dept:"情報局", lead:"Toma", leadId:"IK-2026-0076", skills:["ライティング","整理"], status:"受付中", seats:2,
     desc:"池本市の通信インフラ構築過程を文書として整備し公式記録に残すプロジェクト。施工記録・設計資料の収集と整理、記録文書の執筆が主な作業。整備された資料は情報局アーカイブおよび商業区に公開される。" },
 ];
+
 
 export const SHOP_META = {
   "第三区縫製所":   { desc:"池本市第三区を拠点とする服飾工房。廃工場の特殊繊維を活用し、構造を持つ衣服を制作する。", grad:"linear-gradient(135deg,#1a2a4a,#2a4060)" },

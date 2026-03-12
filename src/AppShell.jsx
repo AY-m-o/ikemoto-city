@@ -416,7 +416,7 @@ export default function AppShell({ citizenId, userId, onLogout }) {
       {/* ── SCREENS ── */}
       <div ref={contentRef} key={screenKey} className="screen-fade"
         style={{flex:1,display:"flex",flexDirection:"column",overflowY:"auto",position:"relative"}}>
-        {tab==="board"  && <BoardScreen  key={resetKeys.board}  onNudge={onNudge} lang={lang}/>}
+        {tab==="board"  && <BoardScreen  key={resetKeys.board}  onNudge={onNudge} lang={lang} citizenId={citizenId}/>}
         {tab==="market" && <MarketScreen key={resetKeys.market} onNudge={onNudge} lang={lang}
           followedShops={followedShops} onFollowShop={handleFollowShop}
           likedItems={likedItems} onLikeItem={handleLikeItem}

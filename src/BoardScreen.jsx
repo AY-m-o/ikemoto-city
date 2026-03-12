@@ -144,7 +144,7 @@ function ProjectDetail({ item, onBack, onAssign, onRoom, onNudge, alreadyAssigne
 // ─────────────────────────────────────────────
 // BOARD SCREEN（メイン）
 // ─────────────────────────────────────────────
-export default function BoardScreen({ onNudge, lang }) {
+export default function BoardScreen({ onNudge, lang, citizenId }) {
   const t = useI18n(lang);
   const [boardItems, setBoardItems] = useState(BOARD_ITEMS_INIT);
   // 自分がアサイン申請制のプロジェクトreg一覧（承認済み）
@@ -167,6 +167,12 @@ export default function BoardScreen({ onNudge, lang }) {
   // ⑩ プロジェクト認証演出
   const [authChecking, setAuthChecking] = useState(false);
   const [authTarget, setAuthTarget]     = useState(null);
+
+  // 起案者判定: ログイン中のcitizenIdとproject.leadIdを照合
+  const isLeadOf = (reg) => {
+    const item = boardItems.find(b => b.reg === reg);
+    return !!(item && citizenId && citizenId === item.leadId);
+  };
 
   const handleCardTap = (item) => {
     setAuthChecking(true);
@@ -292,10 +298,30 @@ export default function BoardScreen({ onNudge, lang }) {
                 <div key={p.reg} style={{background:"rgba(255,153,0,0.05)",border:"1px solid rgba(255,153,0,0.3)",borderLeft:"3px solid #ff9900",borderRadius:8,padding:"12px 14px",marginBottom:9}}>
                   <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:6}}>
                     <div className="mono" style={{fontSize:8,color:"rgba(255,153,0,0.6)",letterSpacing:"0.12em"}}>{p.dept} / {p.reg}</div>
-                    <span style={{background:"rgba(255,153,0,0.15)",color:"#ff9900",fontSize:7.5,padding:"2px 8px",borderRadius:3,fontWeight:700}}>承認待ち</span>
+                    <span style={{background:"rgba(255,153,0,0.15)",color:"#ff9900",fontSize:7.5,padding:"2px 8px",borderRadius:3,fontWeight:700}}>
+                      {isLeadOf(p.reg) ? "承認待ち（起案者）" : "承認待ち"}
+                    </span>
                   </div>
                   <div style={{fontSize:11,fontWeight:600,color:C.tx,letterSpacing:"0.03em",lineHeight:1.3,marginBottom:6}}>{p.title}</div>
-                  <div style={{fontSize:8.5,color:C.txM}}>起案者 {p.lead} が申請内容を確認しています。承認結果をお待ちください。</div>
+                  {isLeadOf(p.reg) ? (
+                    <>
+                      <div style={{fontSize:8.5,color:"rgba(255,153,0,0.7)",marginBottom:10}}>このプロジェクトへの申請が届いています。承認するとメッセージルームが開放されます。</div>
+                      <div style={{display:"flex",gap:8}}>
+                        <button
+                          onClick={() => approveAssign(p.reg)}
+                          style={{flex:1,padding:"9px",background:"rgba(0,255,136,0.15)",border:"1px solid rgba(0,255,136,0.4)",borderRadius:7,color:"#00ff88",fontSize:10,fontWeight:700,cursor:"pointer",fontFamily:"inherit",letterSpacing:"0.06em",transition:"all 0.2s"}}>
+                          承認する
+                        </button>
+                        <button
+                          onClick={() => rejectAssign(p.reg)}
+                          style={{flex:1,padding:"9px",background:"rgba(255,68,85,0.1)",border:"1px solid rgba(255,68,85,0.35)",borderRadius:7,color:"#ff4455",fontSize:10,fontWeight:700,cursor:"pointer",fontFamily:"inherit",letterSpacing:"0.06em",transition:"all 0.2s"}}>
+                          却下する
+                        </button>
+                      </div>
+                    </>
+                  ) : (
+                    <div style={{fontSize:8.5,color:C.txM}}>起案者 {p.lead} が申請内容を確認しています。承認結果をお待ちください。</div>
+                  )}
                 </div>
               ))}
               {myAssignedProjects.length > 0 && <div style={{height:4}}/>}
@@ -426,38 +452,11 @@ export default function BoardScreen({ onNudge, lang }) {
 
           {assignPhase === "done" && (
             <>
-              <div style={{background:"rgba(0,255,136,0.07)",border:"1px solid rgba(0,255,136,0.3)",borderRadius:7,padding:"11px 13px",marginBottom:12}}>
+              <div style={{background:"rgba(46,107,79,0.07)",border:"1px solid rgba(0,255,136,0.3)",borderRadius:7,padding:"11px 13px",marginBottom:12}}>
                 <div style={{fontSize:9,color:C.green,fontWeight:600,letterSpacing:"0.1em",marginBottom:4}}>申請を受け付けました</div>
                 <div style={{fontSize:8.5,color:C.txM,lineHeight:1.7}}>承認結果はメッセージタブに通知されます。</div>
               </div>
-              {/* ④ 承認/拒否ボタン（自分が起案者の場合を想定したUI） */}
-              <div style={{background:"rgba(255,153,0,0.06)",border:"1px solid rgba(255,153,0,0.2)",borderRadius:7,padding:"10px 13px",marginBottom:12}}>
-                <div style={{fontSize:8,color:"#ff9900",letterSpacing:"0.14em",marginBottom:8}}>起案者として承認する（デモ）</div>
-                <div style={{display:"flex",gap:8}}>
-                  <div style={{flex:1}}><Btn label="承認する" onClick={()=>{
-                    setAssignedRegs(p=>[...p,assignTarget.reg]);
-                    setPendingRegs(p=>p.filter(r=>r!==assignTarget.reg));
-                    setBoardItems(p=>p.map(b=>b.reg===assignTarget.reg?{...b,seats:Math.max(0,b.seats-1)}:b));
-                    setAssignTarget(null);
-                    setInnerTab("message");
-                  }}/></div>
-                  <div style={{flex:1}}><Btn label="拒否する" variant="danger" onClick={()=>{
-                    setPendingRegs(p=>p.filter(r=>r!==assignTarget.reg));
-                    setAssignTarget(null);
-                  }}/></div>
-                </div>
-              </div>
-              <div style={{background:"rgba(0,255,136,0.07)",border:"1px solid rgba(0,255,136,0.3)",borderRadius:7,padding:"11px 13px",marginBottom:12}}>
-                <div style={{fontSize:10,color:C.green,fontWeight:700,letterSpacing:"0.08em",marginBottom:2}}>申請が完了しました</div>
-                <div style={{fontSize:9,color:C.txM,letterSpacing:"0.04em",lineHeight:1.7}}>メッセージタブに自動遷移します。</div>
-              </div>
-              <Btn label="プロジェクトルームへ" onClick={() => {
-                const reg = assignTarget.reg;
-                const title = assignTarget.title;
-                setAssignTarget(null);
-                setProjectRoom({ reg, title });
-                onNudge();
-              }}/>
+              <Btn label="メッセージタブで確認する" onClick={() => { setAssignTarget(null); setInnerTab("message"); }}/>
               <div style={{height:8}}/>
               <Btn label="閉じる" onClick={() => setAssignTarget(null)} variant="ghost"/>
             </>
