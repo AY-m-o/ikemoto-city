@@ -44,10 +44,10 @@ function BellIcon({ hasUnread }) {
   return (
     <div style={{position:"relative",width:15,height:16,display:"flex",alignItems:"center",justifyContent:"center"}}>
       <svg width="15" height="16" viewBox="0 0 15 16" fill="none" xmlns="http://www.w3.org/2000/svg" style={{display:"block"}}>
-        <path d="M7.5 1.5C7.5 1.5 4 3.5 4 8V11.5H11V8C11 3.5 7.5 1.5 7.5 1.5Z" stroke="#ffffff" strokeWidth="1.2" fill="none" strokeLinejoin="round"/>
-        <path d="M4 11.5H11L11.8 13H3.2L4 11.5Z" stroke="#ffffff" strokeWidth="1.2" fill="none" strokeLinejoin="round"/>
-        <path d="M6.2 13.5C6.2 13.5 6.5 14.8 7.5 14.8C8.5 14.8 8.8 13.5 8.8 13.5" stroke="#ffffff" strokeWidth="1.2" fill="none" strokeLinecap="round"/>
-        <line x1="7.5" y1="0.5" x2="7.5" y2="1.8" stroke="#ffffff" strokeWidth="1.2" strokeLinecap="round"/>
+        <path d="M7.5 1.5C7.5 1.5 4 3.5 4 8V11.5H11V8C11 3.5 7.5 1.5 7.5 1.5Z" stroke="#00ff88" strokeWidth="1.2" fill="none" strokeLinejoin="round"/>
+        <path d="M4 11.5H11L11.8 13H3.2L4 11.5Z" stroke="#00ff88" strokeWidth="1.2" fill="none" strokeLinejoin="round"/>
+        <path d="M6.2 13.5C6.2 13.5 6.5 14.8 7.5 14.8C8.5 14.8 8.8 13.5 8.8 13.5" stroke="#00ff88" strokeWidth="1.2" fill="none" strokeLinecap="round"/>
+        <line x1="7.5" y1="0.5" x2="7.5" y2="1.8" stroke="#00ff88" strokeWidth="1.2" strokeLinecap="round"/>
       </svg>
       {hasUnread && <div style={{position:"absolute",top:1,right:0,width:5,height:5,borderRadius:"50%",background:"#ff4455",boxShadow:"0 0 4px rgba(255,68,85,0.8)",border:"1px solid rgba(6,11,21,0.9)"}}/>}
     </div>
@@ -264,15 +264,15 @@ export default function AppShell({ citizenId, userId, onLogout }) {
             <button onClick={() => { setShowSearch(v => !v); setShowLangMenu(false); setShowNotif(false); setSearchQuery(""); }}
               style={{height:28,width:28,background:showSearch?"rgba(0,255,136,0.1)":"rgba(255,255,255,0.04)",border:"1px solid "+(showSearch?"rgba(0,255,136,0.5)":"rgba(255,255,255,0.08)"),borderRadius:6,padding:0,cursor:"pointer",color:"#ffffff",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,transition:"all 0.18s",boxShadow:showSearch?"0 0 8px rgba(0,255,136,0.3)":"none"}}>
               <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
-                <circle cx="5.5" cy="5.5" r="4" stroke="#ffffff" strokeWidth="1.3"/>
-                <line x1="9" y1="9" x2="12" y2="12" stroke="#ffffff" strokeWidth="1.3" strokeLinecap="round"/>
+                <circle cx="5.5" cy="5.5" r="4" stroke="#00ff88" strokeWidth="1.3"/>
+                <line x1="9" y1="9" x2="12" y2="12" stroke="#00ff88" strokeWidth="1.3" strokeLinecap="round"/>
               </svg>
             </button>
 
             {/* 言語ドロップダウン */}
             <div style={{position:"relative"}}>
               <button onClick={() => { setShowLangMenu(v => !v); setShowNotif(false); setShowSearch(false); }}
-                style={{height:28,background:"rgba(255,255,255,0.04)",border:"1px solid rgba(255,255,255,0.08)",borderRadius:6,padding:"0 9px",cursor:"pointer",color:"#ffffff",fontSize:8.5,letterSpacing:"0.08em",fontWeight:600,fontFamily:"inherit",transition:"all 0.18s",display:"flex",alignItems:"center",gap:4,whiteSpace:"nowrap",flexShrink:0}}>
+                style={{height:28,background:"rgba(255,255,255,0.04)",border:"1px solid rgba(255,255,255,0.08)",borderRadius:6,padding:"0 9px",cursor:"pointer",color:"#00ff88",fontSize:8.5,letterSpacing:"0.08em",fontWeight:600,fontFamily:"inherit",transition:"all 0.18s",display:"flex",alignItems:"center",gap:4,whiteSpace:"nowrap",flexShrink:0}}>
                 {lang} <span style={{fontSize:7,opacity:0.6}}>&#x25BC;</span>
               </button>
               {showLangMenu && (
@@ -290,7 +290,7 @@ export default function AppShell({ citizenId, userId, onLogout }) {
             {/* 通知ベル */}
             <div style={{position:"relative"}}>
               <button onClick={() => { setShowNotif(v => !v); setShowLangMenu(false); setShowSearch(false); if (!readNotif) setReadNotif(true); }}
-                style={{height:28,width:28,background:showNotif?"rgba(0,255,136,0.1)":"rgba(255,255,255,0.04)",border:"1px solid "+(showNotif?"rgba(0,255,136,0.4)":"rgba(255,255,255,0.08)"),borderRadius:6,padding:0,cursor:"pointer",color:"#ffffff",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,transition:"all 0.18s",boxShadow:showNotif?"0 0 8px rgba(0,255,136,0.25)":"none"}}>
+                style={{height:28,width:28,background:showNotif?"rgba(0,255,136,0.1)":"rgba(255,255,255,0.04)",border:"1px solid "+(showNotif?"rgba(0,255,136,0.4)":"rgba(255,255,255,0.08)"),borderRadius:6,padding:0,cursor:"pointer",color:"#00ff88",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,transition:"all 0.18s",boxShadow:showNotif?"0 0 8px rgba(0,255,136,0.25)":"none"}}>
                 <BellIcon hasUnread={!readNotif}/>
               </button>
               {showNotif && (
@@ -319,7 +319,7 @@ export default function AppShell({ citizenId, userId, onLogout }) {
               onMouseUp={cancelLongPress}
               onTouchStart={startLongPress}
               onTouchEnd={cancelLongPress}
-              style={{height:28,background:showId?"rgba(0,255,136,0.12)":"rgba(255,255,255,0.04)",border:"1px solid "+(showId?"rgba(0,255,136,0.5)":"rgba(255,255,255,0.08)"),borderRadius:6,padding:"0 10px",cursor:"pointer",color:showId?"#00ff88":"#ffffff",fontSize:9,letterSpacing:"0.08em",fontWeight:600,fontFamily:"inherit",transition:"all 0.18s",whiteSpace:"nowrap",flexShrink:0,display:"flex",alignItems:"center",boxShadow:showId?"0 0 10px rgba(0,255,136,0.25)":"none",textShadow:showId?"0 0 6px rgba(0,255,136,0.5)":"none"}}>
+              style={{height:28,background:showId?"rgba(0,255,136,0.12)":"rgba(255,255,255,0.04)",border:"1px solid "+(showId?"rgba(0,255,136,0.5)":"rgba(255,255,255,0.08)"),borderRadius:6,padding:"0 10px",cursor:"pointer",color:"#00ff88",fontSize:9,letterSpacing:"0.08em",fontWeight:600,fontFamily:"inherit",transition:"all 0.18s",whiteSpace:"nowrap",flexShrink:0,display:"flex",alignItems:"center",boxShadow:showId?"0 0 10px rgba(0,255,136,0.25)":"none",textShadow:showId?"0 0 6px rgba(0,255,136,0.5)":"none"}}>
               {showId ? "x" : "◈ 市民証"}
             </button>
           </div>
