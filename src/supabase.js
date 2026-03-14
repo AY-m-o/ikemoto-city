@@ -165,3 +165,12 @@ export async function insertAssignment(userId, projectId) {
     .upsert({ user_id: userId, project_id: projectId, status: "pending" }, { onConflict: "project_id,user_id" });
   if (error) throw error;
 }
+
+export async function deleteAssignment(userId, projectId) {
+  const { error } = await supabase
+    .from("assignments")
+    .delete()
+    .eq("user_id", userId)
+    .eq("project_id", projectId);
+  if (error) throw error;
+}

@@ -3,7 +3,7 @@ import { C, BOARD_ITEMS_INIT, ASSIGN_LOGS, runSequence } from "./constants.js";
 import { Stamp, SectionHead, LogTerminal, Btn, Modal } from "./components.jsx";
 import { useI18n } from "./i18n.js";
 import MessageRoom from "./MessageRoom.jsx";
-import { supabase, fetchAssignments, insertAssignment } from "./supabase.js";
+import { supabase, fetchAssignments, insertAssignment, deleteAssignment } from "./supabase.js";
 
 // ─────────────────────────────────────────────
 // PROJECT DETAIL（プロジェクト詳細）
@@ -52,11 +52,19 @@ function ProjectDetail({ item, onBack, onAssign, onRoom, onNudge, alreadyAssigne
         {alreadyAssigned ? (
           <Btn label="プロジェクトルームへ" onClick={() => onRoom(item)}/>
         ) : alreadyPending ? (
-          <div style={{background:"rgba(245,158,11,0.08)",border:"1px solid rgba(245,158,11,0.35)",borderRadius:7,padding:"11px 14px",marginBottom:8,display:"flex",alignItems:"center",justifyContent:"center",gap:8}}>
-            <span style={{fontSize:13,color:"#f59e0b"}}>◐</span>
-            <div>
-              <div style={{fontSize:9.5,color:"#f59e0b",fontWeight:700,letterSpacing:"0.08em"}}>申請中</div>
-              <div style={{fontSize:8,color:"rgba(245,158,11,0.7)",letterSpacing:"0.04em",marginTop:2}}>起案者の承認をお待ちください</div>
+          <div style={{background:"rgba(245,158,11,0.08)",border:"1px solid rgba(245,158,11,0.35)",borderRadius:7,padding:"11px 14px",marginBottom:8}}>
+            <div style={{display:"flex",alignItems:"center",justifyContent:"space-between"}}>
+              <div style={{display:"flex",alignItems:"center",gap:8}}>
+                <span style={{fontSize:13,color:"#f59e0b"}}>◐</span>
+                <div>
+                  <div style={{fontSize:9.5,color:"#f59e0b",fontWeight:700,letterSpacing:"0.08em"}}>申請中</div>
+                  <div style={{fontSize:8,color:"rgba(245,158,11,0.7)",letterSpacing:"0.04em",marginTop:2}}>起案者の承認をお待ちください</div>
+                </div>
+              </div>
+              <button onClick={() => onCancel(item)}
+                style={{padding:"6px 12px",background:"rgba(239,68,68,0.15)",border:"1px solid rgba(239,68,68,0.4)",borderRadius:6,color:"#ef4444",fontSize:8.5,fontWeight:700,cursor:"pointer",fontFamily:"inherit",letterSpacing:"0.06em",flexShrink:0}}>
+                申請を取り消す
+              </button>
             </div>
           </div>
         ) : item.status !== "充足" ? (
@@ -162,6 +170,7 @@ export default function Board({ onNudge, lang, citizenId }) {
           setMessage("");
           onNudge();
         }}
+        onCancel={(item) => { cancelAssign(item.reg); setDetailItem(null); onNudge(); }}
         onRoom={(item) => { setDetailItem(null); setProjectRoom({ reg:item.reg, title:item.title }); onNudge(); }}
         onNudge={onNudge}
       />
@@ -178,6 +187,14 @@ export default function Board({ onNudge, lang, citizenId }) {
     setAssignLogs([]);
     setSelectedSkill("");
     setMessage("");
+  };
+
+  const cancelAssign = async (reg) => {
+    setPendingRegs(prev => prev.filter(r => r !== reg));
+    if (currentUserId) {
+      try { await deleteAssignment(currentUserId, reg); } catch(_) {}
+    }
+    onNudge();
   };
 
   const runAssign = () => {
@@ -241,9 +258,17 @@ export default function Board({ onNudge, lang, citizenId }) {
                 <div key={p.reg} style={{background:"rgba(255,153,0,0.05)",border:"1px solid rgba(255,153,0,0.3)",borderLeft:"3px solid #ff9900",borderRadius:8,padding:"12px 14px",marginBottom:9}}>
                   <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:6}}>
                     <div className="mono" style={{fontSize:8,color:"rgba(255,153,0,0.6)",letterSpacing:"0.12em"}}>{p.dept} / {p.reg}</div>
-                    <span style={{background:"rgba(255,153,0,0.15)",color:"#ff9900",fontSize:7.5,padding:"2px 8px",borderRadius:3,fontWeight:700}}>
-                      {isLeadOf(p.reg) ? "承認待ち（起案者）" : "承認待ち"}
-                    </span>
+                    <div style={{display:"flex",alignItems:"center",gap:6}}>
+                      <span style={{background:"rgba(255,153,0,0.15)",color:"#ff9900",fontSize:7.5,padding:"2px 8px",borderRadius:3,fontWeight:700}}>
+                        {isLeadOf(p.reg) ? "承認待ち（起案者）" : "承認待ち"}
+                      </span>
+                      {!isLeadOf(p.reg) && (
+                        <button onClick={() => cancelAssign(p.reg)}
+                          style={{padding:"3px 9px",background:"rgba(239,68,68,0.12)",border:"1px solid rgba(239,68,68,0.35)",borderRadius:4,color:"#ef4444",fontSize:7.5,fontWeight:700,cursor:"pointer",fontFamily:"inherit",letterSpacing:"0.05em"}}>
+                          申請を取り消す
+                        </button>
+                      )}
+                    </div>
                   </div>
                   <div style={{fontSize:11,fontWeight:600,color:C.tx,letterSpacing:"0.03em",lineHeight:1.3,marginBottom:6}}>{p.title}</div>
                   {isLeadOf(p.reg) ? (
