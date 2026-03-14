@@ -139,14 +139,32 @@ export async function toggleFollow(userId, shopName) {
 
 // ── 通報 ─────────────────────────────────────
 
-export async function submitReport(reporterId, targetId, reason) {
-  await supabase.from("reports").insert({
-    reporter_id: reporterId,
-    target_id: targetId,
+export async function submitReport({ reporterUserId, targetReg, targetTitle, reason }) {
+  const { error } = await supabase.from("reports").insert({
+    reporter_user_id: reporterUserId,
+    reporter_id:      reporterUserId,
+    target_id:        targetReg || targetTitle,
     reason,
-    status: "pending",
-    created_at: new Date().toISOString(),
+    status:           "pending",
+    created_at:       new Date().toISOString(),
   });
+  if (error) throw error;
+}
+
+export async function fetchHiddenRegs(userId) {
+  // 自分が通報したプロジェクト（通報者からは非表示）
+  const { data: reported } = await supabase
+    .from("reports")
+    .select("target_id")
+    .eq("reporter_user_id", userId);
+  // AI が auto_blocked にしたプロジェクト（全員から非表示）
+  const { data: blocked } = await supabase
+    .from("projects")
+    .select("reg")
+    .eq("hidden", true);
+  const reportedRegs = (reported || []).map(r => r.target_id);
+  const blockedRegs  = (blocked  || []).map(r => r.reg);
+  return [...new Set([...reportedRegs, ...blockedRegs])];
 }
 
 // ── アサイン（参加申請）────────────────────────

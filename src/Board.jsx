@@ -3,7 +3,7 @@ import { C, BOARD_ITEMS_INIT, ASSIGN_LOGS, DOMAINS, runSequence } from "./consta
 import { Stamp, SectionHead, LogTerminal, Btn, Modal } from "./components.jsx";
 import { useI18n } from "./i18n.js";
 import MessageRoom from "./MessageRoom.jsx";
-import { supabase, fetchAssignments, insertAssignment, deleteAssignment, fetchProjects, createProject } from "./supabase.js";
+import { supabase, fetchAssignments, insertAssignment, deleteAssignment, fetchProjects, createProject, submitReport, fetchHiddenRegs } from "./supabase.js";
 
 // ─────────────────────────────────────────────
 // PROJECT DETAIL（プロジェクト詳細）
@@ -97,10 +97,12 @@ export default function Board({ onNudge, lang, citizenId }) {
   const [projectRoom, setProjectRoom] = useState(null);
   const [detailItem, setDetailItem] = useState(null);
   const [innerTab, setInnerTab] = useState("board");
-  const [reportTarget, setReportTarget] = useState(null);
+  const [reportTarget, setReportTarget] = useState(null); // { reg, title }
   const [showReport, setShowReport] = useState(false);
   const [reportDone, setReportDone] = useState(false);
   const [reportReason, setReportReason] = useState("");
+  const [reportSubmitting, setReportSubmitting] = useState(false);
+  const [reportedRegs, setReportedRegs] = useState([]);
   const [authChecking, setAuthChecking] = useState(false);
   const [authTarget, setAuthTarget]     = useState(null);
   const [currentUserId, setCurrentUserId] = useState(null);
@@ -143,6 +145,10 @@ export default function Board({ onNudge, lang, citizenId }) {
       setAssignedRegs(assigned);
       setPendingRegs(pending);
 
+      // 通報済み・非表示プロジェクトを取得
+      const hidden = await fetchHiddenRegs(user.id);
+      setReportedRegs(hidden);
+
       // Supabaseからプロジェクトを取得してBOARD_ITEMS_INITとマージ
       const dbProjects = await fetchProjects();
       if (dbProjects.length > 0) {
@@ -176,9 +182,9 @@ export default function Board({ onNudge, lang, citizenId }) {
     }, 500);
   };
 
-  const openReport = (e, label) => {
+  const openReport = (e, item) => {
     e.stopPropagation();
-    setReportTarget(label);
+    setReportTarget(item);
     setShowReport(true);
     setReportDone(false);
     setReportReason("");
@@ -430,7 +436,7 @@ export default function Board({ onNudge, lang, citizenId }) {
             </button>
           )}
 
-          {boardItems.map((item) => {
+          {boardItems.filter(item => !reportedRegs.includes(item.reg)).map((item) => {
             const assigned = assignedRegs.includes(item.reg);
             return (
               <div key={item.reg} className="card"
@@ -451,7 +457,7 @@ export default function Board({ onNudge, lang, citizenId }) {
                     {pendingRegs.includes(item.reg) && !assigned && <span style={{background:"rgba(245,158,11,0.15)",color:"#f59e0b",fontSize:8,padding:"2px 7px",borderRadius:3,letterSpacing:"0.1em",fontWeight:600}}>申請中</span>}
                   </div>
                   <span style={{fontSize:8,color:C.txL,letterSpacing:"0.1em",flexShrink:0}}>{item.reg}</span>
-                  <button onClick={e => openReport(e, item.title)}
+                  <button onClick={(e) => openReport(e, item)}
                     style={{background:"transparent",border:"none",color:C.txL+"99",fontSize:16,cursor:"pointer",padding:"0 2px",lineHeight:1,flexShrink:0,display:"flex",alignItems:"center",justifyContent:"center"}}>
                     ⋯
                   </button>
@@ -530,7 +536,7 @@ export default function Board({ onNudge, lang, citizenId }) {
           {!reportDone ? (
             <>
               <div style={{fontSize:12,fontWeight:700,color:C.tx,marginBottom:4}}>通報</div>
-              <div style={{fontSize:8.5,color:C.txL,marginBottom:14,letterSpacing:"0.04em",lineHeight:1.6}}>『{reportTarget}』を通報する理由を選択してください</div>
+              <div style={{fontSize:8.5,color:C.txL,marginBottom:14,letterSpacing:"0.04em",lineHeight:1.6}}>『{reportTarget?.title || ""}』を通報する理由を選択してください</div>
               {["スパム","不適切なコンテンツ","規約違反","その他"].map(reason => (
                 <div key={reason} onClick={() => setReportReason(reason)}
                   style={{padding:"11px 13px",borderRadius:7,marginBottom:7,cursor:"pointer",display:"flex",alignItems:"center",gap:10,background:reportReason===reason?"rgba(46,107,79,0.15)":C.bg,border:"1px solid "+(reportReason===reason?"rgba(46,107,79,0.4)":C.border),transition:"all 0.15s"}}>
@@ -542,7 +548,31 @@ export default function Board({ onNudge, lang, citizenId }) {
               ))}
               <div style={{marginTop:10,display:"flex",gap:8}}>
                 <button onClick={() => setShowReport(false)} style={{flex:1,padding:"9px",background:"transparent",border:"1px solid "+C.border,borderRadius:7,color:C.txL,fontSize:9.5,cursor:"pointer",fontFamily:"inherit"}}>キャンセル</button>
-                <button onClick={() => { if(reportReason) setReportDone(true); }} style={{flex:1,padding:"9px",background:reportReason?C.green:"rgba(46,107,79,0.25)",border:"none",borderRadius:7,color:"#fff",fontSize:9.5,fontWeight:600,cursor:reportReason?"pointer":"default",fontFamily:"inherit",transition:"background 0.2s"}}>送信する</button>
+                <button disabled={!reportReason || reportSubmitting}
+                  onClick={async () => {
+                    if (!reportReason) return;
+                    setReportSubmitting(true);
+                    try {
+                      await submitReport({
+                        reporterUserId: currentUserId,
+                        targetReg: reportTarget?.reg,
+                        targetTitle: reportTarget?.title,
+                        reason: reportReason,
+                      });
+                      // 通報者の画面から即非表示
+                      if (reportTarget?.reg) {
+                        setReportedRegs(prev => [...new Set([...prev, reportTarget.reg])]);
+                      }
+                      setReportDone(true);
+                    } catch(e) {
+                      alert("送信に失敗しました: " + e.message);
+                    } finally {
+                      setReportSubmitting(false);
+                    }
+                  }}
+                  style={{flex:1,padding:"9px",background:reportReason&&!reportSubmitting?C.green:"rgba(46,107,79,0.25)",border:"none",borderRadius:7,color:"#fff",fontSize:9.5,fontWeight:600,cursor:reportReason&&!reportSubmitting?"pointer":"default",fontFamily:"inherit",transition:"background 0.2s"}}>
+                  {reportSubmitting ? "送信中…" : "送信する"}
+                </button>
               </div>
             </>
           ) : (

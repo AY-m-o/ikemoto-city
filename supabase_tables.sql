@@ -125,3 +125,24 @@ create policy "projects: public read" on public.projects for select using (true)
 create policy "projects: auth insert" on public.projects for insert with check (auth.uid() = lead_user_id);
 create policy "projects: owner update" on public.projects for update using (auth.uid() = lead_user_id);
 
+-- ⑨ AI モデレーション用カラム追加（Supabase SQL Editorで実行）
+-- reports テーブルに AI 判定カラムを追加
+alter table public.reports add column if not exists reporter_user_id uuid references public.users(id) on delete set null;
+alter table public.reports add column if not exists ai_verdict text;
+alter table public.reports add column if not exists ai_reason  text;
+-- status の取りうる値: pending | auto_blocked | pending_review | dismissed | escalated
+
+-- projects テーブルに非表示フラグを追加
+alter table public.projects add column if not exists hidden boolean default false;
+
+-- projects の public read を hidden=false のみに更新
+drop policy if exists "projects: public read" on public.projects;
+create policy "projects: public read" on public.projects
+  for select using (hidden = false or auth.uid() = lead_user_id);
+
+-- users テーブルに違反カウントを追加
+alter table public.users add column if not exists report_count int default 0;
+
+-- reports に AI サービス（service_role）からの UPDATE を許可
+create policy if not exists "reports: service update" on public.reports
+  for update using (true) with check (true);
