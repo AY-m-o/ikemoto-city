@@ -61,7 +61,7 @@ function ProjectDetail({ item, onBack, onAssign, onRoom, onNudge, alreadyAssigne
                   <div style={{fontSize:8,color:"rgba(245,158,11,0.7)",letterSpacing:"0.04em",marginTop:2}}>起案者の承認をお待ちください</div>
                 </div>
               </div>
-              <button onClick={() => onCancel(item)}
+              <button onClick={() => onCancelConfirm(item)}
                 style={{padding:"6px 12px",background:"rgba(239,68,68,0.15)",border:"1px solid rgba(239,68,68,0.4)",borderRadius:6,color:"#ef4444",fontSize:8.5,fontWeight:700,cursor:"pointer",fontFamily:"inherit",letterSpacing:"0.06em",flexShrink:0}}>
                 申請を取り消す
               </button>
@@ -106,6 +106,11 @@ export default function Board({ onNudge, lang, citizenId }) {
   const [currentUserId, setCurrentUserId] = useState(null);
   const [currentCitizenId, setCurrentCitizenId] = useState(citizenId || "");
   const [currentCitizenName, setCurrentCitizenName] = useState("");
+
+  // 確認ダイアログ用 state
+  const [cancelConfirmReg, setCancelConfirmReg] = useState(null);
+  const [cancelLoading, setCancelLoading] = useState(false);
+  const [cancelError, setCancelError] = useState("");
 
   // プロジェクト作成フォーム state
   const [showCreate, setShowCreate] = useState(false);
@@ -202,7 +207,8 @@ export default function Board({ onNudge, lang, citizenId }) {
           setMessage("");
           onNudge();
         }}
-        onCancel={(item) => { cancelAssign(item.reg); setDetailItem(null); onNudge(); }}
+        onCancel={(item) => { setCancelConfirmReg(item.reg); setDetailItem(null); onNudge(); }}
+        onCancelConfirm={(item) => { setCancelConfirmReg(item.reg); setDetailItem(null); onNudge(); }}
         onRoom={(item) => { setDetailItem(null); setProjectRoom({ reg:item.reg, title:item.title }); onNudge(); }}
         onNudge={onNudge}
       />
@@ -222,11 +228,23 @@ export default function Board({ onNudge, lang, citizenId }) {
   };
 
   const cancelAssign = async (reg) => {
+    setCancelLoading(true);
+    setCancelError("");
+    // 先にローカルステートを更新（楽観的UI更新）
     setPendingRegs(prev => prev.filter(r => r !== reg));
-    if (currentUserId) {
-      try { await deleteAssignment(currentUserId, reg); } catch(_) {}
+    try {
+      if (currentUserId) {
+        await deleteAssignment(currentUserId, reg);
+      }
+      setCancelConfirmReg(null);
+      onNudge();
+    } catch(e) {
+      // 失敗時はstateを元に戻す
+      setPendingRegs(prev => prev.includes(reg) ? prev : [...prev, reg]);
+      setCancelError("取り消しに失敗しました: " + e.message);
+    } finally {
+      setCancelLoading(false);
     }
-    onNudge();
   };
 
   const handleSubmitCreate = async () => {
@@ -340,7 +358,7 @@ export default function Board({ onNudge, lang, citizenId }) {
                         {isLeadOf(p.reg) ? "承認待ち（起案者）" : "承認待ち"}
                       </span>
                       {!isLeadOf(p.reg) && (
-                        <button onClick={() => cancelAssign(p.reg)}
+                        <button onClick={() => setCancelConfirmReg(p.reg)}
                           style={{padding:"3px 9px",background:"rgba(239,68,68,0.12)",border:"1px solid rgba(239,68,68,0.35)",borderRadius:4,color:"#ef4444",fontSize:7.5,fontWeight:700,cursor:"pointer",fontFamily:"inherit",letterSpacing:"0.05em"}}>
                           申請を取り消す
                         </button>
@@ -617,6 +635,36 @@ export default function Board({ onNudge, lang, citizenId }) {
           {!createLoading && (
             <button onClick={() => { setShowCreate(false); setCreateError(""); }}
               style={{width:"100%",marginTop:8,padding:"10px",background:"transparent",border:"1px solid "+C.border,borderRadius:8,color:C.txL,fontSize:10,cursor:"pointer",fontFamily:"inherit"}}>
+              キャンセル
+            </button>
+          )}
+        </Modal>
+      )}
+
+      {/* 申請取り消し確認ダイアログ */}
+      {cancelConfirmReg && (
+        <Modal onClose={() => { if (!cancelLoading) { setCancelConfirmReg(null); setCancelError(""); } }}>
+          <div style={{textAlign:"center",padding:"8px 0 4px"}}>
+            <div style={{fontSize:22,marginBottom:10,color:"#f59e0b"}}>◐</div>
+            <div style={{fontSize:13,fontWeight:700,color:C.tx,marginBottom:8}}>申請を取り消しますか？</div>
+            <div style={{fontSize:9.5,color:C.txM,lineHeight:1.75,letterSpacing:"0.04em",marginBottom:20}}>
+              「{(boardItems.find(b => b.reg === cancelConfirmReg) || {}).title || cancelConfirmReg}」への<br/>
+              参加申請を取り消します。<br/>
+              <span style={{color:C.txL,fontSize:9}}>取り消し後は再度申請が必要です。</span>
+            </div>
+          </div>
+          {cancelError && (
+            <div style={{background:"rgba(239,68,68,0.08)",border:"1px solid rgba(239,68,68,0.3)",borderRadius:6,padding:"8px 12px",marginBottom:12}}>
+              <div style={{fontSize:9,color:"#ef4444"}}>{cancelError}</div>
+            </div>
+          )}
+          <button onClick={() => cancelAssign(cancelConfirmReg)} disabled={cancelLoading}
+            style={{width:"100%",padding:"12px",background:cancelLoading?"rgba(239,68,68,0.2)":"rgba(239,68,68,0.85)",border:"none",borderRadius:8,color:"#fff",fontSize:11,fontWeight:700,cursor:cancelLoading?"default":"pointer",fontFamily:"inherit",letterSpacing:"0.08em",marginBottom:8,transition:"background 0.2s"}}>
+            {cancelLoading ? "処理中…" : "取り消す"}
+          </button>
+          {!cancelLoading && (
+            <button onClick={() => { setCancelConfirmReg(null); setCancelError(""); }}
+              style={{width:"100%",padding:"10px",background:"transparent",border:"1px solid "+C.border,borderRadius:8,color:C.txL,fontSize:10,cursor:"pointer",fontFamily:"inherit"}}>
               キャンセル
             </button>
           )}
