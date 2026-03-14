@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import { C, TICKER, TABS, MARKET_ITEMS, SHOP_META, nudge } from "./constants.js";
 import { Stamp, Watermark, RR } from "./components.jsx";
 import Board        from "./Board.jsx";
@@ -8,7 +8,34 @@ import GovScreen    from "./GovScreen.jsx";
 import MyPage       from "./MyPage.jsx";
 import { fetchLikes, fetchFollows, toggleLike, toggleFollow } from "./supabase.js";
 
+class ScreenErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false, error: null };
+  }
+  static getDerivedStateFromError(error) {
+    return { hasError: true, error };
+  }
+  componentDidCatch(error, info) {
+    console.error("ScreenErrorBoundary caught:", error, info);
+  }
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:"20px",background:"#0a0f1e",color:"#f9fafb"}}>
+          <div style={{fontSize:11,color:"#f87171",marginBottom:8,fontWeight:600}}>画面の読み込みに失敗しました</div>
+          <div style={{fontSize:9,color:"rgba(255,255,255,0.4)",fontFamily:"monospace",maxWidth:"100%",overflow:"auto",padding:"8px",background:"rgba(255,0,0,0.05)",borderRadius:4}}>
+            {this.state.error && this.state.error.message}
+          </div>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
 const LANGS = ["JP", "EN", "\u97d3", "\u4e2d", "ES"];
+
 
 const NOTIFS = [
   { id:1, icon:"assign", text:"\u30a2\u30b5\u30a4\u30f3\u7533\u8acb\u304c\u627f\u8a8d\u3055\u308c\u307e\u3057\u305f\u3002\u300c\u5e02\u6c11\u767d\u66f8 \u7b2c\u4e8c\u7ae0 \u6620\u50cf\u5316\u300d\u306b\u53c2\u52a0\u3067\u304d\u307e\u3059\u3002", time:"4\u5206\u524d" },
@@ -421,14 +448,14 @@ export default function AppShell({ citizenId, userId, onLogout }) {
       <div ref={contentRef} key={screenKey} className="screen-fade"
         style={{flex:1,display:"flex",flexDirection:"column",overflowY:"auto",position:"relative",background:"#0a0f1e",color:"#f9fafb"}}>
         {tab==="board"  && <Board        key={resetKeys.board}  onNudge={onNudge} lang={lang} citizenId={citizenId}/>}
-        {tab==="market" && <MarketScreen key={resetKeys.market} onNudge={onNudge} lang={lang}
+        {tab==="market" && <ScreenErrorBoundary key={resetKeys.market}><MarketScreen onNudge={onNudge} lang={lang}
           followedShops={followedShops} onFollowShop={handleFollowShop}
           likedItems={likedItems} onLikeItem={handleLikeItem}
           likedShops={likedShops} onLikeShop={handleLikeShop}
           blockedShops={blockedShops} onBlockShop={handleBlockShop}
-          jumpTo={marketJump} onJumpClear={() => setMarketJump(null)}/>}
-        {tab==="gov"    && <GovScreen    key={resetKeys.gov}    onNudge={onNudge} lang={lang}/>}
-        {tab==="proc"   && <ProcScreen   key={resetKeys.proc}   onNudge={onNudge} lang={lang}/>}
+          jumpTo={marketJump} onJumpClear={() => setMarketJump(null)}/></ScreenErrorBoundary>}
+        {tab==="gov"    && <ScreenErrorBoundary key={resetKeys.gov}><GovScreen    onNudge={onNudge} lang={lang}/></ScreenErrorBoundary>}
+        {tab==="proc"   && <ScreenErrorBoundary key={resetKeys.proc}><ProcScreen   onNudge={onNudge} lang={lang}/></ScreenErrorBoundary>}
         {tab==="my"     && <MyPage       key={resetKeys.my}     citizenId={citizenId} onNudge={onNudge} onLogout={onLogout} lang={lang}
           followedShops={followedShops} likedItems={likedItems} likedShops={likedShops}
           blockedShops={blockedShops}
