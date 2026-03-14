@@ -190,10 +190,10 @@ export function Modal({ children, onClose }) {
   return (
     <div
       onClick={onClose}
-      style={{position:"fixed",inset:0,zIndex:500,background:"rgba(6,11,21,0.88)",animation:"fadeIn 0.2s ease",backdropFilter:"blur(6px)"}}>
+      style={{position:"fixed",top:0,left:0,width:"100%",height:"100%",display:"flex",alignItems:"center",justifyContent:"center",zIndex:1000,background:"rgba(6,11,21,0.88)",animation:"fadeIn 0.2s ease",backdropFilter:"blur(6px)"}}>
       <div
         onClick={(e)=>e.stopPropagation()}
-        style={{position:"fixed",top:"50%",left:"50%",transform:"translate(-50%,-50%)",background:C.card,width:"calc(100% - 32px)",maxWidth:374,borderRadius:16,padding:"22px 18px 24px",animation:"slideUp 0.25s ease",maxHeight:"88vh",overflowY:"auto",scrollbarWidth:"none",border:"1px solid rgba(0,255,136,0.18)",boxShadow:"0 8px 48px rgba(0,0,0,0.6),0 0 0 1px rgba(0,255,136,0.06)"}}>
+        style={{background:C.card,width:"calc(100% - 32px)",maxWidth:374,borderRadius:16,padding:"22px 18px 24px",animation:"slideUp 0.25s ease",maxHeight:"88vh",overflowY:"auto",scrollbarWidth:"none",border:"1px solid rgba(0,255,136,0.18)",boxShadow:"0 8px 48px rgba(0,0,0,0.6),0 0 0 1px rgba(0,255,136,0.06)"}}>
         {children}
       </div>
     </div>
