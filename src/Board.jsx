@@ -302,11 +302,6 @@ export default function Board({ onNudge, lang, citizenId }) {
         try { await insertAssignment(currentUserId, assignTarget.reg); } catch(_) {}
       }
       setAssignPhase("done");
-      setTimeout(() => {
-        setAssignTarget(null);
-        setInnerTab("message");
-        onNudge();
-      }, 1500);
     });
   };
 
