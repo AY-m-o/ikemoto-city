@@ -104,3 +104,24 @@ create table if not exists public.reports (
 );
 alter table public.reports enable row level security;
 create policy "reports: insert own" on public.reports for insert with check (auth.uid() = reporter_id);
+
+-- ⑧ projects（プロジェクト）
+create table if not exists public.projects (
+  id          uuid primary key default gen_random_uuid(),
+  reg         text unique not null,
+  title       text not null,
+  "desc"      text,
+  skills      text[] default '{}',
+  seats       int default 3,
+  dept        text,
+  lead        text,
+  lead_id     text,
+  lead_user_id uuid references public.users(id) on delete set null,
+  status      text default '受付中',
+  created_at  timestamptz default now()
+);
+alter table public.projects enable row level security;
+create policy "projects: public read" on public.projects for select using (true);
+create policy "projects: auth insert" on public.projects for insert with check (auth.uid() = lead_user_id);
+create policy "projects: owner update" on public.projects for update using (auth.uid() = lead_user_id);
+

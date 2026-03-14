@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
-import { C, BOARD_ITEMS_INIT, ASSIGN_LOGS, runSequence } from "./constants.js";
+import { C, BOARD_ITEMS_INIT, ASSIGN_LOGS, DOMAINS, runSequence } from "./constants.js";
 import { Stamp, SectionHead, LogTerminal, Btn, Modal } from "./components.jsx";
 import { useI18n } from "./i18n.js";
 import MessageRoom from "./MessageRoom.jsx";
-import { supabase, fetchAssignments, insertAssignment, deleteAssignment } from "./supabase.js";
+import { supabase, fetchAssignments, insertAssignment, deleteAssignment, fetchProjects, createProject } from "./supabase.js";
 
 // ─────────────────────────────────────────────
 // PROJECT DETAIL（プロジェクト詳細）
@@ -104,6 +104,18 @@ export default function Board({ onNudge, lang, citizenId }) {
   const [authChecking, setAuthChecking] = useState(false);
   const [authTarget, setAuthTarget]     = useState(null);
   const [currentUserId, setCurrentUserId] = useState(null);
+  const [currentCitizenId, setCurrentCitizenId] = useState(citizenId || "");
+  const [currentCitizenName, setCurrentCitizenName] = useState("");
+
+  // プロジェクト作成フォーム state
+  const [showCreate, setShowCreate] = useState(false);
+  const [createTitle, setCreateTitle] = useState("");
+  const [createDesc, setCreateDesc] = useState("");
+  const [createSkills, setCreateSkills] = useState([]);
+  const [createSeats, setCreateSeats] = useState(3);
+  const [createDept, setCreateDept] = useState("");
+  const [createLoading, setCreateLoading] = useState(false);
+  const [createError, setCreateError] = useState("");
 
   // ログイン済みユーザーの申請状況をSupabaseから取得
   useEffect(() => {
@@ -111,6 +123,11 @@ export default function Board({ onNudge, lang, citizenId }) {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
       setCurrentUserId(user.id);
+      const meta = user.user_metadata || {};
+      setCurrentCitizenId(meta.citizen_id || citizenId || "");
+      setCurrentCitizenName(meta.citizen_name || "市民");
+
+      // 申請状況を取得
       const rows = await fetchAssignments(user.id);
       const pending = [];
       const assigned = [];
@@ -120,6 +137,21 @@ export default function Board({ onNudge, lang, citizenId }) {
       });
       setAssignedRegs(assigned);
       setPendingRegs(pending);
+
+      // Supabaseからプロジェクトを取得してBOARD_ITEMS_INITとマージ
+      const dbProjects = await fetchProjects();
+      if (dbProjects.length > 0) {
+        const dbMapped = dbProjects.map(p => ({
+          reg: p.reg, title: p.title, dept: p.dept || "建設局",
+          lead: p.lead || "不明", leadId: p.lead_id || "",
+          skills: p.skills || [], status: p.status || "受付中",
+          seats: p.seats || 0, desc: p.desc || "",
+        }));
+        // 重複除外（同じregがあればデータベース側を優先）
+        const dbRegs = new Set(dbMapped.map(p => p.reg));
+        const filtered = BOARD_ITEMS_INIT.filter(b => !dbRegs.has(b.reg));
+        setBoardItems([...dbMapped, ...filtered]);
+      }
     })();
   }, []);
 
@@ -195,6 +227,51 @@ export default function Board({ onNudge, lang, citizenId }) {
       try { await deleteAssignment(currentUserId, reg); } catch(_) {}
     }
     onNudge();
+  };
+
+  const handleSubmitCreate = async () => {
+    if (!createTitle.trim() || !createDept || createSkills.length === 0) {
+      setCreateError("\u30d7\u30ed\u30b8\u30a7\u30af\u30c8\u540d\u30fb\u6240\u5c5e\u5c40\u30fb\u5fc5\u8981\u30b9\u30ad\u30eb\u3092\u5165\u529b\u3057\u3066\u304f\u3060\u3055\u3044");
+      return;
+    }
+    setCreateLoading(true);
+    setCreateError("");
+    const newReg = "REG-" + Date.now().toString(36).toUpperCase().slice(-6);
+    const newItem = {
+      reg: newReg,
+      title: createTitle.trim(),
+      dept: createDept,
+      lead: currentCitizenName,
+      leadId: currentCitizenId,
+      skills: createSkills,
+      status: "\u53d7\u4ed8\u4e2d",
+      seats: createSeats,
+      desc: createDesc.trim(),
+    };
+    try {
+      if (currentUserId) {
+        await createProject({
+          reg: newReg,
+          title: newItem.title,
+          desc: newItem.desc,
+          skills: newItem.skills,
+          seats: newItem.seats,
+          dept: newItem.dept,
+          lead: newItem.lead,
+          leadId: newItem.leadId,
+          leadUserId: currentUserId,
+        });
+      }
+      setBoardItems(prev => [newItem, ...prev]);
+      setAssignedRegs(prev => [...prev, newReg]);
+      setShowCreate(false);
+      setCreateTitle(""); setCreateDesc(""); setCreateSkills([]); setCreateSeats(3); setCreateDept(""); setCreateError("");
+      onNudge();
+    } catch(e) {
+      setCreateError("\u4fdd\u5b58\u306b\u5931\u6557\u3057\u307e\u3057\u305f: " + e.message);
+    } finally {
+      setCreateLoading(false);
+    }
   };
 
   const runAssign = () => {
@@ -332,6 +409,13 @@ export default function Board({ onNudge, lang, citizenId }) {
             <div style={{fontSize:9.5,color:C.txM,lineHeight:1.75,letterSpacing:"0.04em"}}>{t.board_note}</div>
           </div>
 
+          {currentUserId && (
+            <button onClick={() => setShowCreate(true)}
+              style={{width:"100%",padding:"11px 0",marginBottom:16,background:"rgba(0,255,136,0.07)",border:"1px solid rgba(0,255,136,0.3)",borderRadius:8,color:C.green,fontSize:10,fontWeight:700,cursor:"pointer",fontFamily:"inherit",letterSpacing:"0.1em",display:"flex",alignItems:"center",justifyContent:"center",gap:6,transition:"background 0.15s"}}>
+              <span style={{fontSize:13}}>+</span>プロジェクトを作成する
+            </button>
+          )}
+
           {boardItems.map((item) => {
             const assigned = assignedRegs.includes(item.reg);
             return (
@@ -454,6 +538,87 @@ export default function Board({ onNudge, lang, citizenId }) {
               <div style={{fontSize:9,color:C.txL,lineHeight:1.7}}>24時間中に運営が対応いたします。</div>
               <button onClick={() => setShowReport(false)} style={{marginTop:14,padding:"8px 24px",background:C.green,border:"none",borderRadius:7,color:"#fff",fontSize:9.5,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>閉じる</button>
             </div>
+          )}
+        </Modal>
+      )}
+
+      {/* プロジェクト作成モーダル */}
+      {showCreate && (
+        <Modal onClose={() => { if (!createLoading) { setShowCreate(false); setCreateError(""); } }}>
+          <div style={{marginBottom:16,display:"flex",justifyContent:"space-between",alignItems:"flex-start"}}>
+            <div>
+              <div style={{fontSize:8,color:C.txL,letterSpacing:"0.14em",marginBottom:3}}>プロジェクト登録</div>
+              <div style={{fontSize:13,fontWeight:700,color:C.tx}}>新規プロジェクトを作成</div>
+            </div>
+            {!createLoading && (
+              <button onClick={() => { setShowCreate(false); setCreateError(""); }}
+                style={{background:"transparent",border:"none",color:C.txL,fontSize:18,cursor:"pointer",lineHeight:1,padding:0}}>✕</button>
+            )}
+          </div>
+
+          {/* プロジェクト名 */}
+          <div style={{marginBottom:12}}>
+            <div style={{fontSize:8,color:C.txL,letterSpacing:"0.14em",marginBottom:5}}>プロジェクト名 <span style={{color:"#ef4444"}}>*</span></div>
+            <input value={createTitle} onChange={e => setCreateTitle(e.target.value)}
+              placeholder="プロジェクトのタイトルを入力"
+              style={{width:"100%",padding:"9px 12px",background:C.bg,border:"1px solid "+C.border,borderRadius:6,color:C.tx,fontSize:12,fontFamily:"inherit",outline:"none",letterSpacing:"0.04em",boxSizing:"border-box"}}/>
+          </div>
+
+          {/* 説明 */}
+          <div style={{marginBottom:12}}>
+            <div style={{fontSize:8,color:C.txL,letterSpacing:"0.14em",marginBottom:5}}>概要・説明</div>
+            <textarea value={createDesc} onChange={e => setCreateDesc(e.target.value)}
+              placeholder="プロジェクトの内容や目的を記載してください" rows={3}
+              style={{width:"100%",padding:"9px 12px",background:C.bg,border:"1px solid "+C.border,borderRadius:6,color:C.tx,fontSize:12,fontFamily:"inherit",outline:"none",resize:"none",letterSpacing:"0.04em",lineHeight:1.7,boxSizing:"border-box"}}/>
+          </div>
+
+          {/* 所属局 */}
+          <div style={{marginBottom:12}}>
+            <div style={{fontSize:8,color:C.txL,letterSpacing:"0.14em",marginBottom:5}}>所属局 <span style={{color:"#ef4444"}}>*</span></div>
+            <div style={{display:"flex",flexWrap:"wrap",gap:6}}>
+              {["建設局","文化局","厘生局","情報局","行政局","財務局"].map(d => (
+                <button key={d} onClick={() => setCreateDept(d)}
+                  style={{padding:"5px 12px",background:createDept===d?C.navy:"transparent",border:"1px solid "+(createDept===d?C.navy:C.border),borderRadius:20,color:createDept===d?"#e4eaf4":C.txM,fontSize:9.5,cursor:"pointer",fontFamily:"inherit",transition:"all 0.15s",letterSpacing:"0.06em"}}>{d}</button>
+              ))}
+            </div>
+          </div>
+
+          {/* 必要スキル */}
+          <div style={{marginBottom:12}}>
+            <div style={{fontSize:8,color:C.txL,letterSpacing:"0.14em",marginBottom:5}}>必要スキル（複数選択可） <span style={{color:"#ef4444"}}>*</span></div>
+            <div style={{display:"flex",flexWrap:"wrap",gap:6}}>
+              {DOMAINS.map(s => {
+                const selected = createSkills.includes(s);
+                return (
+                  <button key={s} onClick={() => setCreateSkills(prev => selected ? prev.filter(x => x !== s) : [...prev, s])}
+                    style={{padding:"5px 12px",background:selected?C.green:"transparent",border:"1px solid "+(selected?C.green:C.border),borderRadius:20,color:selected?"#000":C.txM,fontSize:9.5,cursor:"pointer",fontFamily:"inherit",transition:"all 0.15s",letterSpacing:"0.06em",fontWeight:selected?700:400}}>{s}</button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* 募集人数 */}
+          <div style={{marginBottom:16}}>
+            <div style={{fontSize:8,color:C.txL,letterSpacing:"0.14em",marginBottom:5}}>募集人数：<span style={{color:C.green,fontWeight:700}}>{createSeats}名</span></div>
+            <input type="range" min={1} max={10} value={createSeats} onChange={e => setCreateSeats(Number(e.target.value))}
+              style={{width:"100%",accentColor:"#00ff88"}}/>
+          </div>
+
+          {createError && (
+            <div style={{background:"rgba(239,68,68,0.08)",border:"1px solid rgba(239,68,68,0.3)",borderRadius:6,padding:"8px 12px",marginBottom:12}}>
+              <div style={{fontSize:9,color:"#ef4444"}}>{createError}</div>
+            </div>
+          )}
+
+          <button onClick={handleSubmitCreate} disabled={createLoading}
+            style={{width:"100%",padding:"12px",background:createLoading?"rgba(0,255,136,0.2)":C.green,border:"none",borderRadius:8,color:"#000",fontSize:11,fontWeight:700,cursor:createLoading?"default":"pointer",fontFamily:"inherit",letterSpacing:"0.1em",transition:"background 0.2s"}}>
+            {createLoading ? "登録中…" : "プロジェクトを登録する"}
+          </button>
+          {!createLoading && (
+            <button onClick={() => { setShowCreate(false); setCreateError(""); }}
+              style={{width:"100%",marginTop:8,padding:"10px",background:"transparent",border:"1px solid "+C.border,borderRadius:8,color:C.txL,fontSize:10,cursor:"pointer",fontFamily:"inherit"}}>
+              キャンセル
+            </button>
           )}
         </Modal>
       )}

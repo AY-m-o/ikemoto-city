@@ -174,3 +174,34 @@ export async function deleteAssignment(userId, projectId) {
     .eq("project_id", projectId);
   if (error) throw error;
 }
+
+// ── プロジェクト ──────────────────────────────
+
+export async function fetchProjects() {
+  const { data } = await supabase
+    .from("projects")
+    .select("*")
+    .order("created_at", { ascending: false });
+  return data || [];
+}
+
+export async function createProject({ reg, title, desc, skills, seats, dept, lead, leadId, leadUserId }) {
+  const { data, error } = await supabase
+    .from("projects")
+    .insert({
+      reg,
+      title,
+      desc,
+      skills,
+      seats,
+      dept,
+      lead,
+      lead_id: leadId,
+      lead_user_id: leadUserId,
+      status: "受付中",
+    })
+    .select()
+    .single();
+  if (error) throw error;
+  return data;
+}
