@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { C, LOGOUT_LOGS, runSequence } from "./constants.js";
-import { SectionHead, LogTerminal, Btn, Field, SubScreenNav } from "./components.jsx";
+import { SectionHead, LogTerminal, Btn, SubScreenNav } from "./components.jsx";
 
 // ─────────────────────────────────────────────
 // SETTINGS VIEW（パラメータ設定）
@@ -22,7 +22,8 @@ export function SettingsView({ onBack, onNudge }) {
       <div style={{padding:"16px 14px 0"}}>
         <div style={{background:C.card,border:"1px solid "+C.border,borderRadius:8,padding:"14px 14px",marginBottom:12}}>
           <div style={{fontSize:9,color:C.txL,letterSpacing:"0.18em",fontWeight:600,marginBottom:12}}>プロフィール</div>
-          <Field label="表示名" value={displayName} onChangeVal={setDisplayName} placeholder="表示名を入力"/>
+          <input value={displayName} onChange={e => setDisplayName(e.target.value)} placeholder="表示名を入力"
+            style={{width:"100%",padding:"8px 12px",background:C.bg,border:"1px solid "+C.border,borderRadius:7,color:C.tx,fontSize:12,fontFamily:"inherit",outline:"none",letterSpacing:"0.04em",boxSizing:"border-box"}}/>
         </div>
         <div style={{background:C.card,border:"1px solid "+C.border,borderRadius:8,padding:"14px 14px",marginBottom:14}}>
           <div style={{fontSize:9,color:C.txL,letterSpacing:"0.18em",fontWeight:600,marginBottom:12}}>通知設定</div>
