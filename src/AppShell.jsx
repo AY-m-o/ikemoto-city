@@ -1,11 +1,11 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { C, TICKER, TABS, MARKET_ITEMS, SHOP_META, nudge } from "./constants.js";
 import { Stamp, Watermark, RR } from "./components.jsx";
-import BoardScreen  from "./BoardScreen.jsx";
+import Board        from "./Board.jsx";
 import MarketScreen from "./MarketScreen.jsx";
 import ProcScreen   from "./ProcScreen.jsx";
 import GovScreen    from "./GovScreen.jsx";
-import MyScreen     from "./MyScreen.jsx";
+import MyPage       from "./MyPage.jsx";
 import { fetchLikes, fetchFollows, toggleLike, toggleFollow } from "./supabase.js";
 
 const LANGS = ["JP", "EN", "\u97d3", "\u4e2d", "ES"];
@@ -420,7 +420,7 @@ export default function AppShell({ citizenId, userId, onLogout }) {
       {/* ── SCREENS ── */}
       <div ref={contentRef} key={screenKey} className="screen-fade"
         style={{flex:1,display:"flex",flexDirection:"column",overflowY:"auto",position:"relative",background:"#0a0f1e",color:"#f9fafb"}}>
-        {tab==="board"  && <BoardScreen  key={resetKeys.board}  onNudge={onNudge} lang={lang} citizenId={citizenId}/>}
+        {tab==="board"  && <Board        key={resetKeys.board}  onNudge={onNudge} lang={lang} citizenId={citizenId}/>}
         {tab==="market" && <MarketScreen key={resetKeys.market} onNudge={onNudge} lang={lang}
           followedShops={followedShops} onFollowShop={handleFollowShop}
           likedItems={likedItems} onLikeItem={handleLikeItem}
@@ -429,7 +429,7 @@ export default function AppShell({ citizenId, userId, onLogout }) {
           jumpTo={marketJump} onJumpClear={() => setMarketJump(null)}/>}
         {tab==="gov"    && <GovScreen    key={resetKeys.gov}    onNudge={onNudge} lang={lang}/>}
         {tab==="proc"   && <ProcScreen   key={resetKeys.proc}   onNudge={onNudge} lang={lang}/>}
-        {tab==="my"     && <MyScreen     key={resetKeys.my}     citizenId={citizenId} onNudge={onNudge} onLogout={onLogout} lang={lang}
+        {tab==="my"     && <MyPage       key={resetKeys.my}     citizenId={citizenId} onNudge={onNudge} onLogout={onLogout} lang={lang}
           followedShops={followedShops} likedItems={likedItems} likedShops={likedShops}
           blockedShops={blockedShops}
           onUnblockShop={shopName => setBlockedShops(p=>{const n={...p};delete n[shopName];return n;})}
