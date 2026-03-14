@@ -1,13 +1,14 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { C, BOARD_ITEMS_INIT, ASSIGN_LOGS, runSequence } from "./constants.js";
 import { Stamp, SectionHead, LogTerminal, Btn, Modal } from "./components.jsx";
 import { useI18n } from "./i18n.js";
 import MessageRoom from "./MessageRoom.jsx";
+import { supabase, fetchAssignments, insertAssignment } from "./supabase.js";
 
 // ─────────────────────────────────────────────
 // PROJECT DETAIL（プロジェクト詳細）
 // ─────────────────────────────────────────────
-function ProjectDetail({ item, onBack, onAssign, onRoom, onNudge, alreadyAssigned }) {
+function ProjectDetail({ item, onBack, onAssign, onRoom, onNudge, alreadyAssigned, alreadyPending }) {
   return (
     <div style={{flex:1,overflowY:"auto",paddingBottom:72}} onScroll={onNudge}>
       <div style={{background:C.navy,padding:"14px 16px 16px",borderBottom:"1px solid rgba(46,107,79,0.3)"}}>
@@ -17,6 +18,9 @@ function ProjectDetail({ item, onBack, onAssign, onRoom, onNudge, alreadyAssigne
           <span style={{background:"rgba(255,255,255,0.08)",color:"rgba(143,168,200,0.6)",fontSize:8,padding:"2px 9px",borderRadius:3,letterSpacing:"0.1em"}}>{item.dept}</span>
           {alreadyAssigned && (
             <span style={{background:"rgba(46,107,79,0.3)",color:"#4caf7d",fontSize:8,padding:"2px 9px",borderRadius:3,letterSpacing:"0.1em",fontWeight:600}}>参加中</span>
+          )}
+          {alreadyPending && !alreadyAssigned && (
+            <span style={{background:"rgba(245,158,11,0.2)",color:"#f59e0b",fontSize:8,padding:"2px 9px",borderRadius:3,letterSpacing:"0.1em",fontWeight:600}}>申請中</span>
           )}
         </div>
         <div style={{fontSize:17,fontWeight:700,color:"#dde8f5",letterSpacing:"0.04em",lineHeight:1.35,marginBottom:6}}>{item.title}</div>
@@ -47,6 +51,14 @@ function ProjectDetail({ item, onBack, onAssign, onRoom, onNudge, alreadyAssigne
 
         {alreadyAssigned ? (
           <Btn label="プロジェクトルームへ" onClick={() => onRoom(item)}/>
+        ) : alreadyPending ? (
+          <div style={{background:"rgba(245,158,11,0.08)",border:"1px solid rgba(245,158,11,0.35)",borderRadius:7,padding:"11px 14px",marginBottom:8,display:"flex",alignItems:"center",justifyContent:"center",gap:8}}>
+            <span style={{fontSize:13,color:"#f59e0b"}}>◐</span>
+            <div>
+              <div style={{fontSize:9.5,color:"#f59e0b",fontWeight:700,letterSpacing:"0.08em"}}>申請中</div>
+              <div style={{fontSize:8,color:"rgba(245,158,11,0.7)",letterSpacing:"0.04em",marginTop:2}}>起案者の承認をお待ちください</div>
+            </div>
+          </div>
         ) : item.status !== "充足" ? (
           <Btn label="参加申請する" onClick={() => onAssign(item)}/>
         ) : (
@@ -83,6 +95,25 @@ export default function Board({ onNudge, lang, citizenId }) {
   const [reportReason, setReportReason] = useState("");
   const [authChecking, setAuthChecking] = useState(false);
   const [authTarget, setAuthTarget]     = useState(null);
+  const [currentUserId, setCurrentUserId] = useState(null);
+
+  // ログイン済みユーザーの申請状況をSupabaseから取得
+  useEffect(() => {
+    (async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+      setCurrentUserId(user.id);
+      const rows = await fetchAssignments(user.id);
+      const pending = [];
+      const assigned = [];
+      rows.forEach(r => {
+        if (r.status === "active") assigned.push(r.project_id);
+        else pending.push(r.project_id);
+      });
+      setAssignedRegs(assigned);
+      setPendingRegs(pending);
+    })();
+  }, []);
 
   const isLeadOf = (reg) => {
     const item = boardItems.find(b => b.reg === reg);
@@ -115,10 +146,12 @@ export default function Board({ onNudge, lang, citizenId }) {
   if (detailItem) {
     const live = boardItems.find(b => b.reg === detailItem.reg) || detailItem;
     const alreadyAssigned = assignedRegs.includes(live.reg);
+    const alreadyPending  = pendingRegs.includes(live.reg);
     return (
       <ProjectDetail
         item={live}
         alreadyAssigned={alreadyAssigned}
+        alreadyPending={alreadyPending}
         onBack={() => { setDetailItem(null); onNudge(); }}
         onAssign={(item) => {
           setDetailItem(null);
@@ -149,8 +182,12 @@ export default function Board({ onNudge, lang, citizenId }) {
 
   const runAssign = () => {
     setAssignPhase("running");
-    runSequence(ASSIGN_LOGS, setAssignLogs, () => {
+    runSequence(ASSIGN_LOGS, setAssignLogs, async () => {
       setPendingRegs(prev => prev.includes(assignTarget.reg) ? prev : [...prev, assignTarget.reg]);
+      // Supabaseへ申請を保存
+      if (currentUserId) {
+        try { await insertAssignment(currentUserId, assignTarget.reg); } catch(_) {}
+      }
       setAssignPhase("done");
       setTimeout(() => {
         setAssignTarget(null);
@@ -288,6 +325,7 @@ export default function Board({ onNudge, lang, citizenId }) {
                       {item.status==="充足" ? "充足・待機中" : "参加申請受付中"}
                     </span>
                     {assigned && <span style={{background:"rgba(46,107,79,0.15)",color:"#4caf7d",fontSize:8,padding:"2px 7px",borderRadius:3,letterSpacing:"0.1em",fontWeight:600}}>参加中</span>}
+                    {pendingRegs.includes(item.reg) && !assigned && <span style={{background:"rgba(245,158,11,0.15)",color:"#f59e0b",fontSize:8,padding:"2px 7px",borderRadius:3,letterSpacing:"0.1em",fontWeight:600}}>申請中</span>}
                   </div>
                   <span style={{fontSize:8,color:C.txL,letterSpacing:"0.1em",flexShrink:0}}>{item.reg}</span>
                   <button onClick={e => openReport(e, item.title)}

@@ -148,3 +148,20 @@ export async function submitReport(reporterId, targetId, reason) {
     created_at: new Date().toISOString(),
   });
 }
+
+// ── アサイン（参加申請）────────────────────────
+
+export async function fetchAssignments(userId) {
+  const { data } = await supabase
+    .from("assignments")
+    .select("project_id, status")
+    .eq("user_id", userId);
+  return data || [];
+}
+
+export async function insertAssignment(userId, projectId) {
+  const { error } = await supabase
+    .from("assignments")
+    .upsert({ user_id: userId, project_id: projectId, status: "pending" }, { onConflict: "project_id,user_id" });
+  if (error) throw error;
+}
