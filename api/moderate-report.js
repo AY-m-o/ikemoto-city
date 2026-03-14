@@ -17,6 +17,25 @@ const GEMINI_URL =
 // 同ユーザーの違反が何回でエスカレートするか
 const ESCALATE_THRESHOLD = 3;
 
+// キーワードベースのフォールバック判定（Gemini API が使えない場合に使用）
+function judgeByKeyword({ targetTitle, targetDesc, reason }) {
+  const BLOCK_KEYWORDS = [
+    "スパム", "spam", "出会い", "売春", "援助交際", "詐欺", "フィッシング",
+    "わいせつ", "ポルノ", "暴力", "殺", "死ね", "ヘイト", "差別",
+    "個人情報", "マルウェア", "ウイルス", "不法", "違法", "薬物",
+  ];
+  const text = [targetTitle, targetDesc, reason].join(" ").toLowerCase();
+  const matched = BLOCK_KEYWORDS.some(kw => text.includes(kw));
+  if (matched) {
+    return { verdict: "auto_blocked", reason: "キーワード検出による自動ブロック" };
+  }
+  // 規約違反・不適切コンテンツの通報理由はレビュー待ちに
+  if (reason === "規約違反" || reason === "不適切なコンテンツ") {
+    return { verdict: "pending_review", reason: "要人間レビュー" };
+  }
+  return { verdict: "pending_review", reason: "AIなし判定：人間レビュー待ち" };
+}
+
 async function judgeWithGemini({ targetTitle, targetDesc, reason }) {
   const prompt = `
 あなたはオンラインコミュニティ「池本市」のコンテンツモデレーターです。
@@ -59,6 +78,15 @@ ${reason}
   return match ? JSON.parse(match[0]) : { verdict: "pending_review", reason: "AI判定失敗" };
 }
 
+async function judge(params) {
+  try {
+    return await judgeWithGemini(params);
+  } catch (e) {
+    console.warn("Gemini unavailable, falling back to keyword judge:", e.message);
+    return judgeByKeyword(params);
+  }
+}
+
 module.exports = async function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method Not Allowed" });
@@ -88,8 +116,8 @@ module.exports = async function handler(req, res) {
       }
     }
 
-    // Gemini で判定
-    const { verdict, reason: aiReason } = await judgeWithGemini({
+    // Gemini（失敗時はキーワード判定）で判定
+    const { verdict, reason: aiReason } = await judge({
       targetTitle,
       targetDesc,
       reason,
