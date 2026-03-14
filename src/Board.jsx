@@ -207,8 +207,8 @@ export default function Board({ onNudge, lang, citizenId }) {
           setMessage("");
           onNudge();
         }}
-        onCancel={(item) => { setCancelConfirmReg(item.reg); setDetailItem(null); onNudge(); }}
-        onCancelConfirm={(item) => { setCancelConfirmReg(item.reg); setDetailItem(null); onNudge(); }}
+        onCancel={(item) => { setCancelConfirmReg(item.reg); }}
+        onCancelConfirm={(item) => { setCancelConfirmReg(item.reg); }}
         onRoom={(item) => { setDetailItem(null); setProjectRoom({ reg:item.reg, title:item.title }); onNudge(); }}
         onNudge={onNudge}
       />
@@ -237,6 +237,7 @@ export default function Board({ onNudge, lang, citizenId }) {
         await deleteAssignment(currentUserId, reg);
       }
       setCancelConfirmReg(null);
+      setDetailItem(null);
       onNudge();
     } catch(e) {
       // 失敗時はstateを元に戻す
