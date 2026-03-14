@@ -11,7 +11,7 @@ const supabase = createClient(
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 const GEMINI_URL =
-  "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-8b:generateContent?key=" +
+  "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=" +
   GEMINI_API_KEY;
 
 // 同ユーザーの違反が何回でエスカレートするか
