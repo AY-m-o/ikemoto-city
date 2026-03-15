@@ -82,8 +82,10 @@ async function judge(params) {
   try {
     return await judgeWithGemini(params);
   } catch (e) {
-    console.warn("Gemini unavailable, falling back to keyword judge:", e.message);
-    return judgeByKeyword(params);
+    const errMsg = e.message.slice(0, 120);
+    console.error("Gemini error:", errMsg);
+    const fallback = judgeByKeyword(params);
+    return { ...fallback, reason: fallback.reason + " [GeminiErr:" + errMsg + "]" };
   }
 }
 
