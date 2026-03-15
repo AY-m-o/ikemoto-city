@@ -103,9 +103,8 @@ ${reason}
   const reasonMatch  = raw.match(/"reason"\s*:\s*"([^"]{1,100})"/);
 
   if (!verdictMatch) {
-    // フォールバック: キーワード見つからなければ pending_review
-    console.warn("verdict not found in Gemini response, raw:", raw.slice(0, 100));
-    return { verdict: "pending_review", reason: "AI応答解析不可" };
+    // デバッグ: rawの内容をそのまま返す
+    return { verdict: "pending_review", reason: "RAW:" + JSON.stringify(raw).slice(0, 150) };
   }
 
   return {
