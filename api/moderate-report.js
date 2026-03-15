@@ -102,14 +102,14 @@ ${reason}
            || "";
 
   if (!raw) {
-    return { verdict: "pending_review", reason: "DATA:" + dataStr };
+    return { verdict: "pending_review", reason: "AI応答なし（safety block等）" };
   }
 
   const verdictMatch = raw.match(/"verdict"\s*:\s*"(auto_blocked|pending_review|dismissed)"/);
   const reasonMatch  = raw.match(/"reason"\s*:\s*"([^"]{1,100})"/);
 
   if (!verdictMatch) {
-    return { verdict: "pending_review", reason: "RAW:" + JSON.stringify(raw).slice(0, 150) };
+    return { verdict: "pending_review", reason: "AI応答解析不可" };
   }
 
   return {
