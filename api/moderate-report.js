@@ -95,15 +95,21 @@ ${reason}
   }
 
   const data = await res.json();
-  const raw = data?.candidates?.[0]?.content?.parts?.[0]?.text || "";
-  console.log("Gemini raw:", JSON.stringify(raw).slice(0, 300));
 
-  // verdictとreasonを正規表現で直接抽出（フォーマット依存なし）
+  // デバッグ: 全構造を確認
+  const dataStr = JSON.stringify(data).slice(0, 400);
+  const raw = data?.candidates?.[0]?.content?.parts?.[0]?.text
+           || data?.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data
+           || "";
+
+  if (!raw) {
+    return { verdict: "pending_review", reason: "DATA:" + dataStr };
+  }
+
   const verdictMatch = raw.match(/"verdict"\s*:\s*"(auto_blocked|pending_review|dismissed)"/);
   const reasonMatch  = raw.match(/"reason"\s*:\s*"([^"]{1,100})"/);
 
   if (!verdictMatch) {
-    // デバッグ: rawの内容をそのまま返す
     return { verdict: "pending_review", reason: "RAW:" + JSON.stringify(raw).slice(0, 150) };
   }
 
