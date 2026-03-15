@@ -10,9 +10,26 @@ const supabase = createClient(
 );
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
-const GEMINI_URL =
-  "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite:generateContent?key=" +
-  GEMINI_API_KEY;
+const GEMINI_BASE = "https://generativelanguage.googleapis.com/v1beta";
+
+// 利用可能なモデルを動的に取得（キャッシュ付き）
+let _cachedModel = null;
+async function getAvailableModel() {
+  if (_cachedModel) return _cachedModel;
+  const res = await fetch(`${GEMINI_BASE}/models?key=${GEMINI_API_KEY}`);
+  if (!res.ok) throw new Error("ListModels failed: " + res.status);
+  const { models = [] } = await res.json();
+  // generateContent対応モデルの中でflashを優先
+  const candidates = models.filter(m =>
+    (m.supportedGenerationMethods || []).includes("generateContent")
+  );
+  const flash = candidates.find(m => m.name.includes("flash"));
+  const chosen = flash || candidates[0];
+  if (!chosen) throw new Error("No available Gemini model found");
+  _cachedModel = chosen.name.replace("models/", "");
+  console.log("Using Gemini model:", _cachedModel);
+  return _cachedModel;
+}
 
 // 同ユーザーの違反が何回でエスカレートするか
 const ESCALATE_THRESHOLD = 3;
@@ -57,7 +74,9 @@ ${reason}
 {"verdict":"<verdict>","reason":"<判定理由（日本語・50文字以内）>"}
 `.trim();
 
-  const res = await fetch(GEMINI_URL, {
+  const model = await getAvailableModel();
+  const url = `${GEMINI_BASE}/models/${model}:generateContent?key=${GEMINI_API_KEY}`;
+  const res = await fetch(url, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
