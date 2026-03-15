@@ -96,18 +96,22 @@ ${reason}
 
   const data = await res.json();
   const raw = data?.candidates?.[0]?.content?.parts?.[0]?.text || "";
-  console.log("Gemini raw response:", raw.slice(0, 200));
-  // 最初の { から最後の } を取り出してJSONをパース
-  const start = raw.indexOf("{");
-  const end = raw.lastIndexOf("}");
-  if (start === -1 || end === -1 || end <= start) {
-    return { verdict: "pending_review", reason: "AI応答にJSONなし: " + raw.slice(0, 60) };
+  console.log("Gemini raw:", JSON.stringify(raw).slice(0, 300));
+
+  // verdictとreasonを正規表現で直接抽出（フォーマット依存なし）
+  const verdictMatch = raw.match(/"verdict"\s*:\s*"(auto_blocked|pending_review|dismissed)"/);
+  const reasonMatch  = raw.match(/"reason"\s*:\s*"([^"]{1,100})"/);
+
+  if (!verdictMatch) {
+    // フォールバック: キーワード見つからなければ pending_review
+    console.warn("verdict not found in Gemini response, raw:", raw.slice(0, 100));
+    return { verdict: "pending_review", reason: "AI応答解析不可" };
   }
-  try {
-    return JSON.parse(raw.slice(start, end + 1));
-  } catch {
-    return { verdict: "pending_review", reason: "AI応答JSON解析エラー" };
-  }
+
+  return {
+    verdict: verdictMatch[1],
+    reason:  reasonMatch ? reasonMatch[1] : "AI判定完了",
+  };
 }
 
 async function judge(params) {
