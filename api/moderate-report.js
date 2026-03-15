@@ -81,7 +81,11 @@ ${reason}
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       contents: [{ parts: [{ text: prompt }] }],
-      generationConfig: { temperature: 0.1, maxOutputTokens: 128 },
+      generationConfig: {
+        temperature: 0.1,
+        maxOutputTokens: 256,
+        responseMimeType: "application/json",
+      },
     }),
   });
 
