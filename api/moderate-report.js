@@ -91,10 +91,17 @@ ${reason}
   }
 
   const data = await res.json();
-  const text = data?.candidates?.[0]?.content?.parts?.[0]?.text || "{}";
-  // JSONを安全にパース
-  const match = text.match(/\{[\s\S]*\}/);
-  return match ? JSON.parse(match[0]) : { verdict: "pending_review", reason: "AI判定失敗" };
+  const raw = data?.candidates?.[0]?.content?.parts?.[0]?.text || "";
+  console.log("Gemini raw response:", raw.slice(0, 200));
+  // markdownコードブロックを除去してからJSONを抽出
+  const cleaned = raw.replace(/```(?:json)?\n?/g, "").replace(/```/g, "").trim();
+  const match = cleaned.match(/\{[\s\S]*?\}/);
+  if (!match) return { verdict: "pending_review", reason: "AI応答パース失敗: " + raw.slice(0, 80) };
+  try {
+    return JSON.parse(match[0]);
+  } catch {
+    return { verdict: "pending_review", reason: "AI応答JSON解析エラー: " + match[0].slice(0, 60) };
+  }
 }
 
 async function judge(params) {
