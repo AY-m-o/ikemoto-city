@@ -83,8 +83,7 @@ ${reason}
       contents: [{ parts: [{ text: prompt }] }],
       generationConfig: {
         temperature: 0.1,
-        maxOutputTokens: 256,
-        responseMimeType: "application/json",
+        maxOutputTokens: 1024,
       },
     }),
   });
