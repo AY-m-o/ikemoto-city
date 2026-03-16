@@ -3,12 +3,83 @@ import { C, BOARD_ITEMS_INIT, ASSIGN_LOGS, DOMAINS, runSequence } from "./consta
 import { Stamp, SectionHead, LogTerminal, Btn, Modal } from "./components.jsx";
 import { useI18n } from "./i18n.js";
 import MessageRoom from "./MessageRoom.jsx";
-import { supabase, fetchAssignments, insertAssignment, deleteAssignment, fetchProjects, createProject, submitReport, fetchHiddenRegs } from "./supabase.js";
+import { supabase, fetchAssignments, insertAssignment, deleteAssignment, fetchProjects, createProject, submitReport, fetchHiddenRegs, uploadProjectImage, deleteProjectImage, updateProjectImages } from "./supabase.js";
+
+// ─────────────────────────────────────────────
+// PROJECT IMAGE SECTION（画像アップロード）
+// ─────────────────────────────────────────────
+function ProjectImageSection({ item, currentUserId, onImagesUpdate }) {
+  const [uploading, setUploading] = useState(false);
+  const [imgError, setImgError] = useState("");
+  const isOwner = item.lead_user_id && currentUserId && item.lead_user_id === currentUserId;
+  const images = item.image_urls || [];
+
+  const handleUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (images.length >= 3) { setImgError("画像は最大3枚まで"); return; }
+    setImgError("");
+    setUploading(true);
+    try {
+      const url = await uploadProjectImage(file, item.reg);
+      const newUrls = [...images, url];
+      await updateProjectImages(item.reg, newUrls);
+      onImagesUpdate(item.reg, newUrls);
+    } catch (e) {
+      setImgError(e.message);
+    } finally {
+      setUploading(false);
+      e.target.value = "";
+    }
+  };
+
+  const handleDelete = async (url) => {
+    try {
+      await deleteProjectImage(url);
+      const newUrls = images.filter(u => u !== url);
+      await updateProjectImages(item.reg, newUrls);
+      onImagesUpdate(item.reg, newUrls);
+    } catch(e) {
+      setImgError("削除失敗: " + e.message);
+    }
+  };
+
+  if (images.length === 0 && !isOwner) return null;
+
+  return (
+    <div style={{marginBottom:14}}>
+      <div style={{fontSize:8,color:"rgba(143,168,200,0.5)",letterSpacing:"0.14em",marginBottom:7}}>PROJECT IMAGES</div>
+      {images.length > 0 && (
+        <div style={{display:"flex",gap:8,flexWrap:"wrap",marginBottom:8}}>
+          {images.map((url, i) => (
+            <div key={i} style={{position:"relative",display:"inline-block"}}>
+              <img src={url} alt={"project-img-"+i}
+                style={{width:100,height:80,objectFit:"cover",borderRadius:7,border:"1px solid rgba(46,107,79,0.3)"}}/>
+              {isOwner && (
+                <button onClick={() => handleDelete(url)}
+                  style={{position:"absolute",top:2,right:2,background:"rgba(239,68,68,0.85)",border:"none",borderRadius:"50%",width:18,height:18,color:"#fff",fontSize:9,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",lineHeight:1}}>
+                  ×
+                </button>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
+      {isOwner && images.length < 3 && (
+        <label style={{display:"inline-flex",alignItems:"center",gap:6,padding:"7px 14px",background:uploading?"rgba(46,107,79,0.1)":"rgba(46,107,79,0.15)",border:"1px dashed rgba(46,107,79,0.5)",borderRadius:7,cursor:uploading?"default":"pointer",fontSize:9,color:"rgba(100,200,150,0.9)",letterSpacing:"0.06em"}}>
+          {uploading ? "AI検査中…" : "+ 画像を追加（最大3枚）"}
+          <input type="file" accept="image/*" style={{display:"none"}} onChange={handleUpload} disabled={uploading}/>
+        </label>
+      )}
+      {imgError && <div style={{fontSize:8.5,color:"#ef4444",marginTop:5,lineHeight:1.5}}>{imgError}</div>}
+    </div>
+  );
+}
 
 // ─────────────────────────────────────────────
 // PROJECT DETAIL（プロジェクト詳細）
 // ─────────────────────────────────────────────
-function ProjectDetail({ item, onBack, onAssign, onRoom, onNudge, alreadyAssigned, alreadyPending }) {
+function ProjectDetail({ item, onBack, onAssign, onRoom, onNudge, alreadyAssigned, alreadyPending, onCancelConfirm, currentUserId, onImagesUpdate }) {
   return (
     <div style={{flex:1,overflowY:"auto",paddingBottom:72}} onScroll={onNudge}>
       <div style={{background:C.navy,padding:"14px 16px 16px",borderBottom:"1px solid rgba(46,107,79,0.3)"}}>
@@ -32,6 +103,9 @@ function ProjectDetail({ item, onBack, onAssign, onRoom, onNudge, alreadyAssigne
         <div style={{background:C.card,border:"1px solid "+C.border,borderLeft:"2.5px solid "+C.green,borderRadius:7,padding:"12px 14px",marginBottom:14}}>
           <div style={{fontSize:9.5,color:C.txM,lineHeight:1.85,letterSpacing:"0.04em"}}>{item.desc || "概要情報なし"}</div>
         </div>
+
+        {/* 画像セクション */}
+        <ProjectImageSection item={item} currentUserId={currentUserId} onImagesUpdate={onImagesUpdate}/>
 
         <div style={{fontSize:8,color:C.txL,letterSpacing:"0.14em",marginBottom:7}}>REQUIRED SKILLS</div>
         <div style={{display:"flex",gap:7,flexWrap:"wrap",marginBottom:14}}>
@@ -203,6 +277,11 @@ export default function Board({ onNudge, lang, citizenId }) {
         item={live}
         alreadyAssigned={alreadyAssigned}
         alreadyPending={alreadyPending}
+        currentUserId={currentUserId}
+        onImagesUpdate={(reg, urls) => {
+          setBoardItems(prev => prev.map(b => b.reg === reg ? { ...b, image_urls: urls } : b));
+          setDetailItem(prev => prev?.reg === reg ? { ...prev, image_urls: urls } : prev);
+        }}
         onBack={() => { setDetailItem(null); onNudge(); }}
         onAssign={(item) => {
           setDetailItem(null);

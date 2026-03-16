@@ -223,3 +223,93 @@ export async function createProject({ reg, title, desc, skills, seats, dept, lea
   if (error) throw error;
   return data;
 }
+
+// ── 画像ストレージ ────────────────────────────
+
+const STORAGE_URL = "https://aeubsvgqilfaujqvlgdd.supabase.co/storage/v1/object/public";
+
+// AI画像検査（/api/check-image を呼ぶ）
+async function checkImage(publicUrl) {
+  const res = await fetch("/api/check-image", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ imageUrl: publicUrl }),
+  });
+  if (!res.ok) return { approved: true }; // エラー時は通過
+  return await res.json();
+}
+
+// プロジェクト画像アップロード（最大3枚・AI検査付き）
+export async function uploadProjectImage(file, projectReg) {
+  const ext = file.name.split(".").pop().toLowerCase();
+  const allowed = ["jpg", "jpeg", "png", "webp", "gif"];
+  if (!allowed.includes(ext)) throw new Error("対応していないファイル形式です（jpg/png/webp/gif）");
+  if (file.size > 5 * 1024 * 1024) throw new Error("ファイルサイズは5MB以下にしてください");
+
+  const path = `${projectReg}/${Date.now()}.${ext}`;
+  const { error } = await supabase.storage.from("project-images").upload(path, file, { upsert: false });
+  if (error) throw new Error("アップロード失敗: " + error.message);
+
+  const publicUrl = `${STORAGE_URL}/project-images/${path}`;
+
+  // AI検査
+  const check = await checkImage(publicUrl);
+  if (!check.approved) {
+    // NG → 削除して例外をスロー
+    await supabase.storage.from("project-images").remove([path]);
+    throw new Error("AI検査NG: " + (check.reason || "コンテンツポリシー違反"));
+  }
+
+  return publicUrl;
+}
+
+// プロジェクト画像削除
+export async function deleteProjectImage(publicUrl) {
+  const path = publicUrl.split("/project-images/")[1];
+  if (!path) return;
+  await supabase.storage.from("project-images").remove([path]);
+}
+
+// プロジェクトの画像URL一覧を更新
+export async function updateProjectImages(projectReg, imageUrls) {
+  const { error } = await supabase
+    .from("projects")
+    .update({ image_urls: imageUrls })
+    .eq("reg", projectReg);
+  if (error) throw error;
+}
+
+// アバターアップロード（AI検査付き）
+export async function uploadAvatar(file, userId) {
+  const ext = file.name.split(".").pop().toLowerCase();
+  const allowed = ["jpg", "jpeg", "png", "webp"];
+  if (!allowed.includes(ext)) throw new Error("対応していないファイル形式です（jpg/png/webp）");
+  if (file.size > 2 * 1024 * 1024) throw new Error("ファイルサイズは2MB以下にしてください");
+
+  const path = `${userId}/avatar.${ext}`;
+  const { error } = await supabase.storage.from("avatars").upload(path, file, { upsert: true });
+  if (error) throw new Error("アップロード失敗: " + error.message);
+
+  const publicUrl = `${STORAGE_URL}/avatars/${path}?t=${Date.now()}`;
+
+  // AI検査
+  const check = await checkImage(publicUrl);
+  if (!check.approved) {
+    await supabase.storage.from("avatars").remove([path]);
+    throw new Error("AI検査NG: " + (check.reason || "コンテンツポリシー違反"));
+  }
+
+  // DBのavatar_urlを更新
+  await supabase.from("users").update({ avatar_url: publicUrl }).eq("id", userId);
+  return publicUrl;
+}
+
+// アバターURL取得
+export async function fetchAvatarUrl(userId) {
+  const { data } = await supabase
+    .from("users")
+    .select("avatar_url")
+    .eq("id", userId)
+    .single();
+  return data?.avatar_url || null;
+}

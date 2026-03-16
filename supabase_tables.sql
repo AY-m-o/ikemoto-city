@@ -146,3 +146,7 @@ alter table public.users add column if not exists report_count int default 0;
 -- reports に AI サービス（service_role）からの UPDATE を許可
 create policy if not exists "reports: service update" on public.reports
   for update using (true) with check (true);
+
+-- ⑩ 画像アップロード用カラム追加（Supabase SQL Editorで実行）
+alter table public.projects add column if not exists image_urls text[] default '{}';
+alter table public.users    add column if not exists avatar_url text;

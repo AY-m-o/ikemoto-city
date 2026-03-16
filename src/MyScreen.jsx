@@ -2,14 +2,38 @@ import { useState, useEffect } from "react";
 import { C, LOGOUT_LOGS, BOARD_ITEMS_INIT, runSequence } from "./constants.js";
 import { SectionHead, LogTerminal, Btn, Field, SubScreenNav } from "./components.jsx";
 import { useI18n } from "./i18n.js";
+import { supabase, uploadAvatar, fetchAvatarUrl } from "./supabase.js";
 
 // ─────────────────────────────────────────────
 // SETTINGS SUB-VIEW
 // ─────────────────────────────────────────────
-function SettingsView({ onBack, onNudge }) {
+function SettingsView({ onBack, onNudge, userId }) {
   const [displayName, setDisplayName] = useState("開発局員");
   const [notifs, setNotifs] = useState({ assign:true, market:false, system:true });
   const [saved, setSaved] = useState(false);
+  const [avatarUrl, setAvatarUrl] = useState(null);
+  const [avatarLoading, setAvatarLoading] = useState(false);
+  const [avatarError, setAvatarError] = useState("");
+
+  useEffect(() => {
+    if (userId) fetchAvatarUrl(userId).then(url => { if (url) setAvatarUrl(url); });
+  }, [userId]);
+
+  const handleAvatarUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file || !userId) return;
+    setAvatarError("");
+    setAvatarLoading(true);
+    try {
+      const url = await uploadAvatar(file, userId);
+      setAvatarUrl(url);
+    } catch (err) {
+      setAvatarError(err.message);
+    } finally {
+      setAvatarLoading(false);
+      e.target.value = "";
+    }
+  };
 
   const handleSave = () => {
     setSaved(true);
@@ -23,6 +47,24 @@ function SettingsView({ onBack, onNudge }) {
       <div style={{padding:"16px 14px 0"}}>
         <div style={{background:C.card,border:"1px solid "+C.border,borderRadius:8,padding:"14px 14px",marginBottom:12}}>
           <div style={{fontSize:9,color:C.txL,letterSpacing:"0.18em",fontWeight:600,marginBottom:12}}>プロフィール</div>
+
+          {/* アバター */}
+          <div style={{display:"flex",alignItems:"center",gap:12,marginBottom:14}}>
+            <label style={{cursor:avatarLoading?"default":"pointer",position:"relative"}}>
+              <div style={{width:52,height:52,borderRadius:"50%",overflow:"hidden",background:"rgba(46,107,79,0.2)",border:"2px solid rgba(46,107,79,0.4)",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
+                {avatarUrl
+                  ? <img src={avatarUrl} alt="avatar" style={{width:"100%",height:"100%",objectFit:"cover"}}/>
+                  : <span style={{fontSize:20,color:C.green}}>●</span>}
+              </div>
+              <input type="file" accept="image/*" style={{display:"none"}} onChange={handleAvatarUpload} disabled={avatarLoading}/>
+            </label>
+            <div>
+              <div style={{fontSize:9,color:C.txL,letterSpacing:"0.08em",marginBottom:3}}>アイコン画像</div>
+              <div style={{fontSize:8,color:"rgba(100,160,130,0.7)",letterSpacing:"0.04em"}}>{avatarLoading?"AI検査中…":"タップして変更（2MB以内）"}</div>
+              {avatarError && <div style={{fontSize:8,color:"#ef4444",marginTop:3,lineHeight:1.4}}>{avatarError}</div>}
+            </div>
+          </div>
+
           <Field label="表示名" value={displayName} onChangeVal={setDisplayName} placeholder="表示名を入力"/>
         </div>
         <div style={{background:C.card,border:"1px solid "+C.border,borderRadius:8,padding:"14px 14px",marginBottom:14}}>
@@ -416,6 +458,13 @@ export default function MyScreen({ citizenId, onNudge, onLogout, followedShops, 
   const eviData = [0.62,0.71,0.68,0.80,0.75,0.84,0.91];
   const labels  = ["月","火","水","木","金","土","日"];
   const [eviDisplay, setEviDisplay] = useState(0);
+  const [currentUserId, setCurrentUserId] = useState(null);
+
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data }) => {
+      if (data?.user) setCurrentUserId(data.user.id);
+    });
+  }, []);
   useEffect(() => {
     if (subView !== null) return; // メインビューのみ実行
     const target = eviData[eviData.length - 1];
@@ -436,7 +485,7 @@ export default function MyScreen({ citizenId, onNudge, onLogout, followedShops, 
   // 参加中プロジェクト（充足のもの）
   const joinedProjects = BOARD_ITEMS_INIT.filter(b => b.status === "充足");
 
-  if (subView === "settings")  return <SettingsView  onBack={()=>setSubView(null)} onNudge={onNudge}/>;
+  if (subView === "settings")  return <SettingsView  onBack={()=>setSubView(null)} onNudge={onNudge} userId={currentUserId}/>;
   if (subView === "inquiry")   return <InquiryView   onBack={()=>setSubView(null)} onNudge={onNudge}/>;
   if (subView === "logout")    return <LogoutView    onBack={()=>setSubView(null)} onLogout={onLogout} onNudge={onNudge}/>;
   if (subView === "guide")     return <GuideView     onBack={()=>setSubView(null)}/>;
