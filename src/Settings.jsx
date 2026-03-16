@@ -59,7 +59,7 @@ export function SettingsView({ onBack, onNudge, userId }) {
             </label>
             <div>
               <div style={{fontSize:9,color:C.txL,letterSpacing:"0.08em",marginBottom:3}}>アイコン画像</div>
-              <div style={{fontSize:8,color:"rgba(100,160,130,0.7)",letterSpacing:"0.04em"}}>{avatarLoading?"AI検査中…":"タップして変更（2MB以内）"}</div>
+              <div style={{fontSize:8,color:"rgba(100,160,130,0.7)",letterSpacing:"0.04em"}}>{avatarLoading?"AI検査中…":"タップして変更"}</div>
               {avatarError && <div style={{fontSize:8,color:"#ef4444",marginTop:3,lineHeight:1.4}}>{avatarError}</div>}
             </div>
           </div>

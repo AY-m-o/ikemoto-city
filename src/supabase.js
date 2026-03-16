@@ -284,7 +284,7 @@ export async function uploadAvatar(file, userId) {
   const ext = file.name.split(".").pop().toLowerCase();
   const allowed = ["jpg", "jpeg", "png", "webp"];
   if (!allowed.includes(ext)) throw new Error("対応していないファイル形式です（jpg/png/webp）");
-  if (file.size > 2 * 1024 * 1024) throw new Error("ファイルサイズは2MB以下にしてください");
+  if (file.size > 10 * 1024 * 1024) throw new Error("ファイルサイズは10MB以下にしてください");
 
   const path = `${userId}/avatar.${ext}`;
   const { error } = await supabase.storage.from("avatars").upload(path, file, { upsert: true });
