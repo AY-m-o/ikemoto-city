@@ -23,28 +23,39 @@ export const C_DARK = {
 };
 
 // ─────────────────────────────────────────────
-// LIGHT MODE (リキッドグラス昼の市政)
+// LIGHT MODE 「光の中の行政庁舎」
 // ─────────────────────────────────────────────
 export const C_LIGHT = {
-  navy:    "#f5f5f5",
-  navyD:   "#ebebeb",
+  navy:    "rgba(255,255,255,0.25)",
+  navyD:   "rgba(240,240,240,0.3)",
   navyL:   "#ffffff",
   green:   "#000000",
   greenL:  "#333333",
   greenD:  "#000000",
-  red:     "#dc2626",
+  red:     "#c0392b",
   bg:      "#ffffff",
-  card:    "rgba(255,255,255,0.5)",
-  border:  "rgba(0,0,0,0.1)",
-  borderD: "rgba(0,0,0,0.2)",
+  card:    "rgba(255,255,255,0.25)",
+  border:  "rgba(255,255,255,0.9)",
+  borderD: "rgba(0,0,0,0.08)",
   tx:      "#000000",
-  txM:     "#333333",
-  txL:     "#666666",
+  txM:     "#222222",
+  txL:     "#888888",
   glass: {
-    backdropFilter:       "blur(16px)",
-    WebkitBackdropFilter: "blur(16px)",
-    border:               "1px solid rgba(255,255,255,0.6)",
-    boxShadow:            "0 4px 24px rgba(0,0,0,0.08)",
+    background:           "rgba(255,255,255,0.25)",
+    backdropFilter:       "blur(40px) saturate(180%) brightness(1.1)",
+    WebkitBackdropFilter: "blur(40px) saturate(180%) brightness(1.1)",
+    border:               "1px solid rgba(255,255,255,0.9)",
+    boxShadow:            "0 8px 32px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,1), inset 0 -1px 0 rgba(0,0,0,0.04)",
+    borderRadius:         20,
+  },
+  // ボタン専用スタイル（primaryのみ上書き）
+  btnPrimary: {
+    bg:          "#000000",
+    color:       "#ffffff",
+    border:      "none",
+    shadow:      "0 4px 16px rgba(0,0,0,0.15)",
+    shadowPress: "0 2px 8px rgba(0,0,0,0.25)",
+    borderRadius: 14,
   },
   isLight: true,
 };

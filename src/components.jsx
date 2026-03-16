@@ -122,27 +122,39 @@ export function Btn({ label, onClick, variant="primary", small=false, disabled=f
   const C = useTheme();
   const [pressed, setPressed] = useState(false);
 
+  // ライトモードのprimaryボタンは黒背景・白文字
+  const bp = C.btnPrimary;
   const styles = {
-    primary: {
+    primary: bp ? {
+      bg: bp.bg,
+      color: bp.color,
+      border: bp.border || "none",
+      shadow: bp.shadow,
+      shadowPress: bp.shadowPress,
+      borderRadius: bp.borderRadius || 14,
+    } : {
       bg: "transparent",
       color: "#00ff88",
       border: "1px solid #00ff88",
       shadow: "0 0 12px rgba(0,255,136,0.3),inset 0 0 12px rgba(0,255,136,0.04)",
       shadowPress: "0 0 24px rgba(0,255,136,0.6),inset 0 0 16px rgba(0,255,136,0.1)",
+      borderRadius: 7,
     },
     navy: {
       bg: C.navyL,
       color: C.tx,
       border: "1px solid "+C.border,
       shadow: "none",
-      shadowPress: "0 0 12px rgba(0,255,136,0.2)",
+      shadowPress: bp ? "0 4px 16px rgba(0,0,0,0.2)" : "0 0 12px rgba(0,255,136,0.2)",
+      borderRadius: bp ? 14 : 7,
     },
     danger: {
       bg: "transparent",
       color: C.red,
       border: "1px solid "+C.red,
       shadow: "none",
-      shadowPress: "0 0 12px rgba(255,68,85,0.4)",
+      shadowPress: "0 0 12px rgba(192,57,43,0.4)",
+      borderRadius: 7,
     },
     ghost: {
       bg: "transparent",
@@ -150,9 +162,13 @@ export function Btn({ label, onClick, variant="primary", small=false, disabled=f
       border: "1px solid "+C.border,
       shadow: "none",
       shadowPress: "none",
+      borderRadius: 7,
     },
   };
   const s = styles[variant] || styles.primary;
+  const disabledBg    = bp ? "rgba(0,0,0,0.08)" : "rgba(0,255,136,0.04)";
+  const disabledBorder = bp ? "1px solid rgba(0,0,0,0.1)" : "1px solid rgba(0,255,136,0.12)";
+  const disabledColor  = bp ? "rgba(0,0,0,0.25)" : "rgba(0,255,136,0.25)";
 
   return (
     <button
@@ -166,20 +182,20 @@ export function Btn({ label, onClick, variant="primary", small=false, disabled=f
       style={{
         padding:small?"9px 20px":"14px 0",
         width:small?"auto":"100%",
-        background:disabled?"rgba(0,255,136,0.04)":s.bg,
-        border:disabled?"1px solid rgba(0,255,136,0.12)":s.border,
-        borderRadius:7,
-        color:disabled?"rgba(0,255,136,0.25)":s.color,
+        background:disabled?disabledBg:s.bg,
+        border:disabled?disabledBorder:s.border,
+        borderRadius:s.borderRadius||7,
+        color:disabled?disabledColor:s.color,
         fontSize:small?9:10,
         fontWeight:700,
-        letterSpacing:"0.16em",
+        letterSpacing:"0.12em",
         textTransform:"uppercase",
         cursor:disabled?"default":"pointer",
         fontFamily:"inherit",
         transition:"all 0.15s",
         boxShadow:pressed&&!disabled ? s.shadowPress : (disabled?"none":s.shadow),
         transform:pressed&&!disabled?"scale(0.97)":"scale(1)",
-        textShadow:variant==="primary"&&!disabled?"0 0 10px rgba(0,255,136,0.7)":"none",
+        textShadow:bp||(variant!=="primary")||disabled?"none":"0 0 10px rgba(0,255,136,0.7)",
       }}>
       {label}
     </button>

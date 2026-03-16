@@ -7,7 +7,7 @@ import ProcScreen   from "./ProcScreen.jsx";
 import GovScreen    from "./GovScreen.jsx";
 import MyPage       from "./MyPage.jsx";
 import { fetchLikes, fetchFollows, toggleLike, toggleFollow } from "./supabase.js";
-import { useTheme } from "./ThemeContext.jsx";
+import { useTheme, useThemeCtx } from "./ThemeContext.jsx";
 
 class ScreenErrorBoundary extends React.Component {
   constructor(props) {
@@ -92,6 +92,7 @@ function SearchTag({ type }) {
 
 export default function AppShell({ citizenId, userId, onLogout }) {
   const C = useTheme();
+  const { isLight } = useThemeCtx();
   const [tab, setTab]           = useState("board");
   const [showId, setShowId]     = useState(false);
   const [rr, setRR]             = useState(4821);
@@ -273,16 +274,19 @@ export default function AppShell({ citizenId, userId, onLogout }) {
 
   return (
     <div style={{display:"flex",flexDirection:"column",flex:1,animation:"fadeIn 0.4s ease",position:"relative"}} onClick={closeMenus}>
-      {/* グリッドパターン背景 */}
-      <div style={{position:"fixed",inset:0,zIndex:-1,pointerEvents:"none",backgroundImage:"linear-gradient(#1f2937 1px,transparent 1px),linear-gradient(90deg,#1f2937 1px,transparent 1px)",backgroundSize:"32px 32px",opacity:0.3,animation:"gridPulse 8s ease-in-out infinite"}}/>
+      {/* グリッドパターン背景 — ダークのみ表示 */}
+      {!isLight && <div style={{position:"fixed",inset:0,zIndex:-1,pointerEvents:"none",backgroundImage:"linear-gradient(#1f2937 1px,transparent 1px),linear-gradient(90deg,#1f2937 1px,transparent 1px)",backgroundSize:"32px 32px",opacity:0.3,animation:"gridPulse 8s ease-in-out infinite"}}/>}
 
       {/* ── HEADER ── */}
-      <div className={scrolled ? "glass-header" : ""}
-        style={{background:scrolled?"rgba(10,15,30,0.75)":"#0a0f1e",position:"sticky",top:0,zIndex:200,borderBottom:"1px solid rgba(0,255,136,0.2)",boxShadow:"0 4px 24px rgba(0,0,0,0.7)",transition:"background 0.3s ease, backdrop-filter 0.3s ease"}}>
+      <div
+        style={isLight
+          ? {position:"sticky",top:0,zIndex:200,transition:"all 0.3s ease",...C.glass,borderRadius:0,boxShadow:"0 2px 24px rgba(0,0,0,0.06), inset 0 -1px 0 rgba(255,255,255,0.8)"}
+          : {background:scrolled?"rgba(10,15,30,0.75)":"#0a0f1e",position:"sticky",top:0,zIndex:200,borderBottom:"1px solid rgba(0,255,136,0.2)",boxShadow:"0 4px 24px rgba(0,0,0,0.7)",backdropFilter:scrolled?"blur(20px)":"none",transition:"background 0.3s ease"}
+        }>
         <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"14px 18px 13px"}}>
           <div>
-            <div style={{color:"rgba(0,255,136,0.3)",fontSize:8,letterSpacing:"0.28em",marginBottom:3,fontWeight:300,fontFamily:"monospace"}}>{I18N[lang].sub}</div>
-            <div style={{color:"#f9fafb",fontSize:16,fontWeight:700,letterSpacing:"0.12em",textShadow:"0 0 24px rgba(0,255,136,0.2)",lineHeight:1.25}}>
+            <div style={{color:isLight?"rgba(0,0,0,0.3)":"rgba(0,255,136,0.3)",fontSize:8,letterSpacing:"0.28em",marginBottom:3,fontWeight:300,fontFamily:"monospace"}}>{I18N[lang].sub}</div>
+            <div style={{color:C.tx,fontSize:16,fontWeight:700,letterSpacing:"0.12em",lineHeight:1.25}}>
               <div style={{whiteSpace:"nowrap"}}>{I18N[lang].line1}</div>
               <div style={{whiteSpace:"nowrap"}}>{I18N[lang].line2}</div>
             </div>
@@ -466,23 +470,26 @@ export default function AppShell({ citizenId, userId, onLogout }) {
       </div>
 
       {/* BOTTOM NAV — ガラス風 */}
-      <div style={{position:"fixed",bottom:0,left:"50%",transform:"translateX(-50%)",width:"calc(390px - 24px)",margin:"0 12px 12px 12px",background:"rgba(255,255,255,0.08)",backdropFilter:"blur(20px)",WebkitBackdropFilter:"blur(20px)",border:"1px solid rgba(255,255,255,0.15)",borderRadius:20,boxShadow:"0 4px 24px rgba(0,0,0,0.4), 0 0 40px rgba(0,255,136,0.04)",display:"flex",zIndex:200,overflow:"hidden"}}>
+      <div style={isLight
+        ? {position:"fixed",bottom:0,left:"50%",transform:"translateX(-50%)",width:"calc(390px - 24px)",margin:"0 12px 12px 12px",...C.glass,display:"flex",zIndex:200,overflow:"hidden",borderRadius:20}
+        : {position:"fixed",bottom:0,left:"50%",transform:"translateX(-50%)",width:"calc(390px - 24px)",margin:"0 12px 12px 12px",background:"rgba(255,255,255,0.08)",backdropFilter:"blur(20px)",WebkitBackdropFilter:"blur(20px)",border:"1px solid rgba(255,255,255,0.15)",borderRadius:20,boxShadow:"0 4px 24px rgba(0,0,0,0.4), 0 0 40px rgba(0,255,136,0.04)",display:"flex",zIndex:200,overflow:"hidden"}
+      }>
         {TABS.map((t) => {
           const isActive = tab === t.id;
           const isTapped = tappedTab === t.id;
           return (
             <button key={t.id} onClick={() => handleTabChange(t.id)}
-              style={{flex:1,padding:"9px 0 11px",background:isActive?"rgba(0,255,136,0.04)":"transparent",border:"none",cursor:"pointer",display:"flex",flexDirection:"column",alignItems:"center",gap:3,borderTop:isActive?"1.5px solid #00ff88":"1.5px solid transparent",marginTop:-1.5,fontFamily:"inherit",transition:"all 0.14s"}}>
+              style={{flex:1,padding:"9px 0 11px",background:isActive?(isLight?"rgba(0,0,0,0.04)":"rgba(0,255,136,0.04)"):"transparent",border:"none",cursor:"pointer",display:"flex",flexDirection:"column",alignItems:"center",gap:3,borderTop:isActive?(isLight?"1.5px solid #000000":"1.5px solid #00ff88"):"1.5px solid transparent",marginTop:-1.5,fontFamily:"inherit",transition:"all 0.14s"}}>
               <span style={{
                 fontSize:18,
                 lineHeight:1,
-                color:isActive?"#00ff88":"#374151",
+                color:isActive?(isLight?"#000000":"#00ff88"):(isLight?"#888888":"#374151"),
                 transform:isTapped?"translateY(-4px) scale(1.15)":(isActive?"translateY(-2px) scale(1.05)":"translateY(0) scale(1)"),
                 transition:"transform 0.15s ease-out, color 0.14s, filter 0.14s",
                 display:"inline-block",
-                filter:isActive?"drop-shadow(0 0 6px rgba(0,255,136,0.8))":"none",
+                filter:isActive&&!isLight?"drop-shadow(0 0 6px rgba(0,255,136,0.8))":"none",
               }}>{t.icon}</span>
-              <span style={{fontSize:8.5,letterSpacing:"0.1em",fontWeight:isActive?700:400,color:isActive?"#00ff88":"#4b5563",transition:"color 0.14s",textShadow:isActive?"0 0 8px rgba(0,255,136,0.5)":"none"}}>{t.label}</span>
+              <span style={{fontSize:8.5,letterSpacing:"0.1em",fontWeight:isActive?700:400,color:isActive?(isLight?"#000000":"#00ff88"):(isLight?"#888888":"#4b5563"),transition:"color 0.14s"}}>{t.label}</span>
             </button>
           );
         })}
