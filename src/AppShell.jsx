@@ -7,7 +7,7 @@ import ProcScreen   from "./ProcScreen.jsx";
 import GovScreen    from "./GovScreen.jsx";
 import MyPage       from "./MyPage.jsx";
 import { fetchLikes, fetchFollows, toggleLike, toggleFollow } from "./supabase.js";
-import { useTheme, useThemeCtx } from "./ThemeContext.jsx";
+import { useTheme } from "./ThemeContext.jsx";
 
 class ScreenErrorBoundary extends React.Component {
   constructor(props) {
@@ -92,7 +92,6 @@ function SearchTag({ type }) {
 
 export default function AppShell({ citizenId, userId, onLogout }) {
   const C = useTheme();
-  const { isLight } = useThemeCtx();
   const [tab, setTab]           = useState("board");
   const [showId, setShowId]     = useState(false);
   const [rr, setRR]             = useState(4821);
@@ -289,18 +288,15 @@ export default function AppShell({ citizenId, userId, onLogout }) {
 
   return (
     <div style={{display:"flex",flexDirection:"column",flex:1,animation:"fadeIn 0.4s ease",position:"relative"}} onClick={closeMenus}>
-      {/* グリッドパターン背景 — ダークのみ表示 */}
-      {!isLight && <div style={{position:"fixed",inset:0,zIndex:-1,pointerEvents:"none",backgroundImage:"linear-gradient(#1f2937 1px,transparent 1px),linear-gradient(90deg,#1f2937 1px,transparent 1px)",backgroundSize:"32px 32px",opacity:0.3,animation:"gridPulse 8s ease-in-out infinite"}}/>}
+      {/* グリッドパターン背景 */}
+      <div style={{position:"fixed",inset:0,zIndex:-1,pointerEvents:"none",backgroundImage:"linear-gradient(#1f2937 1px,transparent 1px),linear-gradient(90deg,#1f2937 1px,transparent 1px)",backgroundSize:"32px 32px",opacity:0.3,animation:"gridPulse 8s ease-in-out infinite"}}/>
 
       {/* ── HEADER ── */}
       <div
-        style={isLight
-          ? {position:"sticky",top:0,zIndex:200,transition:"all 0.3s ease",...C.glass,borderRadius:0,boxShadow:"0 2px 24px rgba(0,0,0,0.06), inset 0 -1px 0 rgba(255,255,255,0.8)"}
-          : {background:scrolled?"rgba(10,15,30,0.75)":"#0a0f1e",position:"sticky",top:0,zIndex:200,borderBottom:"1px solid rgba(0,255,136,0.2)",boxShadow:"0 4px 24px rgba(0,0,0,0.7)",backdropFilter:scrolled?"blur(20px)":"none",transition:"background 0.3s ease"}
-        }>
+        style={{background:scrolled?"rgba(10,15,30,0.75)":"#0a0f1e",position:"sticky",top:0,zIndex:200,borderBottom:"1px solid rgba(0,255,136,0.2)",boxShadow:"0 4px 24px rgba(0,0,0,0.7)",backdropFilter:scrolled?"blur(20px)":"none",transition:"background 0.3s ease"}}>
         <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"14px 18px 13px"}}>
           <div>
-            <div style={{color:isLight?"rgba(0,0,0,0.3)":"rgba(0,255,136,0.3)",fontSize:8,letterSpacing:"0.28em",marginBottom:3,fontWeight:300,fontFamily:"monospace"}}>{I18N[lang].sub}</div>
+            <div style={{color:"rgba(0,255,136,0.3)",fontSize:8,letterSpacing:"0.28em",marginBottom:3,fontWeight:300,fontFamily:"monospace"}}>{I18N[lang].sub}</div>
             <div style={{color:C.tx,fontSize:16,fontWeight:700,letterSpacing:"0.12em",lineHeight:1.25}}>
               <div style={{whiteSpace:"nowrap"}}>{I18N[lang].line1}</div>
               <div style={{whiteSpace:"nowrap"}}>{I18N[lang].line2}</div>
@@ -311,13 +307,13 @@ export default function AppShell({ citizenId, userId, onLogout }) {
             {/* ③ 検索アイコン */}
             <button onClick={() => { setShowSearch(v => !v); setShowLangMenu(false); setShowNotif(false); setSearchQuery(""); }}
               style={{height:28,width:28,
-                background:showSearch?(isLight?"rgba(0,0,0,0.08)":"rgba(0,255,136,0.1)"):"rgba(255,255,255,0.04)",
-                border:"1px solid "+(showSearch?(isLight?"rgba(0,0,0,0.3)":"rgba(0,255,136,0.5)"):"rgba(255,255,255,0.08)"),
+                background:showSearch?"rgba(0,255,136,0.1)":"rgba(255,255,255,0.04)",
+                border:"1px solid "+(showSearch?"rgba(0,255,136,0.5)":"rgba(255,255,255,0.08)"),
                 borderRadius:6,padding:0,cursor:"pointer",color:"#ffffff",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,transition:"all 0.18s",
-                boxShadow:showSearch?(isLight?"0 0 8px rgba(0,0,0,0.12)":"0 0 8px rgba(0,255,136,0.3)"):"none"}}>
+                boxShadow:showSearch?"0 0 8px rgba(0,255,136,0.3)":"none"}}>
               <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
-                <circle cx="5.5" cy="5.5" r="4" stroke={isLight?"#000000":"#00ff88"} strokeWidth="1.3"/>
-                <line x1="9" y1="9" x2="12" y2="12" stroke={isLight?"#000000":"#00ff88"} strokeWidth="1.3" strokeLinecap="round"/>
+                <circle cx="5.5" cy="5.5" r="4" stroke="#00ff88" strokeWidth="1.3"/>
+                <line x1="9" y1="9" x2="12" y2="12" stroke="#00ff88" strokeWidth="1.3" strokeLinecap="round"/>
               </svg>
             </button>
 
@@ -329,18 +325,18 @@ export default function AppShell({ citizenId, userId, onLogout }) {
               </button>
               {showLangMenu && (
                 <div style={{position:"absolute",top:"calc(100% + 4px)",right:0,background:C.bg,
-                  border:isLight?"1px solid rgba(0,0,0,0.1)":"1px solid rgba(0,255,136,0.2)",
+                  border:"1px solid rgba(0,255,136,0.2)",
                   borderRadius:8,overflow:"hidden",zIndex:400,minWidth:64,
                   boxShadow:"0 4px 24px rgba(0,0,0,0.25)"}}>
                   {LANGS.map(l => (
                     <button key={l} onClick={() => { setLang(l); setShowLangMenu(false); }}
                       style={{display:"block",width:"100%",padding:"8px 14px",
-                        background:l===lang?(isLight?"rgba(0,0,0,0.06)":"rgba(0,255,136,0.08)"):"transparent",
+                        background:l===lang?"rgba(0,255,136,0.08)":"transparent",
                         border:"none",
-                        color:l===lang?(isLight?"#000000":"#00ff88"):(isLight?"rgba(0,0,0,0.45)":"rgba(156,163,175,0.7)"),
+                        color:l===lang?"#00ff88":"rgba(156,163,175,0.7)",
                         fontSize:9.5,fontWeight:l===lang?700:400,cursor:"pointer",fontFamily:"inherit",
                         letterSpacing:"0.08em",textAlign:"center",
-                        borderBottom:isLight?"1px solid rgba(0,0,0,0.05)":"1px solid rgba(255,255,255,0.04)",
+                        borderBottom:"1px solid rgba(255,255,255,0.04)",
                         textShadow:"none"}}>
                       {l}
                     </button>
@@ -353,22 +349,22 @@ export default function AppShell({ citizenId, userId, onLogout }) {
             <div style={{position:"relative"}}>
               <button onClick={() => { setShowNotif(v => !v); setShowLangMenu(false); setShowSearch(false); if (!readNotif) setReadNotif(true); }}
                 style={{height:28,width:28,
-                  background:showNotif?(isLight?"rgba(0,0,0,0.08)":"rgba(0,255,136,0.1)"):"rgba(255,255,255,0.04)",
-                  border:"1px solid "+(showNotif?(isLight?"rgba(0,0,0,0.3)":"rgba(0,255,136,0.4)"):"rgba(255,255,255,0.08)"),
+                  background:showNotif?"rgba(0,255,136,0.1)":"rgba(255,255,255,0.04)",
+                  border:"1px solid "+(showNotif?"rgba(0,255,136,0.4)":"rgba(255,255,255,0.08)"),
                   borderRadius:6,padding:0,cursor:"pointer",color:C.green,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,transition:"all 0.18s",
-                  boxShadow:showNotif?(isLight?"0 0 8px rgba(0,0,0,0.12)":"0 0 8px rgba(0,255,136,0.25)"):"none"}}>
-                <BellIcon hasUnread={!readNotif} stroke={isLight?"#000000":"#00ff88"}/>
+                  boxShadow:showNotif?"0 0 8px rgba(0,255,136,0.25)":"none"}}>
+                <BellIcon hasUnread={!readNotif} stroke="#00ff88"/>
               </button>
               {showNotif && (
                 <div style={{position:"absolute",top:"calc(100% + 4px)",right:0,background:C.bg,
-                  border:isLight?"1px solid rgba(0,0,0,0.1)":"1px solid rgba(0,255,136,0.15)",
+                  border:"1px solid rgba(0,255,136,0.15)",
                   borderRadius:8,overflow:"hidden",zIndex:400,width:220,boxShadow:"0 4px 24px rgba(0,0,0,0.25)"}}>
-                  <div style={{padding:"9px 12px",borderBottom:isLight?"1px solid rgba(0,0,0,0.05)":"1px solid rgba(255,255,255,0.05)",fontSize:8,color:isLight?"rgba(0,0,0,0.35)":"rgba(0,255,136,0.4)",letterSpacing:"0.18em",fontFamily:"monospace"}}>通知 // NOTIFICATIONS</div>
+                  <div style={{padding:"9px 12px",borderBottom:"1px solid rgba(255,255,255,0.05)",fontSize:8,color:"rgba(0,255,136,0.4)",letterSpacing:"0.18em",fontFamily:"monospace"}}>通知 // NOTIFICATIONS</div>
                   {NOTIFS.map(n => {
                     const iconMap = { assign:"✔", msg:"◈", doc:"▣" };
                     return (
-                      <div key={n.id} style={{padding:"10px 12px",borderBottom:isLight?"1px solid rgba(0,0,0,0.04)":"1px solid rgba(255,255,255,0.03)",display:"flex",gap:8,alignItems:"flex-start"}}>
-                        <span style={{fontSize:11,flexShrink:0,marginTop:1,color:isLight?"rgba(0,0,0,0.4)":"rgba(0,255,136,0.5)"}}>{iconMap[n.icon]||"•"}</span>
+                      <div key={n.id} style={{padding:"10px 12px",borderBottom:"1px solid rgba(255,255,255,0.03)",display:"flex",gap:8,alignItems:"flex-start"}}>
+                        <span style={{fontSize:11,flexShrink:0,marginTop:1,color:"rgba(0,255,136,0.5)"}}>{iconMap[n.icon]||"•"}</span>
                         <div style={{flex:1}}>
                           <div style={{fontSize:8.5,color:"rgba(249,250,251,0.8)",lineHeight:1.6,letterSpacing:"0.02em"}}>{n.text}</div>
                           <div style={{fontSize:7.5,color:"rgba(107,114,128,0.7)",marginTop:3}}>{n.time}</div>
@@ -508,14 +504,12 @@ export default function AppShell({ citizenId, userId, onLogout }) {
       {(() => {
         const activeIdx = TABS.findIndex(t => t.id === tab);
         const tabW = 100 / TABS.length;
-        const navBg    = isLight ? "rgba(255,255,255,0.18)" : "rgba(255,255,255,0.06)";
-        const navBorder = isLight ? "1px solid rgba(255,255,255,0.85)" : "1px solid rgba(255,255,255,0.18)";
-        const navShadow = isLight
-          ? "0 16px 48px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.9), inset 0 -1px 0 rgba(0,0,0,0.04)"
-          : "0 8px 32px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.12), inset 0 -1px 0 rgba(0,0,0,0.2)";
-        const pillBg   = isLight ? "rgba(0,0,0,0.07)" : "rgba(255,255,255,0.14)";
-        const colActive = isLight ? "#000000" : "#ffffff";
-        const colInactive = isLight ? "#888888" : "rgba(255,255,255,0.4)";
+        const navBg    = "rgba(255,255,255,0.06)";
+        const navBorder = "1px solid rgba(255,255,255,0.18)";
+        const navShadow = "0 8px 32px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.12), inset 0 -1px 0 rgba(0,0,0,0.2)";
+        const pillBg   = "rgba(255,255,255,0.14)";
+        const colActive = "#ffffff";
+        const colInactive = "rgba(255,255,255,0.4)";
         return (
           <div
             ref={navRef}
@@ -581,7 +575,7 @@ export default function AppShell({ citizenId, userId, onLogout }) {
                     lineHeight: 1,
                     display: "inline-block",
                     color: isActive ? colActive : colInactive,
-                    filter: isActive && !isLight ? "drop-shadow(0 0 8px rgba(255,255,255,0.6))" : "none",
+                    filter: isActive ? "drop-shadow(0 0 8px rgba(255,255,255,0.6))" : "none",
                     transition: "color 0.25s, filter 0.25s",
                   }}>{t.icon}</span>
                   <span style={{

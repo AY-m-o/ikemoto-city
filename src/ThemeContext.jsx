@@ -1,7 +1,7 @@
-import { createContext, useContext, useState, useEffect } from "react";
+import { createContext, useContext } from "react";
 
 // ─────────────────────────────────────────────
-// DARK MODE (サイバー夜の都市)
+// DARK MODE FIXED（サイバー夜の都市）
 // ─────────────────────────────────────────────
 export const C_DARK = {
   navy:    "#0a0f1e",
@@ -23,79 +23,22 @@ export const C_DARK = {
 };
 
 // ─────────────────────────────────────────────
-// LIGHT MODE 「光の中の行政庁舎」
+// CONTEXT（固定ダークモード）
 // ─────────────────────────────────────────────
-export const C_LIGHT = {
-  navy:    "rgba(255,255,255,0.25)",
-  navyD:   "rgba(240,240,240,0.3)",
-  navyL:   "#ffffff",
-  green:   "#000000",
-  greenL:  "#333333",
-  greenD:  "#000000",
-  red:     "#c0392b",
-  bg:      "#ffffff",
-  card:    "rgba(255,255,255,0.25)",
-  border:  "rgba(255,255,255,0.8)",
-  borderD: "rgba(0,0,0,0.1)",
-  tx:      "#000000",
-  txM:     "#222222",
-  txL:     "#888888",
-  glass: {
-    background:           "rgba(255,255,255,0.25)",
-    backdropFilter:       "blur(16px) saturate(180%)",
-    WebkitBackdropFilter: "blur(16px) saturate(180%)",
-    border:               "1px solid rgba(255,255,255,0.8)",
-    boxShadow:            "0 4px 24px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,0.9)",
-    borderRadius:         20,
-  },
-  // ボタン専用スタイル（primaryのみ上書き）
-  btnPrimary: {
-    bg:          "#000000",
-    color:       "#ffffff",
-    border:      "none",
-    shadow:      "0 4px 16px rgba(0,0,0,0.15)",
-    shadowPress: "0 2px 8px rgba(0,0,0,0.25)",
-    borderRadius: 14,
-  },
-  isLight: true,
-};
-
-// ─────────────────────────────────────────────
-// CONTEXT
-// ─────────────────────────────────────────────
-const ThemeCtx = createContext({ C: C_DARK, toggle: () => {}, isLight: false });
+const ThemeCtx = createContext({ C: C_DARK });
 
 export function ThemeProvider({ children }) {
-  const [isLight, setIsLight] = useState(() => {
-    try { return localStorage.getItem("ik_theme") === "light"; } catch { return false; }
-  });
-
-  const toggle = () => setIsLight(v => {
-    const next = !v;
-    try { localStorage.setItem("ik_theme", next ? "light" : "dark"); } catch {}
-    return next;
-  });
-
-  const C = isLight ? C_LIGHT : C_DARK;
-
-  // body背景・クラスをテーマに同期
-  useEffect(() => {
-    document.body.style.background = C.bg;
-    document.body.style.color = C.tx;
-    document.body.classList.toggle("ik-light", isLight);
-  }, [isLight]);
+  const C = C_DARK;
 
   return (
-    <ThemeCtx.Provider value={{ C, toggle, isLight }}>
+    <ThemeCtx.Provider value={{ C, isLight: false }}>
       {children}
     </ThemeCtx.Provider>
   );
 }
 
 // ─────────────────────────────────────────────
-// HOOK
-// useTheme() → C オブジェクトを返す
-// useThemeCtx() → { C, toggle, isLight } を返す
+// HOOKS
 // ─────────────────────────────────────────────
 export function useTheme() {
   return useContext(ThemeCtx).C;
