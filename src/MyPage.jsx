@@ -4,6 +4,7 @@ import { SectionHead, SubScreenNav } from "./components.jsx";
 import { useI18n } from "./i18n.js";
 import { SettingsView, InquiryView, LogoutView, GuideView, FaqView, LegalView, ContactView, PRIVACY_TEXT, TERMS_TEXT, COMMERCE_TEXT } from "./Settings.jsx";
 import BlockList from "./BlockList.jsx";
+import { supabase } from "./supabase.js";
 
 // ─────────────────────────────────────────────
 // FOLLOWING VIEW（フォロー中店舗一覧）
@@ -106,6 +107,10 @@ export default function MyPage({ citizenId, onNudge, onLogout, followedShops, li
   const eviData = [0.62,0.71,0.68,0.80,0.75,0.84,0.91];
   const labels  = ["月","火","水","木","金","土","日"];
   const [eviDisplay, setEviDisplay] = useState(0);
+  const [currentUserId, setCurrentUserId] = useState(null);
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data }) => { if (data?.user) setCurrentUserId(data.user.id); });
+  }, []);
   useEffect(() => {
     if (subView !== null) return;
     const target = eviData[eviData.length - 1];
@@ -126,7 +131,7 @@ export default function MyPage({ citizenId, onNudge, onLogout, followedShops, li
   const joinedProjects = BOARD_ITEMS_INIT.filter(b => b.status === "充足");
 
   // サブビュールーティング
-  if (subView === "settings")  return <SettingsView  onBack={() => setSubView(null)} onNudge={onNudge}/>;
+  if (subView === "settings")  return <SettingsView  onBack={() => setSubView(null)} onNudge={onNudge} userId={currentUserId}/>;
   if (subView === "inquiry")   return <InquiryView   onBack={() => setSubView(null)} onNudge={onNudge}/>;
   if (subView === "logout")    return <LogoutView    onBack={() => setSubView(null)} onLogout={onLogout} onNudge={onNudge}/>;
   if (subView === "guide")     return <GuideView     onBack={() => setSubView(null)}/>;

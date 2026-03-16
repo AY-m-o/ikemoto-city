@@ -1,14 +1,38 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { C, LOGOUT_LOGS, runSequence } from "./constants.js";
 import { SectionHead, LogTerminal, Btn, SubScreenNav } from "./components.jsx";
+import { uploadAvatar, fetchAvatarUrl } from "./supabase.js";
 
 // ─────────────────────────────────────────────
 // SETTINGS VIEW（パラメータ設定）
 // ─────────────────────────────────────────────
-export function SettingsView({ onBack, onNudge }) {
+export function SettingsView({ onBack, onNudge, userId }) {
   const [displayName, setDisplayName] = useState("開発局員");
   const [notifs, setNotifs] = useState({ assign:true, market:false, system:true });
   const [saved, setSaved] = useState(false);
+  const [avatarUrl, setAvatarUrl] = useState(null);
+  const [avatarLoading, setAvatarLoading] = useState(false);
+  const [avatarError, setAvatarError] = useState("");
+
+  useEffect(() => {
+    if (userId) fetchAvatarUrl(userId).then(url => { if (url) setAvatarUrl(url); });
+  }, [userId]);
+
+  const handleAvatarUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file || !userId) return;
+    setAvatarError("");
+    setAvatarLoading(true);
+    try {
+      const url = await uploadAvatar(file, userId);
+      setAvatarUrl(url);
+    } catch (err) {
+      setAvatarError(err.message);
+    } finally {
+      setAvatarLoading(false);
+      e.target.value = "";
+    }
+  };
 
   const handleSave = () => {
     setSaved(true);
@@ -22,6 +46,24 @@ export function SettingsView({ onBack, onNudge }) {
       <div style={{padding:"16px 14px 0"}}>
         <div style={{background:C.card,border:"1px solid "+C.border,borderRadius:8,padding:"14px 14px",marginBottom:12}}>
           <div style={{fontSize:9,color:C.txL,letterSpacing:"0.18em",fontWeight:600,marginBottom:12}}>プロフィール</div>
+
+          {/* アバター */}
+          <div style={{display:"flex",alignItems:"center",gap:12,marginBottom:14}}>
+            <label style={{cursor:avatarLoading?"default":"pointer"}}>
+              <div style={{width:52,height:52,borderRadius:"50%",overflow:"hidden",background:"rgba(46,107,79,0.2)",border:"2px solid rgba(46,107,79,0.4)",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
+                {avatarUrl
+                  ? <img src={avatarUrl} alt="avatar" style={{width:"100%",height:"100%",objectFit:"cover"}}/>
+                  : <span style={{fontSize:22,color:C.green}}>&#9679;</span>}
+              </div>
+              <input type="file" accept="image/*" style={{display:"none"}} onChange={handleAvatarUpload} disabled={avatarLoading}/>
+            </label>
+            <div>
+              <div style={{fontSize:9,color:C.txL,letterSpacing:"0.08em",marginBottom:3}}>アイコン画像</div>
+              <div style={{fontSize:8,color:"rgba(100,160,130,0.7)",letterSpacing:"0.04em"}}>{avatarLoading?"AI検査中…":"タップして変更（2MB以内）"}</div>
+              {avatarError && <div style={{fontSize:8,color:"#ef4444",marginTop:3,lineHeight:1.4}}>{avatarError}</div>}
+            </div>
+          </div>
+
           <input value={displayName} onChange={e => setDisplayName(e.target.value)} placeholder="表示名を入力"
             style={{width:"100%",padding:"8px 12px",background:C.bg,border:"1px solid "+C.border,borderRadius:7,color:C.tx,fontSize:12,fontFamily:"inherit",outline:"none",letterSpacing:"0.04em",boxSizing:"border-box"}}/>
         </div>

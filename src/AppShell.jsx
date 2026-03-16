@@ -6,7 +6,7 @@ import MarketScreen from "./MarketScreen.jsx";
 import ProcScreen   from "./ProcScreen.jsx";
 import GovScreen    from "./GovScreen.jsx";
 import MyPage       from "./MyPage.jsx";
-import { fetchLikes, fetchFollows, toggleLike, toggleFollow, fetchAvatarUrl } from "./supabase.js";
+import { fetchLikes, fetchFollows, toggleLike, toggleFollow } from "./supabase.js";
 
 class ScreenErrorBoundary extends React.Component {
   constructor(props) {
@@ -129,7 +129,6 @@ export default function AppShell({ citizenId, userId, onLogout }) {
   const [likedItems,    setLikedItems]    = useState({});
   const [likedShops,    setLikedShops]    = useState({});
   const [blockedShops,  setBlockedShops]  = useState({});
-  const [avatarUrl,     setAvatarUrl]     = useState(null);
   // マーケットへのディープリンク
   const [marketJump, setMarketJump] = useState(null);
   // ⑥ スクロール標高→トリガージャス&フェード
@@ -141,7 +140,6 @@ export default function AppShell({ citizenId, userId, onLogout }) {
     if (!userId) return;
     fetchLikes(userId).then(data => setLikedItems(data));
     fetchFollows(userId).then(data => setFollowedShops(data));
-    fetchAvatarUrl(userId).then(url => { if (url) setAvatarUrl(url); });
   }, [userId]);
 
   // ⑦ コンテンツエリアのスクロール検知
@@ -340,14 +338,6 @@ export default function AppShell({ citizenId, userId, onLogout }) {
                 </div>
               )}
             </div>
-
-            {/* アバターアイコン（マイページへ遷移） */}
-            <button onClick={() => handleTab("my")}
-              style={{height:28,width:28,padding:0,background:"transparent",border:"1px solid rgba(0,255,136,0.3)",borderRadius:"50%",cursor:"pointer",overflow:"hidden",flexShrink:0,display:"flex",alignItems:"center",justifyContent:"center",transition:"border-color 0.18s"}}>
-              {avatarUrl
-                ? <img src={avatarUrl} alt="avatar" style={{width:"100%",height:"100%",objectFit:"cover"}}/>
-                : <span style={{fontSize:13,color:"#00ff88",lineHeight:1}}>◉</span>}
-            </button>
 
             {/* 市民証 押して長押と3D回転（⑩） */}
             <button
