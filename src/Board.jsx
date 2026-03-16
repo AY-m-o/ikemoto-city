@@ -512,7 +512,13 @@ export default function Board({ onNudge, lang, citizenId }) {
 
           {currentUserId && (
             <button onClick={() => setShowCreate(true)}
-              style={{width:"100%",padding:"11px 0",marginBottom:16,background:"rgba(0,255,136,0.07)",border:"1px solid rgba(0,255,136,0.3)",borderRadius:8,color:C.green,fontSize:10,fontWeight:700,cursor:"pointer",fontFamily:"inherit",letterSpacing:"0.1em",display:"flex",alignItems:"center",justifyContent:"center",gap:6,transition:"background 0.15s"}}>
+              style={{width:"100%",padding:"11px 0",marginBottom:16,
+                background:C.isLight?"rgba(0,0,0,0.06)":"rgba(0,255,136,0.07)",
+                border:C.isLight?"1px solid rgba(0,0,0,0.18)":"1px solid rgba(0,255,136,0.3)",
+                borderRadius:8,
+                color:C.isLight?"#000000":C.green,
+                fontSize:10,fontWeight:700,cursor:"pointer",fontFamily:"inherit",letterSpacing:"0.1em",
+                display:"flex",alignItems:"center",justifyContent:"center",gap:6,transition:"background 0.15s"}}>
               <span style={{fontSize:13}}>+</span>プロジェクトを作成する
             </button>
           )}

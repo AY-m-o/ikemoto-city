@@ -68,14 +68,14 @@ const I18N = {
 
 
 // ベルアイコン（白・細線・赤い点バッジのみ）
-function BellIcon({ hasUnread }) {
+function BellIcon({ hasUnread, stroke="#00ff88" }) {
   return (
     <div style={{position:"relative",width:15,height:16,display:"flex",alignItems:"center",justifyContent:"center"}}>
       <svg width="15" height="16" viewBox="0 0 15 16" fill="none" xmlns="http://www.w3.org/2000/svg" style={{display:"block"}}>
-        <path d="M7.5 1.5C7.5 1.5 4 3.5 4 8V11.5H11V8C11 3.5 7.5 1.5 7.5 1.5Z" stroke="#00ff88" strokeWidth="1.2" fill="none" strokeLinejoin="round"/>
-        <path d="M4 11.5H11L11.8 13H3.2L4 11.5Z" stroke="#00ff88" strokeWidth="1.2" fill="none" strokeLinejoin="round"/>
-        <path d="M6.2 13.5C6.2 13.5 6.5 14.8 7.5 14.8C8.5 14.8 8.8 13.5 8.8 13.5" stroke="#00ff88" strokeWidth="1.2" fill="none" strokeLinecap="round"/>
-        <line x1="7.5" y1="0.5" x2="7.5" y2="1.8" stroke="#00ff88" strokeWidth="1.2" strokeLinecap="round"/>
+        <path d="M7.5 1.5C7.5 1.5 4 3.5 4 8V11.5H11V8C11 3.5 7.5 1.5 7.5 1.5Z" stroke={stroke} strokeWidth="1.2" fill="none" strokeLinejoin="round"/>
+        <path d="M4 11.5H11L11.8 13H3.2L4 11.5Z" stroke={stroke} strokeWidth="1.2" fill="none" strokeLinejoin="round"/>
+        <path d="M6.2 13.5C6.2 13.5 6.5 14.8 7.5 14.8C8.5 14.8 8.8 13.5 8.8 13.5" stroke={stroke} strokeWidth="1.2" fill="none" strokeLinecap="round"/>
+        <line x1="7.5" y1="0.5" x2="7.5" y2="1.8" stroke={stroke} strokeWidth="1.2" strokeLinecap="round"/>
       </svg>
       {hasUnread && <div style={{position:"absolute",top:1,right:0,width:5,height:5,borderRadius:"50%",background:"#ff4455",boxShadow:"0 0 4px rgba(255,68,85,0.8)",border:"1px solid rgba(6,11,21,0.9)"}}/>}
     </div>
@@ -310,10 +310,14 @@ export default function AppShell({ citizenId, userId, onLogout }) {
 
             {/* ③ 検索アイコン */}
             <button onClick={() => { setShowSearch(v => !v); setShowLangMenu(false); setShowNotif(false); setSearchQuery(""); }}
-              style={{height:28,width:28,background:showSearch?"rgba(0,255,136,0.1)":"rgba(255,255,255,0.04)",border:"1px solid "+(showSearch?"rgba(0,255,136,0.5)":"rgba(255,255,255,0.08)"),borderRadius:6,padding:0,cursor:"pointer",color:"#ffffff",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,transition:"all 0.18s",boxShadow:showSearch?"0 0 8px rgba(0,255,136,0.3)":"none"}}>
+              style={{height:28,width:28,
+                background:showSearch?(isLight?"rgba(0,0,0,0.08)":"rgba(0,255,136,0.1)"):"rgba(255,255,255,0.04)",
+                border:"1px solid "+(showSearch?(isLight?"rgba(0,0,0,0.3)":"rgba(0,255,136,0.5)"):"rgba(255,255,255,0.08)"),
+                borderRadius:6,padding:0,cursor:"pointer",color:"#ffffff",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,transition:"all 0.18s",
+                boxShadow:showSearch?(isLight?"0 0 8px rgba(0,0,0,0.12)":"0 0 8px rgba(0,255,136,0.3)"):"none"}}>
               <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
-                <circle cx="5.5" cy="5.5" r="4" stroke="#00ff88" strokeWidth="1.3"/>
-                <line x1="9" y1="9" x2="12" y2="12" stroke="#00ff88" strokeWidth="1.3" strokeLinecap="round"/>
+                <circle cx="5.5" cy="5.5" r="4" stroke={isLight?"#000000":"#00ff88"} strokeWidth="1.3"/>
+                <line x1="9" y1="9" x2="12" y2="12" stroke={isLight?"#000000":"#00ff88"} strokeWidth="1.3" strokeLinecap="round"/>
               </svg>
             </button>
 
@@ -324,10 +328,20 @@ export default function AppShell({ citizenId, userId, onLogout }) {
                 {lang} <span style={{fontSize:7,opacity:0.6}}>&#x25BC;</span>
               </button>
               {showLangMenu && (
-                <div style={{position:"absolute",top:"calc(100% + 4px)",right:0,background:C.bg,border:"1px solid rgba(0,255,136,0.2)",borderRadius:8,overflow:"hidden",zIndex:400,minWidth:64,boxShadow:"0 4px 24px rgba(0,0,0,0.6),0 0 12px rgba(0,255,136,0.05)"}}>
+                <div style={{position:"absolute",top:"calc(100% + 4px)",right:0,background:C.bg,
+                  border:isLight?"1px solid rgba(0,0,0,0.1)":"1px solid rgba(0,255,136,0.2)",
+                  borderRadius:8,overflow:"hidden",zIndex:400,minWidth:64,
+                  boxShadow:"0 4px 24px rgba(0,0,0,0.25)"}}>
                   {LANGS.map(l => (
                     <button key={l} onClick={() => { setLang(l); setShowLangMenu(false); }}
-                      style={{display:"block",width:"100%",padding:"8px 14px",background:l===lang?"rgba(0,255,136,0.08)":"transparent",border:"none",color:l===lang?"#00ff88":"rgba(156,163,175,0.7)",fontSize:9.5,fontWeight:l===lang?700:400,cursor:"pointer",fontFamily:"inherit",letterSpacing:"0.08em",textAlign:"center",borderBottom:"1px solid rgba(255,255,255,0.04)",textShadow:l===lang?"0 0 6px rgba(0,255,136,0.5)":"none"}}>
+                      style={{display:"block",width:"100%",padding:"8px 14px",
+                        background:l===lang?(isLight?"rgba(0,0,0,0.06)":"rgba(0,255,136,0.08)"):"transparent",
+                        border:"none",
+                        color:l===lang?(isLight?"#000000":"#00ff88"):(isLight?"rgba(0,0,0,0.45)":"rgba(156,163,175,0.7)"),
+                        fontSize:9.5,fontWeight:l===lang?700:400,cursor:"pointer",fontFamily:"inherit",
+                        letterSpacing:"0.08em",textAlign:"center",
+                        borderBottom:isLight?"1px solid rgba(0,0,0,0.05)":"1px solid rgba(255,255,255,0.04)",
+                        textShadow:"none"}}>
                       {l}
                     </button>
                   ))}
@@ -338,17 +352,23 @@ export default function AppShell({ citizenId, userId, onLogout }) {
             {/* 通知ベル */}
             <div style={{position:"relative"}}>
               <button onClick={() => { setShowNotif(v => !v); setShowLangMenu(false); setShowSearch(false); if (!readNotif) setReadNotif(true); }}
-                style={{height:28,width:28,background:showNotif?"rgba(0,255,136,0.1)":"rgba(255,255,255,0.04)",border:"1px solid "+(showNotif?"rgba(0,255,136,0.4)":"rgba(255,255,255,0.08)"),borderRadius:6,padding:0,cursor:"pointer",color:C.green,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,transition:"all 0.18s",boxShadow:showNotif?"0 0 8px rgba(0,255,136,0.25)":"none"}}>
-                <BellIcon hasUnread={!readNotif}/>
+                style={{height:28,width:28,
+                  background:showNotif?(isLight?"rgba(0,0,0,0.08)":"rgba(0,255,136,0.1)"):"rgba(255,255,255,0.04)",
+                  border:"1px solid "+(showNotif?(isLight?"rgba(0,0,0,0.3)":"rgba(0,255,136,0.4)"):"rgba(255,255,255,0.08)"),
+                  borderRadius:6,padding:0,cursor:"pointer",color:C.green,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,transition:"all 0.18s",
+                  boxShadow:showNotif?(isLight?"0 0 8px rgba(0,0,0,0.12)":"0 0 8px rgba(0,255,136,0.25)"):"none"}}>
+                <BellIcon hasUnread={!readNotif} stroke={isLight?"#000000":"#00ff88"}/>
               </button>
               {showNotif && (
-                <div style={{position:"absolute",top:"calc(100% + 4px)",right:0,background:C.bg,border:"1px solid rgba(0,255,136,0.15)",borderRadius:8,overflow:"hidden",zIndex:400,width:220,boxShadow:"0 4px 24px rgba(0,0,0,0.6),0 0 16px rgba(0,255,136,0.04)"}}>
-                  <div style={{padding:"9px 12px",borderBottom:"1px solid rgba(255,255,255,0.05)",fontSize:8,color:"rgba(0,255,136,0.4)",letterSpacing:"0.18em",fontFamily:"monospace"}}>通知 // NOTIFICATIONS</div>
+                <div style={{position:"absolute",top:"calc(100% + 4px)",right:0,background:C.bg,
+                  border:isLight?"1px solid rgba(0,0,0,0.1)":"1px solid rgba(0,255,136,0.15)",
+                  borderRadius:8,overflow:"hidden",zIndex:400,width:220,boxShadow:"0 4px 24px rgba(0,0,0,0.25)"}}>
+                  <div style={{padding:"9px 12px",borderBottom:isLight?"1px solid rgba(0,0,0,0.05)":"1px solid rgba(255,255,255,0.05)",fontSize:8,color:isLight?"rgba(0,0,0,0.35)":"rgba(0,255,136,0.4)",letterSpacing:"0.18em",fontFamily:"monospace"}}>通知 // NOTIFICATIONS</div>
                   {NOTIFS.map(n => {
                     const iconMap = { assign:"✔", msg:"◈", doc:"▣" };
                     return (
-                      <div key={n.id} style={{padding:"10px 12px",borderBottom:"1px solid rgba(255,255,255,0.03)",display:"flex",gap:8,alignItems:"flex-start"}}>
-                        <span style={{fontSize:11,flexShrink:0,marginTop:1,color:"rgba(0,255,136,0.5)"}}>{iconMap[n.icon]||"•"}</span>
+                      <div key={n.id} style={{padding:"10px 12px",borderBottom:isLight?"1px solid rgba(0,0,0,0.04)":"1px solid rgba(255,255,255,0.03)",display:"flex",gap:8,alignItems:"flex-start"}}>
+                        <span style={{fontSize:11,flexShrink:0,marginTop:1,color:isLight?"rgba(0,0,0,0.4)":"rgba(0,255,136,0.5)"}}>{iconMap[n.icon]||"•"}</span>
                         <div style={{flex:1}}>
                           <div style={{fontSize:8.5,color:"rgba(249,250,251,0.8)",lineHeight:1.6,letterSpacing:"0.02em"}}>{n.text}</div>
                           <div style={{fontSize:7.5,color:"rgba(107,114,128,0.7)",marginTop:3}}>{n.time}</div>
