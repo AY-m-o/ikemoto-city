@@ -173,7 +173,7 @@ export default function AssetDetail({ item, shopName, onBack, onNudge, likedItem
           </div>
 
           {/* CA指数バー */}
-          <div style={{background:C.card,border:"1px solid "+C.border,borderRadius:7,padding:"11px 13px",marginBottom:12}}>
+          <div style={{...C.glass,background:C.card,border:"1px solid "+C.border,borderRadius:7,padding:"11px 13px",marginBottom:12}}>
             <div style={{fontSize:8,color:C.txL,letterSpacing:"0.14em",marginBottom:7}}>CA ALIGNMENT INDEX</div>
             <div style={{display:"flex",alignItems:"center",gap:9}}>
               <div style={{flex:1,height:5,background:C.border,borderRadius:3,overflow:"hidden"}}>
@@ -186,7 +186,7 @@ export default function AssetDetail({ item, shopName, onBack, onNudge, likedItem
           {/* コンセプト */}
           <div style={{marginBottom:12}}>
             <div style={{fontSize:8,color:C.txL,letterSpacing:"0.14em",marginBottom:7}}>CONCEPT</div>
-            <div style={{background:C.card,border:"1px solid "+C.border,borderLeft:"2.5px solid "+C.green,borderRadius:7,padding:"11px 13px"}}>
+            <div style={{...C.glass,background:C.card,border:"1px solid "+C.border,borderLeft:"2.5px solid "+C.green,borderRadius:7,padding:"11px 13px"}}>
               <div style={{fontSize:9.5,color:C.txM,lineHeight:1.8,letterSpacing:"0.04em"}}>{item.concept}</div>
             </div>
           </div>
@@ -194,7 +194,7 @@ export default function AssetDetail({ item, shopName, onBack, onNudge, likedItem
           {/* スペック */}
           <div style={{marginBottom:12}}>
             <div style={{fontSize:8,color:C.txL,letterSpacing:"0.14em",marginBottom:7}}>SPECIFICATIONS</div>
-            <div style={{background:C.card,border:"1px solid "+C.border,borderRadius:7,overflow:"hidden"}}>
+            <div style={{...C.glass,background:C.card,border:"1px solid "+C.border,borderRadius:7,overflow:"hidden"}}>
               {item.specs.map((s,i) => (
                 <div key={i} style={{display:"flex",justifyContent:"space-between",padding:"9px 13px",borderBottom:i<item.specs.length-1?"1px solid "+C.borderD:"none"}}>
                   <span style={{fontSize:9,color:C.txL,letterSpacing:"0.07em"}}>{s.k}</span>
@@ -210,7 +210,7 @@ export default function AssetDetail({ item, shopName, onBack, onNudge, likedItem
             {comments.map(cm => (
               <div key={cm.id} style={{marginBottom:9,display:"flex",gap:8}}>
                 <div style={{width:24,height:24,borderRadius:"50%",background:C.navy,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,fontSize:10,color:"rgba(143,168,200,0.5)",border:"1px solid "+C.border}}>{cm.from[0]}</div>
-                <div style={{flex:1,background:C.card,border:"1px solid "+C.border,borderRadius:7,padding:"8px 10px"}}>
+                <div style={{flex:1,...C.glass,background:C.card,border:"1px solid "+C.border,borderRadius:7,padding:"8px 10px"}}>
                   <div style={{fontSize:8,color:C.txL,marginBottom:3}}>{cm.from} <span style={{opacity:0.5}}>{cm.time}</span></div>
                   <div style={{fontSize:9.5,color:C.txM,lineHeight:1.6,letterSpacing:"0.03em"}}>{cm.text}</div>
                 </div>
@@ -222,7 +222,7 @@ export default function AssetDetail({ item, shopName, onBack, onNudge, likedItem
                 onChange={e => setCommentInput(e.target.value)}
                 onKeyDown={e => { if (e.key === "Enter") sendComment(); }}
                 placeholder="コメントを入力…"
-                style={{flex:1,background:C.card,border:"1px solid "+C.border,borderRadius:6,padding:"7px 10px",color:C.tx,fontSize:9.5,fontFamily:"inherit",outline:"none",letterSpacing:"0.03em"}}
+                style={{flex:1,...C.glass,background:C.card,border:"1px solid "+C.border,borderRadius:6,padding:"7px 10px",color:C.tx,fontSize:9.5,fontFamily:"inherit",outline:"none",letterSpacing:"0.03em"}}
               />
               <button onClick={sendComment}
                 style={{padding:"7px 11px",background:commentInput.trim()?C.green:"rgba(46,107,79,0.25)",border:"none",borderRadius:6,color:"#fff",fontSize:9,fontWeight:600,cursor:"pointer",fontFamily:"inherit",flexShrink:0,transition:"background 0.2s"}}>
@@ -235,7 +235,7 @@ export default function AssetDetail({ item, shopName, onBack, onNudge, likedItem
           <div style={{marginBottom:14}}>
             <div style={{fontSize:8,color:C.txL,letterSpacing:"0.14em",marginBottom:9}}>REVIEWS</div>
             {reviews.map(r => (
-              <div key={r.id} style={{background:C.card,border:"1px solid "+C.border,borderRadius:7,padding:"11px 12px",marginBottom:8}}>
+              <div key={r.id} style={{...C.glass,background:C.card,border:"1px solid "+C.border,borderRadius:7,padding:"11px 12px",marginBottom:8}}>
                 <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:5}}>
                   <div style={{display:"flex",gap:6,alignItems:"center"}}>
                     <span style={{fontSize:10,fontWeight:600,color:C.tx}}>{r.from}</span>
@@ -257,7 +257,7 @@ export default function AssetDetail({ item, shopName, onBack, onNudge, likedItem
                   onChange={e => setMyReview(e.target.value)}
                   placeholder="感想を入力（任意）"
                   rows={2}
-                  style={{width:"100%",background:C.card,border:"1px solid "+C.border,borderRadius:6,padding:"7px 10px",color:C.tx,fontSize:9.5,fontFamily:"inherit",outline:"none",letterSpacing:"0.03em",resize:"none",lineHeight:1.7,boxSizing:"border-box",marginBottom:8}}
+                  style={{width:"100%",...C.glass,background:C.card,border:"1px solid "+C.border,borderRadius:6,padding:"7px 10px",color:C.tx,fontSize:9.5,fontFamily:"inherit",outline:"none",letterSpacing:"0.03em",resize:"none",lineHeight:1.7,boxSizing:"border-box",marginBottom:8}}
                 />
                 <button onClick={submitReview} disabled={!myRating}
                   style={{padding:"7px 16px",background:myRating?C.green:"rgba(46,107,79,0.25)",border:"none",borderRadius:6,color:"#fff",fontSize:9,fontWeight:600,cursor:myRating?"pointer":"default",fontFamily:"inherit",transition:"background 0.2s"}}>
@@ -272,10 +272,10 @@ export default function AssetDetail({ item, shopName, onBack, onNudge, likedItem
           </div>
 
           {/* 価格 */}
-          <div style={{background:C.card,border:"1px solid "+C.border,borderRadius:8,padding:"13px 14px",marginBottom:14}}>
+          <div style={{...C.glass,background:C.card,border:"1px solid "+C.border,borderRadius:8,padding:"13px 14px",marginBottom:14}}>
             <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
               <span style={{fontSize:10,fontWeight:700,color:C.tx}}>登録価格</span>
-              <span style={{fontSize:24,fontWeight:700,color:"#00ff88",letterSpacing:"0.04em",textShadow:"0 0 12px rgba(0,255,136,0.4)"}}>{item.price}</span>
+              <span style={{fontSize:24,fontWeight:700,color:C.green,letterSpacing:"0.04em",textShadow:"0 0 12px rgba(0,255,136,0.4)"}}>{item.price}</span>
             </div>
           </div>
 
@@ -374,7 +374,7 @@ export default function AssetDetail({ item, shopName, onBack, onNudge, likedItem
                 <div style={{height:1,background:C.border,margin:"8px 0"}}/>
                 <div style={{display:"flex",justifyContent:"space-between"}}>
                   <span style={{fontSize:10,color:C.tx,fontWeight:700}}>登録価格</span>
-                  <span style={{fontSize:13,color:"#00ff88",fontWeight:700,textShadow:"0 0 8px rgba(0,255,136,0.35)"}}>{item.price}</span>
+                  <span style={{fontSize:13,color:C.green,fontWeight:700,textShadow:"0 0 8px rgba(0,255,136,0.35)"}}>{item.price}</span>
                 </div>
               </div>
               <Btn label="物質化申請を実行する" onClick={runPurchase}/>

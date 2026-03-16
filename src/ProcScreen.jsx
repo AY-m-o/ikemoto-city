@@ -80,7 +80,7 @@ export default function ProcScreen({ onNudge, lang }) {
           { id:"asset",   label:"作品出力許可申請",   sub:"作品の市資産登録",   desc:"登録した作品を市の資産台帳に登録・管理する手続きを行います。" },
           { id:"connect", label:"売上受取設定",         sub:"Stripe Connect登録",  desc:"作品の売上を受け取るために決済アカウントを登録します。購入者の支払いからインフラ維持税（1.5%）を差し引いた金額が直接振り込まれます。" },
         ].map((p) => (
-          <div key={p.id} className="card" onClick={()=>setSub(p.id)} style={{background:C.card,border:"1px solid "+C.border,borderRadius:8,padding:"14px 14px",marginBottom:10,position:"relative",overflow:"hidden",cursor:"pointer"}}>
+          <div key={p.id} className="card" onClick={()=>setSub(p.id)} style={{...C.glass,background:C.card,border:"1px solid "+C.border,borderRadius:8,padding:"14px 14px",marginBottom:10,position:"relative",overflow:"hidden",cursor:"pointer"}}>
             <Stamp/>
             <div style={{fontSize:8,color:C.txL,letterSpacing:"0.12em",marginBottom:5}}>{p.sub}</div>
             <div style={{fontSize:13,fontWeight:700,color:C.tx,marginBottom:6,letterSpacing:"0.03em"}}>{p.label}</div>
@@ -99,7 +99,7 @@ export default function ProcScreen({ onNudge, lang }) {
         <button onClick={reset} style={{background:"transparent",border:"none",color:C.txL,fontSize:9,cursor:"pointer",fontFamily:"inherit",letterSpacing:"0.1em",marginBottom:14}}>{"\u2190 手続き一覧へ"}</button>
         <SectionHead accent={C.navy} label="売上受取設定" sub="Stripe Connect"/>
 
-        <div style={{background:C.card,border:"1px solid "+C.border,borderLeft:"2.5px solid "+C.green,borderRadius:7,padding:"12px 14px",marginBottom:16}}>
+        <div style={{...C.glass,background:C.card,border:"1px solid "+C.border,borderLeft:"2.5px solid "+C.green,borderRadius:7,padding:"12px 14px",marginBottom:16}}>
           <div style={{fontSize:9.5,color:C.txM,lineHeight:1.8,letterSpacing:"0.04em"}}>
             作品購入時の売上が登録の口座に直接振り込まれます。<br/>
             <span style={{color:C.txL}}>インフラ維持税（1.5%）を差し引いた公駒金額がお支払いされます。</span>
@@ -145,7 +145,7 @@ export default function ProcScreen({ onNudge, lang }) {
 
         {phase === "idle" && sub === "creator" && (
           <div>
-            <div style={{background:C.card,border:"1px solid "+C.border,borderLeft:"2.5px solid "+C.green,borderRadius:7,padding:"12px 13px",marginBottom:16}}>
+            <div style={{...C.glass,background:C.card,border:"1px solid "+C.border,borderLeft:"2.5px solid "+C.green,borderRadius:7,padding:"12px 13px",marginBottom:16}}>
               <div style={{fontSize:9.5,color:C.txM,lineHeight:1.75,letterSpacing:"0.04em"}}>
                 適性診断シーケンスを実行します。診断結果は市民活動ログに記録されます。
               </div>
@@ -206,7 +206,7 @@ export default function ProcScreen({ onNudge, lang }) {
                   <textarea value={assetForm.concept} onChange={e=>updateForm("concept", e.target.value)} placeholder="作品の背景や仕様を入力してください" style={{width:"100%",boxSizing:"border-box",padding:10,borderRadius:6,border:"1px solid "+C.border,background:C.bg,fontSize:9.5,fontFamily:"inherit",color:C.tx,resize:"vertical",minHeight:80}}/>
                 </div>
                 {assetForm.concept && (
-                  <div style={{background:C.card,border:"1px solid "+C.border,borderRadius:6,padding:10,marginBottom:16}}>
+                  <div style={{...C.glass,background:C.card,border:"1px solid "+C.border,borderRadius:6,padding:10,marginBottom:16}}>
                     <div style={{fontSize:8,color:C.txL,marginBottom:4}}>プレビュー</div>
                     <div style={{fontSize:9.5,color:C.tx,lineHeight:1.6,whiteSpace:"pre-wrap"}}>{assetForm.concept}</div>
                   </div>
@@ -221,7 +221,7 @@ export default function ProcScreen({ onNudge, lang }) {
             {assetStep === 4 && (
               <div>
                 <div style={{fontSize:11,fontWeight:600,color:C.tx,marginBottom:12}}>Step 4：最終確認</div>
-                <div style={{background:C.card,border:"1px solid "+C.border,borderLeft:"2.5px solid "+C.green,borderRadius:7,padding:"12px 13px",marginBottom:16}}>
+                <div style={{...C.glass,background:C.card,border:"1px solid "+C.border,borderLeft:"2.5px solid "+C.green,borderRadius:7,padding:"12px 13px",marginBottom:16}}>
                   <div style={{fontSize:9.5,color:C.txM,lineHeight:1.75,letterSpacing:"0.04em"}}>
                     資産台帳への登録処理を実行します。登録後の変更には別途申請が必要です。
                   </div>

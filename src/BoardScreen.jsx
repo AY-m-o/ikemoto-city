@@ -62,7 +62,7 @@ function ProjectRoom({ room, onBack, onNudge }) {
       </div>
 
       {/* 入力欄 */}
-      <div style={{position:"fixed",bottom:56,left:"50%",transform:"translateX(-50%)",width:390,background:C.card,borderTop:"1px solid "+C.border,padding:"8px 12px",display:"flex",gap:8,alignItems:"flex-end",boxSizing:"border-box"}}>
+      <div style={{position:"fixed",bottom:56,left:"50%",transform:"translateX(-50%)",width:390,...C.glass,background:C.card,borderTop:"1px solid "+C.border,padding:"8px 12px",display:"flex",gap:8,alignItems:"flex-end",boxSizing:"border-box"}}>
         <textarea
           value={input}
           onChange={e => setInput(e.target.value)}
@@ -103,7 +103,7 @@ function ProjectDetail({ item, onBack, onAssign, onRoom, onNudge, alreadyAssigne
       <div style={{padding:"14px 14px 0"}}>
         {/* 概要 */}
         <div style={{fontSize:8,color:C.txL,letterSpacing:"0.14em",marginBottom:7}}>PROJECT OVERVIEW</div>
-        <div style={{background:C.card,border:"1px solid "+C.border,borderLeft:"2.5px solid "+C.green,borderRadius:7,padding:"12px 14px",marginBottom:14}}>
+        <div style={{...C.glass,background:C.card,border:"1px solid "+C.border,borderLeft:"2.5px solid "+C.green,borderRadius:7,padding:"12px 14px",marginBottom:14}}>
           <div style={{fontSize:9.5,color:C.txM,lineHeight:1.85,letterSpacing:"0.04em"}}>{item.desc || "概要情報なし"}</div>
         </div>
 
@@ -111,12 +111,12 @@ function ProjectDetail({ item, onBack, onAssign, onRoom, onNudge, alreadyAssigne
         <div style={{fontSize:8,color:C.txL,letterSpacing:"0.14em",marginBottom:7}}>REQUIRED SKILLS</div>
         <div style={{display:"flex",gap:7,flexWrap:"wrap",marginBottom:14}}>
           {item.skills.map(s => (
-            <span key={s} style={{background:C.card,border:"1px solid "+C.border,color:C.txM,fontSize:9.5,padding:"5px 13px",borderRadius:20,letterSpacing:"0.06em",fontWeight:500}}>{s}</span>
+            <span key={s} style={{...C.glass,background:C.card,border:"1px solid "+C.border,color:C.txM,fontSize:9.5,padding:"5px 13px",borderRadius:20,letterSpacing:"0.06em",fontWeight:500}}>{s}</span>
           ))}
         </div>
 
         {/* 詳細情報 */}
-        <div style={{background:C.card,border:"1px solid "+C.border,borderRadius:8,padding:"12px 14px",marginBottom:14}}>
+        <div style={{...C.glass,background:C.card,border:"1px solid "+C.border,borderRadius:8,padding:"12px 14px",marginBottom:14}}>
           {[["部署",item.dept],["起案者",item.lead],["空席数",item.seats+"名"],["ステータス",item.status]].map(([k,v]) => (
             <div key={k} style={{display:"flex",justifyContent:"space-between",padding:"5px 0",borderBottom:"1px solid "+C.borderD}}>
               <span style={{fontSize:9,color:C.txL,letterSpacing:"0.08em"}}>{k}</span>
@@ -311,7 +311,7 @@ export default function BoardScreen({ onNudge, lang, citizenId }) {
                       <div style={{display:"flex",gap:8}}>
                         <button
                           onClick={() => approveAssign(p.reg)}
-                          style={{flex:1,padding:"9px",background:"rgba(0,255,136,0.15)",border:"1px solid rgba(0,255,136,0.4)",borderRadius:7,color:"#00ff88",fontSize:10,fontWeight:700,cursor:"pointer",fontFamily:"inherit",letterSpacing:"0.06em",transition:"all 0.2s"}}>
+                          style={{flex:1,padding:"9px",background:"rgba(0,255,136,0.15)",border:"1px solid rgba(0,255,136,0.4)",borderRadius:7,color:C.green,fontSize:10,fontWeight:700,cursor:"pointer",fontFamily:"inherit",letterSpacing:"0.06em",transition:"all 0.2s"}}>
                           承認する
                         </button>
                         <button
@@ -333,14 +333,14 @@ export default function BoardScreen({ onNudge, lang, citizenId }) {
           {/* 承認済みプロジェクト */}
           <div style={{fontSize:8,color:C.txL,letterSpacing:"0.14em",marginBottom:10}}>{t.board_my_msg}</div>
           {myAssignedProjects.length === 0 && myPendingProjects.length === 0 ? (
-            <div style={{background:C.card,border:"1px solid "+C.border,borderRadius:8,padding:"22px 16px",textAlign:"center"}}>
+            <div style={{...C.glass,background:C.card,border:"1px solid "+C.border,borderRadius:8,padding:"22px 16px",textAlign:"center"}}>
               <div style={{fontSize:9.5,color:C.txL,letterSpacing:"0.08em",marginBottom:6}}>{t.board_no_room}</div>
               <div style={{fontSize:8.5,color:C.txL,letterSpacing:"0.06em",lineHeight:1.7}}>{t.board_no_room_sub}</div>
             </div>
           ) : (
             myAssignedProjects.map(p => (
               <div key={p.reg} className="pressable" onClick={() => { setProjectRoom({ reg:p.reg, title:p.title }); onNudge(); }}
-                style={{background:C.card,border:"1px solid "+C.border,borderLeft:"3px solid "+C.green,borderRadius:8,padding:"12px 14px",marginBottom:9,cursor:"pointer"}}>
+                style={{...C.glass,background:C.card,border:"1px solid "+C.border,borderLeft:"3px solid "+C.green,borderRadius:8,padding:"12px 14px",marginBottom:9,cursor:"pointer"}}>
                 <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:6}}>
                   <div className="mono" style={{fontSize:8,color:C.txL,letterSpacing:"0.12em"}}>{p.dept} / {p.reg}</div>
                   <span style={{background:"rgba(0,255,136,0.1)",color:C.green,fontSize:7.5,padding:"2px 7px",borderRadius:3,fontWeight:600}}>参加中</span>
@@ -365,7 +365,7 @@ export default function BoardScreen({ onNudge, lang, citizenId }) {
         <InnerTabBar/>
         <div style={{padding:"15px 14px 0"}}>
           <SectionHead accent={C.navy} label={t.board_title} sub={t.board_sub}/>
-          <div style={{background:C.card,border:"1px solid "+C.border,borderLeft:"2.5px solid "+C.green,borderRadius:7,padding:"10px 13px",marginBottom:14}}>
+          <div style={{...C.glass,background:C.card,border:"1px solid "+C.border,borderLeft:"2.5px solid "+C.green,borderRadius:7,padding:"10px 13px",marginBottom:14}}>
             <div style={{fontSize:9.5,color:C.txM,lineHeight:1.75,letterSpacing:"0.04em"}}>
               {t.board_note}
             </div>
@@ -376,11 +376,11 @@ export default function BoardScreen({ onNudge, lang, citizenId }) {
             return (
               <div key={item.reg} className="card"
                 onClick={() => handleCardTap(item)}
-                style={{background:C.card,border:"1px solid "+(item.status==="充足"?C.borderD:C.border),borderRadius:8,padding:"12px 13px",marginBottom:9,position:"relative",overflow:"hidden",cursor:"pointer"}}>
+                style={{...C.glass,background:C.card,border:"1px solid "+(item.status==="充足"?C.borderD:C.border),borderRadius:8,padding:"12px 13px",marginBottom:9,position:"relative",overflow:"hidden",cursor:"pointer"}}>
                 {/* ⑩ 認証チェック演出オーバーレイ */}
                 {authChecking && authTarget?.reg===item.reg && (
                   <div style={{position:"absolute",inset:0,background:"rgba(0,10,6,0.85)",zIndex:50,display:"flex",alignItems:"center",justifyContent:"center",borderRadius:8,backdropFilter:"blur(2px)"}}>
-                    <div style={{fontFamily:"monospace",fontSize:9,color:"#00ff88",letterSpacing:"0.14em",textShadow:"0 0 8px rgba(0,255,136,0.6)",animation:"cursorBlink 0.5s infinite"}}>認証コード確認中…</div>
+                    <div style={{fontFamily:"monospace",fontSize:9,color:C.green,letterSpacing:"0.14em",textShadow:"0 0 8px rgba(0,255,136,0.6)",animation:"cursorBlink 0.5s infinite"}}>認証コード確認中…</div>
                   </div>
                 )}
                 <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:7}}>
@@ -439,7 +439,7 @@ export default function BoardScreen({ onNudge, lang, citizenId }) {
               </div>
               <div style={{marginBottom:14}}>
                 <div style={{fontSize:8.5,color:C.txM,letterSpacing:"0.18em",marginBottom:5}}>メッセージ（任意）</div>
-                <textarea value={message} onChange={(e) => setMessage(e.target.value)} placeholder="活動実績や意欲など、起案者へのメッセージ" rows={3} style={{width:"100%",padding:"10px 13px",background:C.card,border:"1px solid "+C.border,borderRadius:6,color:C.tx,fontSize:12,fontFamily:"inherit",outline:"none",resize:"none",letterSpacing:"0.04em",lineHeight:1.7,boxSizing:"border-box"}}/>
+                <textarea value={message} onChange={(e) => setMessage(e.target.value)} placeholder="活動実績や意欲など、起案者へのメッセージ" rows={3} style={{width:"100%",padding:"10px 13px",...C.glass,background:C.card,border:"1px solid "+C.border,borderRadius:6,color:C.tx,fontSize:12,fontFamily:"inherit",outline:"none",resize:"none",letterSpacing:"0.04em",lineHeight:1.7,boxSizing:"border-box"}}/>
               </div>
               <div style={{background:"rgba(46,107,79,0.07)",border:"1px solid rgba(46,107,79,0.2)",borderRadius:6,padding:"9px 12px",marginBottom:14}}>
                 <div style={{fontSize:8.5,color:C.txM,letterSpacing:"0.04em",lineHeight:1.7}}>申請後、起案者による承認が行われます。承認結果は市民活動ログに記録されます。</div>

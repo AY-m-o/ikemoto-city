@@ -61,7 +61,7 @@ export default function MessageRoom({ room, onBack, onNudge }) {
       </div>
 
       {/* 入力欄 */}
-      <div style={{position:"fixed",bottom:56,left:"50%",transform:"translateX(-50%)",width:390,background:C.card,borderTop:"1px solid "+C.border,padding:"8px 12px",display:"flex",gap:8,alignItems:"flex-end",boxSizing:"border-box"}}>
+      <div style={{position:"fixed",bottom:56,left:"50%",transform:"translateX(-50%)",width:390,...C.glass,background:C.card,borderTop:"1px solid "+C.border,padding:"8px 12px",display:"flex",gap:8,alignItems:"flex-end",boxSizing:"border-box"}}>
         <textarea
           value={input}
           onChange={e => setInput(e.target.value)}

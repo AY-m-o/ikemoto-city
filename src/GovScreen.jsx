@@ -63,7 +63,7 @@ export default function GovScreen({ onNudge, lang }) {
 
         {/* 財政報告 */}
         <SectionHead accent={C.navy} label="財政報告" sub="Financial Report"/>
-        <div style={{background:C.card,border:"1px solid "+C.border,borderRadius:8,padding:"14px 15px",marginBottom:14}}>
+        <div style={{...C.glass,background:C.card,border:"1px solid "+C.border,borderRadius:8,padding:"14px 15px",marginBottom:14}}>
           <div style={{fontSize:8,color:C.txL,letterSpacing:"0.12em",marginBottom:10}}>2026年3月度 月次報告</div>
           {[
             {k:"総税収（月次）",v:"¥4,832万",up:true},
@@ -93,7 +93,7 @@ export default function GovScreen({ onNudge, lang }) {
           {month:"2026.02", title:"第11回市議会定期報告", tags:["現実転写プロトコル改定"]},
           {month:"2026.01", title:"第10回市議会臨時報告", tags:["商業区再編","市資産登録規約制定"]},
         ].map((r) => (
-          <div key={r.month} style={{background:C.card,border:"1px solid "+C.border,borderRadius:7,padding:"12px 14px",marginBottom:8}}>
+          <div key={r.month} style={{...C.glass,background:C.card,border:"1px solid "+C.border,borderRadius:7,padding:"12px 14px",marginBottom:8}}>
             <div style={{fontSize:8,color:C.txL,letterSpacing:"0.12em",marginBottom:4}}>{r.month}</div>
             <div style={{fontSize:11,fontWeight:600,color:C.tx,marginBottom:7}}>{r.title}</div>
             <div style={{display:"flex",gap:5,flexWrap:"wrap"}}>
@@ -114,7 +114,7 @@ export default function GovScreen({ onNudge, lang }) {
           {date:"2026.02.20", label:"重要通達", title:"商業区初回特別展示会の開催お知らせ"},
           {date:"2026.02.15", label:"お知らせ", title:"新規市民登録システムのアップデートが完了しました"},
         ].map((n,i) => (
-          <div key={i} style={{background:C.card,border:"1px solid "+C.border,borderRadius:7,padding:"11px 14px",marginBottom:8,display:"flex",gap:10,alignItems:"flex-start"}}>
+          <div key={i} style={{...C.glass,background:C.card,border:"1px solid "+C.border,borderRadius:7,padding:"11px 14px",marginBottom:8,display:"flex",gap:10,alignItems:"flex-start"}}>
             <div style={{flexShrink:0}}>
               <div style={{fontSize:7.5,color:C.txL,marginBottom:3}}>{n.date}</div>
               <span style={{background:n.label==="重要通達"?"rgba(184,50,40,0.1)":"rgba(26,37,64,0.07)",color:n.label==="重要通達"?C.red:C.txM,fontSize:7.5,padding:"2px 7px",borderRadius:3,letterSpacing:"0.06em"}}>{n.label}</span>
@@ -125,7 +125,7 @@ export default function GovScreen({ onNudge, lang }) {
 
         {/* ③ 市長室（全セクションの最下部） */}
         <SectionHead accent={C.navy} label="市長室" sub="Mayor's Office"/>
-        <div style={{background:C.card,border:"1px solid "+C.border,borderLeft:"3px solid "+C.green,borderRadius:8,padding:"14px 15px",marginBottom:14}}>
+        <div style={{...C.glass,background:C.card,border:"1px solid "+C.border,borderLeft:"3px solid "+C.green,borderRadius:8,padding:"14px 15px",marginBottom:14}}>
           <div style={{fontSize:8,color:C.txL,letterSpacing:"0.14em",marginBottom:8}}>IK-GOV-2026-001 / 市長メッセージ</div>
           <div style={{fontSize:12,fontWeight:700,color:C.tx,marginBottom:8}}>市民の皆さまへ</div>
           <div style={{fontSize:9.5,color:C.txM,lineHeight:1.8,letterSpacing:"0.04em"}}>池本市の市長、変回次郎よりご挨拶申し上げます。有志の市民の相互協務によって、本市は日々成長を続けております。市民各位の様々な表現を容剪なく尊重し、池本市を共に紡いましょう。</div>
@@ -138,7 +138,7 @@ export default function GovScreen({ onNudge, lang }) {
           const allComments = [...post.comments, ...(postedComments[post.id] || [])];
           const isOpen = openPost === post.id;
           return (
-            <div key={post.id} style={{background:C.card,border:"1px solid "+C.border,borderRadius:8,marginBottom:12,overflow:"hidden"}}>
+            <div key={post.id} style={{...C.glass,background:C.card,border:"1px solid "+C.border,borderRadius:8,marginBottom:12,overflow:"hidden"}}>
               <div onClick={() => setOpenPost(isOpen ? null : post.id)} style={{padding:"14px 15px",cursor:"pointer"}}>
                 <div style={{fontSize:7.5,color:C.txL,letterSpacing:"0.14em",marginBottom:5}}>{post.date} / 市長　変回次郎</div>
                 <div style={{fontSize:12,fontWeight:700,color:C.tx,marginBottom:7,letterSpacing:"0.04em"}}>{post.title}</div>
@@ -169,7 +169,7 @@ export default function GovScreen({ onNudge, lang }) {
                       onChange={e => setCommentInputs(p => ({ ...p, [post.id]:e.target.value }))}
                       onKeyDown={e => { if (e.key === "Enter") postComment(post.id); }}
                       placeholder="コメントを入力…"
-                      style={{flex:1,background:C.card,border:"1px solid "+C.border,borderRadius:6,padding:"7px 10px",color:C.tx,fontSize:9.5,fontFamily:"inherit",outline:"none",letterSpacing:"0.03em"}}
+                      style={{flex:1,...C.glass,background:C.card,border:"1px solid "+C.border,borderRadius:6,padding:"7px 10px",color:C.tx,fontSize:9.5,fontFamily:"inherit",outline:"none",letterSpacing:"0.03em"}}
                     />
                     <button onClick={() => postComment(post.id)}
                       style={{padding:"7px 12px",background:(commentInputs[post.id]||"").trim()?C.green:"rgba(46,107,79,0.25)",border:"none",borderRadius:6,color:"#fff",fontSize:9,fontWeight:600,cursor:"pointer",fontFamily:"inherit",flexShrink:0,transition:"background 0.2s"}}>

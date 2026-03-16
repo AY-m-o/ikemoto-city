@@ -44,10 +44,10 @@ export function SettingsView({ onBack, onNudge, userId }) {
   };
 
   return (
-    <div style={{flex:1,display:"flex",flexDirection:"column",overflowY:"auto",paddingBottom:72,background:"#0a0f1e",color:"#f9fafb"}}>
+    <div style={{flex:1,display:"flex",flexDirection:"column",overflowY:"auto",paddingBottom:72,background:C.bg,color:C.tx}}>
       <SubScreenNav label="パラメータ設定" onBack={onBack}/>
       <div style={{padding:"16px 14px 0"}}>
-        <div style={{background:C.card,border:"1px solid "+C.border,borderRadius:8,padding:"14px 14px",marginBottom:12}}>
+        <div style={{...C.glass,background:C.card,border:"1px solid "+C.border,borderRadius:8,padding:"14px 14px",marginBottom:12}}>
           <div style={{fontSize:9,color:C.txL,letterSpacing:"0.18em",fontWeight:600,marginBottom:12}}>プロフィール</div>
 
           {/* アバター */}
@@ -81,7 +81,7 @@ export function SettingsView({ onBack, onNudge, userId }) {
             </div>
           </div>
         </div>
-        <div style={{background:C.card,border:"1px solid "+C.border,borderRadius:8,padding:"14px 14px",marginBottom:14}}>
+        <div style={{...C.glass,background:C.card,border:"1px solid "+C.border,borderRadius:8,padding:"14px 14px",marginBottom:14}}>
           <div style={{fontSize:9,color:C.txL,letterSpacing:"0.18em",fontWeight:600,marginBottom:12}}>通知設定</div>
           {[
             { key:"assign", label:"参加申請の更新", sub:"承認・却下の通知" },
@@ -122,7 +122,7 @@ export function InquiryView({ onBack, onNudge }) {
   const cats = ["行政サービスについて","作品登録・申請","掲示板・参加申請について","技術的な問題","その他"];
 
   if (done) return (
-    <div style={{flex:1,display:"flex",flexDirection:"column",overflowY:"auto",paddingBottom:72,background:"#0a0f1e",color:"#f9fafb"}}>
+    <div style={{flex:1,display:"flex",flexDirection:"column",overflowY:"auto",paddingBottom:72,background:C.bg,color:C.tx}}>
       <SubScreenNav label="行政への意見具申" onBack={onBack}/>
       <div style={{padding:"16px 14px 0"}}>
         <div style={{background:"rgba(46,107,79,0.08)",border:"1px solid "+C.green,borderRadius:8,padding:"18px 16px",marginBottom:14}}>
@@ -135,10 +135,10 @@ export function InquiryView({ onBack, onNudge }) {
   );
 
   return (
-    <div style={{flex:1,display:"flex",flexDirection:"column",overflowY:"auto",paddingBottom:72,background:"#0a0f1e",color:"#f9fafb"}} onScroll={onNudge}>
+    <div style={{flex:1,display:"flex",flexDirection:"column",overflowY:"auto",paddingBottom:72,background:C.bg,color:C.tx}} onScroll={onNudge}>
       <SubScreenNav label="行政への意見具申" onBack={onBack}/>
       <div style={{padding:"16px 14px 0"}}>
-        <div style={{background:C.card,border:"1px solid "+C.border,borderRadius:8,padding:"14px 14px",marginBottom:12}}>
+        <div style={{...C.glass,background:C.card,border:"1px solid "+C.border,borderRadius:8,padding:"14px 14px",marginBottom:12}}>
           <div style={{fontSize:9,color:C.txL,letterSpacing:"0.18em",fontWeight:600,marginBottom:12}}>カテゴリ</div>
           <div style={{display:"flex",flexWrap:"wrap",gap:6}}>
             {cats.map((c) => (
@@ -146,7 +146,7 @@ export function InquiryView({ onBack, onNudge }) {
             ))}
           </div>
         </div>
-        <div style={{background:C.card,border:"1px solid "+C.border,borderRadius:8,padding:"14px 14px",marginBottom:14}}>
+        <div style={{...C.glass,background:C.card,border:"1px solid "+C.border,borderRadius:8,padding:"14px 14px",marginBottom:14}}>
           <div style={{fontSize:9,color:C.txL,letterSpacing:"0.18em",fontWeight:600,marginBottom:10}}>具申内容</div>
           <textarea value={body} onChange={(e) => setBody(e.target.value)} placeholder="市政に対するご意見・ご要望をご記載ください。" rows={5} style={{width:"100%",padding:"10px 12px",background:C.bg,border:"1px solid "+C.border,borderRadius:6,color:C.tx,fontSize:12,fontFamily:"inherit",outline:"none",resize:"none",letterSpacing:"0.04em",lineHeight:1.8,boxSizing:"border-box"}}/>
           <div style={{textAlign:"right",marginTop:4}}>
@@ -172,13 +172,13 @@ export function LogoutView({ onBack, onLogout, onNudge }) {
   };
 
   return (
-    <div style={{flex:1,display:"flex",flexDirection:"column",overflowY:"auto",paddingBottom:72,background:"#0a0f1e",color:"#f9fafb"}}>
+    <div style={{flex:1,display:"flex",flexDirection:"column",overflowY:"auto",paddingBottom:72,background:C.bg,color:C.tx}}>
       {phase === "confirm" && <SubScreenNav label="ログアウト" onBack={onBack}/>}
       <div style={{padding:"16px 14px 0"}}>
         <SectionHead accent={C.red} label="ログアウト" sub="端末接続の切断"/>
         {phase === "confirm" && (
           <>
-            <div style={{background:C.card,border:"1px solid "+C.border,borderLeft:"2.5px solid "+C.red,borderRadius:7,padding:"13px 14px",marginBottom:16}}>
+            <div style={{...C.glass,background:C.card,border:"1px solid "+C.border,borderLeft:"2.5px solid "+C.red,borderRadius:7,padding:"13px 14px",marginBottom:16}}>
               <div style={{fontSize:9.5,color:C.txM,lineHeight:1.8,letterSpacing:"0.04em"}}>
                 ログアウトすると、現在の端末との接続が切断されます。<br/>
                 <span style={{color:C.txL}}>進行中の同期セッションは終了し、活動ログが市サーバーに保存されます。</span>
@@ -209,15 +209,15 @@ const GUIDE_TABS = [
 export function GuideView({ onBack }) {
   const [open, setOpen] = useState(null);
   return (
-    <div style={{flex:1,display:"flex",flexDirection:"column",overflowY:"auto",paddingBottom:72,background:"#0a0f1e",color:"#f9fafb"}}>
+    <div style={{flex:1,display:"flex",flexDirection:"column",overflowY:"auto",paddingBottom:72,background:C.bg,color:C.tx}}>
       <SubScreenNav label="市民ガイドブック" onBack={onBack}/>
       <div style={{padding:"14px 14px 0"}}>
-        <div style={{background:C.card,border:"1px solid "+C.border,borderLeft:"2.5px solid "+C.green,borderRadius:7,padding:"10px 13px",marginBottom:14}}>
+        <div style={{...C.glass,background:C.card,border:"1px solid "+C.border,borderLeft:"2.5px solid "+C.green,borderRadius:7,padding:"10px 13px",marginBottom:14}}>
           <div style={{fontSize:9.5,color:C.txM,lineHeight:1.75,letterSpacing:"0.04em"}}>各タブの機能をタップで確認できます。</div>
         </div>
         {GUIDE_TABS.map((t,i) => (
           <div key={t.name}>
-            <div onClick={() => setOpen(open===i?null:i)} style={{background:C.card,border:"1px solid "+C.border,borderRadius:open===i?"7px 7px 0 0":7,padding:"12px 14px",marginBottom:open===i?0:8,cursor:"pointer",display:"flex",alignItems:"center",gap:10}}>
+            <div onClick={() => setOpen(open===i?null:i)} style={{...C.glass,background:C.card,border:"1px solid "+C.border,borderRadius:open===i?"7px 7px 0 0":7,padding:"12px 14px",marginBottom:open===i?0:8,cursor:"pointer",display:"flex",alignItems:"center",gap:10}}>
               <div style={{width:32,height:32,borderRadius:7,background:C.navy,display:"flex",alignItems:"center",justifyContent:"center",fontSize:14,color:"rgba(143,168,200,0.6)",flexShrink:0}}>{t.icon}</div>
               <div style={{flex:1}}>
                 <div style={{fontSize:11,fontWeight:600,color:C.tx,letterSpacing:"0.04em"}}>{t.name}</div>
@@ -251,12 +251,12 @@ const FAQ_ITEMS = [
 export function FaqView({ onBack }) {
   const [open, setOpen] = useState(null);
   return (
-    <div style={{flex:1,display:"flex",flexDirection:"column",overflowY:"auto",paddingBottom:72,background:"#0a0f1e",color:"#f9fafb"}}>
+    <div style={{flex:1,display:"flex",flexDirection:"column",overflowY:"auto",paddingBottom:72,background:C.bg,color:C.tx}}>
       <SubScreenNav label="よくある質問" onBack={onBack}/>
       <div style={{padding:"14px 14px 0"}}>
         {FAQ_ITEMS.map((f,i) => (
           <div key={i}>
-            <div onClick={() => setOpen(open===i?null:i)} style={{background:C.card,border:"1px solid "+C.border,borderRadius:open===i?"7px 7px 0 0":7,padding:"12px 14px",marginBottom:open===i?0:8,cursor:"pointer",display:"flex",alignItems:"flex-start",gap:10}}>
+            <div onClick={() => setOpen(open===i?null:i)} style={{...C.glass,background:C.card,border:"1px solid "+C.border,borderRadius:open===i?"7px 7px 0 0":7,padding:"12px 14px",marginBottom:open===i?0:8,cursor:"pointer",display:"flex",alignItems:"flex-start",gap:10}}>
               <span style={{fontSize:10,color:C.green,fontWeight:700,flexShrink:0,marginTop:1}}>Q</span>
               <div style={{flex:1,fontSize:10,color:C.tx,fontWeight:600,letterSpacing:"0.03em",lineHeight:1.4}}>{f.q}</div>
               <span style={{color:C.txL,fontSize:12,flexShrink:0,transition:"transform 0.2s",display:"inline-block",transform:open===i?"rotate(90deg)":"rotate(0deg)"}}>›</span>
@@ -349,10 +349,10 @@ const COMMERCE_TEXT = `特定商取引法に基づく表記
 
 export function LegalView({ onBack, title, content }) {
   return (
-    <div style={{flex:1,display:"flex",flexDirection:"column",overflowY:"auto",paddingBottom:72,background:"#0a0f1e",color:"#f9fafb"}}>
+    <div style={{flex:1,display:"flex",flexDirection:"column",overflowY:"auto",paddingBottom:72,background:C.bg,color:C.tx}}>
       <SubScreenNav label={title} onBack={onBack}/>
       <div style={{padding:"16px 14px 0"}}>
-        <div style={{background:C.card,border:"1px solid "+C.border,borderRadius:8,padding:"16px 14px"}}>
+        <div style={{...C.glass,background:C.card,border:"1px solid "+C.border,borderRadius:8,padding:"16px 14px"}}>
           <pre style={{fontSize:9.5,color:C.txM,lineHeight:1.8,letterSpacing:"0.03em",whiteSpace:"pre-wrap",fontFamily:"inherit",margin:0}}>{content}</pre>
         </div>
       </div>
@@ -362,12 +362,12 @@ export function LegalView({ onBack, title, content }) {
 
 export function ContactView({ onBack }) {
   return (
-    <div style={{flex:1,display:"flex",flexDirection:"column",overflowY:"auto",paddingBottom:72,background:"#0a0f1e",color:"#f9fafb"}}>
+    <div style={{flex:1,display:"flex",flexDirection:"column",overflowY:"auto",paddingBottom:72,background:C.bg,color:C.tx}}>
       <SubScreenNav label="お問い合わせ" onBack={onBack}/>
       <div style={{padding:"16px 14px 0"}}>
-        <div style={{background:C.card,border:"1px solid "+C.border,borderRadius:8,padding:"18px 16px",marginBottom:12}}>
+        <div style={{...C.glass,background:C.card,border:"1px solid "+C.border,borderRadius:8,padding:"18px 16px",marginBottom:12}}>
           <div style={{fontSize:9,color:C.txL,letterSpacing:"0.12em",marginBottom:8}}>お問い合わせ先</div>
-          <div style={{fontSize:14,fontWeight:700,color:"#00ff88",letterSpacing:"0.04em",marginBottom:6}}>info@city-ikemoto.jp</div>
+          <div style={{fontSize:14,fontWeight:700,color:C.green,letterSpacing:"0.04em",marginBottom:6}}>info@city-ikemoto.jp</div>
           <div style={{fontSize:9,color:C.txM,lineHeight:1.7}}>受付時間：平日 09:00–18:00（市民アクセス時間）</div>
         </div>
         <div style={{background:"rgba(0,255,136,0.04)",border:"1px solid rgba(0,255,136,0.15)",borderRadius:7,padding:"12px 14px"}}>

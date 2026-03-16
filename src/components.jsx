@@ -20,7 +20,7 @@ export function Ticker({ text }) {
         fontFamily:"'SF Mono','Fira Mono','Courier New',monospace",
         fontSize:9,
         letterSpacing:"0.18em",
-        color:"#00ff88",
+        color:C.green,
         textShadow:"0 0 8px #00ff88",
         whiteSpace:"nowrap",
       }}>
@@ -74,7 +74,7 @@ export function SectionHead({ accent, label, sub }) {
     <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:18}}>
       <div style={{width:2.5,height:18,background:col,borderRadius:2,flexShrink:0,boxShadow:"0 0 14px "+col}}/>
       <span style={{fontSize:11,color:C.txM,letterSpacing:"0.24em",fontWeight:800,textTransform:"uppercase",textShadow:"0 0 8px rgba(255,255,255,0.08)"}}>{label}</span>
-      {sub&&<span style={{fontSize:8,color:"#4b5563",letterSpacing:"0.1em",fontWeight:400}}>{sub}</span>}
+      {sub&&<span style={{fontSize:8,color:C.txL,letterSpacing:"0.1em",fontWeight:400}}>{sub}</span>}
     </div>
   );
 }
@@ -110,7 +110,7 @@ export function LogTerminal({ logs, running, dark=true }) {
             </div>
           );
         })}
-      {running && <span style={{animation:"cursorBlink 0.7s infinite",color:"#00ff88",textShadow:"0 0 6px #00ff88"}}>▋</span>}
+      {running && <span style={{animation:"cursorBlink 0.7s infinite",color:C.green,textShadow:"0 0 6px #00ff88"}}>▋</span>}
     </div>
   );
 }
@@ -213,7 +213,7 @@ export function Modal({ children, onClose }) {
       style={{position:"fixed",top:0,left:0,width:"100%",height:"100%",display:"flex",alignItems:"center",justifyContent:"center",zIndex:1000,background:"rgba(6,11,21,0.88)",animation:"fadeIn 0.2s ease",backdropFilter:"blur(6px)"}}>
       <div
         onClick={(e)=>e.stopPropagation()}
-        style={{background:C.card,width:"calc(100% - 32px)",maxWidth:374,borderRadius:16,padding:"22px 18px 24px",animation:"slideUp 0.25s ease",maxHeight:"88vh",overflowY:"auto",scrollbarWidth:"none",border:"1px solid rgba(0,255,136,0.18)",boxShadow:"0 8px 48px rgba(0,0,0,0.6),0 0 0 1px rgba(0,255,136,0.06)"}}>
+        style={{...C.glass,background:C.card,width:"calc(100% - 32px)",maxWidth:374,borderRadius:16,padding:"22px 18px 24px",animation:"slideUp 0.25s ease",maxHeight:"88vh",overflowY:"auto",scrollbarWidth:"none",border:"1px solid rgba(0,255,136,0.18)",boxShadow:"0 8px 48px rgba(0,0,0,0.6),0 0 0 1px rgba(0,255,136,0.06)"}}>
         {children}
       </div>
     </div>

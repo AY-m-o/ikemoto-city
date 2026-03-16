@@ -125,8 +125,8 @@ export default function AuthScreen({ onLogin }) {
         {/* ロゴ */}
         <div style={{textAlign:"center",marginBottom:mode==="top"?48:32}}>
           <div style={{color:"rgba(0,255,136,0.3)",fontSize:7.5,letterSpacing:"0.3em",marginBottom:10,fontFamily:"monospace"}}>IKEMOTO CITY DIGITAL GOVERNMENT</div>
-          <div style={{color:"#f9fafb",fontSize:26,fontWeight:700,letterSpacing:"0.16em",marginBottom:6,textShadow:"0 0 30px rgba(0,255,136,0.15)"}}>池本市</div>
-          <div style={{color:"#00ff88",fontSize:9.5,letterSpacing:"0.26em",textShadow:"0 0 8px rgba(0,255,136,0.5)"}}>デジタル市役所</div>
+          <div style={{color:C.tx,fontSize:26,fontWeight:700,letterSpacing:"0.16em",marginBottom:6,textShadow:"0 0 30px rgba(0,255,136,0.15)"}}>池本市</div>
+          <div style={{color:C.green,fontSize:9.5,letterSpacing:"0.26em",textShadow:"0 0 8px rgba(0,255,136,0.5)"}}>デジタル市役所</div>
           <div style={{width:40,height:1,background:"rgba(0,255,136,0.3)",margin:"14px auto 0",boxShadow:"0 0 6px rgba(0,255,136,0.3)"}}/>
         </div>
 
@@ -186,12 +186,12 @@ export default function AuthScreen({ onLogin }) {
               <div style={{fontSize:8,color:"rgba(0,255,136,0.4)",letterSpacing:"0.28em",marginBottom:6,fontFamily:"monospace"}}>// AUTH SEQUENCE</div>
               <div style={{fontSize:11,color:"rgba(0,255,136,0.7)",letterSpacing:"0.2em",fontWeight:600,fontFamily:"monospace",textShadow:"0 0 8px rgba(0,255,136,0.4)"}}>接続認証シーケンス実行中</div>
             </div>
-            <div style={{background:"#060b15",border:"1px solid rgba(0,255,136,0.2)",borderRadius:8,padding:"16px 18px",minHeight:140,fontFamily:"'SF Mono','Fira Mono','Courier New',monospace",fontSize:11,lineHeight:2.1,letterSpacing:"0.04em",boxShadow:"inset 0 0 24px rgba(0,0,0,0.5)"}}>
+            <div style={{background:C.navyD,border:"1px solid rgba(0,255,136,0.2)",borderRadius:8,padding:"16px 18px",minHeight:140,fontFamily:"'SF Mono','Fira Mono','Courier New',monospace",fontSize:11,lineHeight:2.1,letterSpacing:"0.04em",boxShadow:"inset 0 0 24px rgba(0,0,0,0.5)"}}>
               {syncLogs.map((line, i) => (
                 <div key={i} style={{color: i === syncLogs.length-1 && line === "池本市デジタル市役所へようこそ" ? "#00ff88" : "rgba(0,255,136,0.75)",textShadow: i === syncLogs.length-1 ? "0 0 8px rgba(0,255,136,0.5)" : "none",display:"flex",alignItems:"center",gap:8}}>
                   <span style={{color:"rgba(0,255,136,0.35)",flexShrink:0}}>{">"}</span>
                   <span>{line}</span>
-                  {i === syncLogs.length-1 && <span style={{animation:"cursorBlink 0.7s infinite",color:"#00ff88"}}>▋</span>}
+                  {i === syncLogs.length-1 && <span style={{animation:"cursorBlink 0.7s infinite",color:C.green}}>▋</span>}
                 </div>
               ))}
             </div>
@@ -218,7 +218,7 @@ export default function AuthScreen({ onLogin }) {
               <>
                 <div style={{background:"rgba(0,255,136,0.06)",border:"1px solid rgba(0,255,136,0.2)",borderRadius:8,padding:"16px 14px",marginBottom:16,textAlign:"center"}}>
                   <div style={{fontSize:14,marginBottom:8}}>✓</div>
-                  <div style={{fontSize:10,color:"#00ff88",fontWeight:600,letterSpacing:"0.08em",marginBottom:6}}>送信完了</div>
+                  <div style={{fontSize:10,color:C.green,fontWeight:600,letterSpacing:"0.08em",marginBottom:6}}>送信完了</div>
                   <div style={{fontSize:9,color:"rgba(156,163,175,0.8)",lineHeight:1.7}}>{resetEmail} にリセットリンクを送信しました。</div>
                 </div>
                 <button onClick={()=>{setMode("login");setResetSent(false);setResetEmail("");}} style={{width:"100%",background:"transparent",border:"none",color:"rgba(0,255,136,0.4)",fontSize:9,cursor:"pointer",fontFamily:"inherit",letterSpacing:"0.1em"}}>← ログインに戻る</button>

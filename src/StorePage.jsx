@@ -32,7 +32,7 @@ export default function StorePage({ shop, followed, likedShops, onFollowShop, on
               ⋯
             </button>
             {shopMenuOpen && (
-              <div style={{position:"absolute",top:"calc(100% + 4px)",right:0,background:"#0a0f1e",border:"1px solid rgba(0,255,136,0.2)",borderRadius:8,zIndex:300,minWidth:136,boxShadow:"0 4px 20px rgba(0,0,0,0.7)"}} onClick={e => e.stopPropagation()}>
+              <div style={{position:"absolute",top:"calc(100% + 4px)",right:0,background:C.bg,border:"1px solid rgba(0,255,136,0.2)",borderRadius:8,zIndex:300,minWidth:136,boxShadow:"0 4px 20px rgba(0,0,0,0.7)"}} onClick={e => e.stopPropagation()}>
                 <button onClick={e => { e.stopPropagation(); setShopMenuOpen(false); setShopReport(true); setShopReportReason(""); setShopReportDone(false); }}
                   style={{display:"block",width:"100%",padding:"11px 14px",background:"transparent",border:"none",color:"rgba(156,163,175,0.8)",fontSize:9.5,cursor:"pointer",fontFamily:"inherit",textAlign:"left",letterSpacing:"0.04em",borderBottom:"1px solid rgba(255,255,255,0.05)"}}>
                   通報する
@@ -76,7 +76,7 @@ export default function StorePage({ shop, followed, likedShops, onFollowShop, on
         <div style={{fontSize:8,color:C.txL,letterSpacing:"0.16em",marginBottom:10}}>取扱作品　{shop.items.length} 点</div>
         {shop.items.map(item => (
           <div key={item.reg} className="pressable" onClick={() => { onSelectItem(item); onNudge(); }}
-            style={{background:"#111827",border:"1px solid rgba(255,255,255,0.06)",borderRadius:8,padding:"12px 13px",marginBottom:9,cursor:"pointer",display:"flex",gap:12,alignItems:"flex-start"}}>
+            style={{...C.glass,background:C.card,border:"1px solid rgba(255,255,255,0.06)",borderRadius:8,padding:"12px 13px",marginBottom:9,cursor:"pointer",display:"flex",gap:12,alignItems:"flex-start"}}>
             <div style={{width:52,height:52,borderRadius:6,background:"linear-gradient(135deg,#1a2540,#131e30)",flexShrink:0,display:"flex",alignItems:"center",justifyContent:"center",fontSize:14,color:"rgba(0,255,136,0.15)",border:"1px solid rgba(0,255,136,0.08)"}}>&#x25C9;</div>
             <div style={{flex:1,minWidth:0}}>
               <div className="mono" style={{fontSize:7.5,color:"rgba(156,163,175,0.45)",letterSpacing:"0.12em",marginBottom:3}}>{item.dept} / {item.reg}</div>
@@ -88,7 +88,7 @@ export default function StorePage({ shop, followed, likedShops, onFollowShop, on
                   </div>
                   <span className="mono" style={{fontSize:8,color:C.green,fontWeight:600}}>CA {item.ca}</span>
                 </div>
-                <span className="mono" style={{fontSize:12,fontWeight:700,color:"#00ff88",textShadow:"0 0 8px rgba(0,255,136,0.35)"}}>{item.price}</span>
+                <span className="mono" style={{fontSize:12,fontWeight:700,color:C.green,textShadow:"0 0 8px rgba(0,255,136,0.35)"}}>{item.price}</span>
               </div>
             </div>
             <span style={{color:"rgba(156,163,175,0.3)",fontSize:14,flexShrink:0}}>&#x203A;</span>
@@ -114,7 +114,7 @@ export default function StorePage({ shop, followed, likedShops, onFollowShop, on
             </>
           ) : (
             <div style={{background:"rgba(0,255,136,0.06)",border:"1px solid rgba(0,255,136,0.2)",borderRadius:8,padding:"14px 13px",textAlign:"center"}}>
-              <div style={{fontSize:10,color:"#00ff88",fontWeight:600,marginBottom:4}}>通報を受け付けました</div>
+              <div style={{fontSize:10,color:C.green,fontWeight:600,marginBottom:4}}>通報を受け付けました</div>
               <div style={{fontSize:9,color:C.txL}}>内容を確認の上対処いたします。</div>
             </div>
           )}

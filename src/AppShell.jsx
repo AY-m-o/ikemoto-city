@@ -23,7 +23,7 @@ class ScreenErrorBoundary extends React.Component {
   render() {
     if (this.state.hasError) {
       return (
-        <div style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:"20px",background:"#0a0f1e",color:"#f9fafb"}}>
+        <div style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:"20px",background:C.bg,color:C.tx}}>
           <div style={{fontSize:11,color:"#f87171",marginBottom:8,fontWeight:600}}>画面の読み込みに失敗しました</div>
           <div style={{fontSize:9,color:"rgba(255,255,255,0.4)",fontFamily:"monospace",maxWidth:"100%",overflow:"auto",padding:"8px",background:"rgba(255,0,0,0.05)",borderRadius:4}}>
             {this.state.error && this.state.error.message}
@@ -305,11 +305,11 @@ export default function AppShell({ citizenId, userId, onLogout }) {
             {/* 言語ドロップダウン */}
             <div style={{position:"relative"}}>
               <button onClick={() => { setShowLangMenu(v => !v); setShowNotif(false); setShowSearch(false); }}
-                style={{height:28,background:"rgba(255,255,255,0.04)",border:"1px solid rgba(255,255,255,0.08)",borderRadius:6,padding:"0 9px",cursor:"pointer",color:"#00ff88",fontSize:8.5,letterSpacing:"0.08em",fontWeight:600,fontFamily:"inherit",transition:"all 0.18s",display:"flex",alignItems:"center",gap:4,whiteSpace:"nowrap",flexShrink:0}}>
+                style={{height:28,background:"rgba(255,255,255,0.04)",border:"1px solid rgba(255,255,255,0.08)",borderRadius:6,padding:"0 9px",cursor:"pointer",color:C.green,fontSize:8.5,letterSpacing:"0.08em",fontWeight:600,fontFamily:"inherit",transition:"all 0.18s",display:"flex",alignItems:"center",gap:4,whiteSpace:"nowrap",flexShrink:0}}>
                 {lang} <span style={{fontSize:7,opacity:0.6}}>&#x25BC;</span>
               </button>
               {showLangMenu && (
-                <div style={{position:"absolute",top:"calc(100% + 4px)",right:0,background:"#0a0f1e",border:"1px solid rgba(0,255,136,0.2)",borderRadius:8,overflow:"hidden",zIndex:400,minWidth:64,boxShadow:"0 4px 24px rgba(0,0,0,0.6),0 0 12px rgba(0,255,136,0.05)"}}>
+                <div style={{position:"absolute",top:"calc(100% + 4px)",right:0,background:C.bg,border:"1px solid rgba(0,255,136,0.2)",borderRadius:8,overflow:"hidden",zIndex:400,minWidth:64,boxShadow:"0 4px 24px rgba(0,0,0,0.6),0 0 12px rgba(0,255,136,0.05)"}}>
                   {LANGS.map(l => (
                     <button key={l} onClick={() => { setLang(l); setShowLangMenu(false); }}
                       style={{display:"block",width:"100%",padding:"8px 14px",background:l===lang?"rgba(0,255,136,0.08)":"transparent",border:"none",color:l===lang?"#00ff88":"rgba(156,163,175,0.7)",fontSize:9.5,fontWeight:l===lang?700:400,cursor:"pointer",fontFamily:"inherit",letterSpacing:"0.08em",textAlign:"center",borderBottom:"1px solid rgba(255,255,255,0.04)",textShadow:l===lang?"0 0 6px rgba(0,255,136,0.5)":"none"}}>
@@ -323,11 +323,11 @@ export default function AppShell({ citizenId, userId, onLogout }) {
             {/* 通知ベル */}
             <div style={{position:"relative"}}>
               <button onClick={() => { setShowNotif(v => !v); setShowLangMenu(false); setShowSearch(false); if (!readNotif) setReadNotif(true); }}
-                style={{height:28,width:28,background:showNotif?"rgba(0,255,136,0.1)":"rgba(255,255,255,0.04)",border:"1px solid "+(showNotif?"rgba(0,255,136,0.4)":"rgba(255,255,255,0.08)"),borderRadius:6,padding:0,cursor:"pointer",color:"#00ff88",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,transition:"all 0.18s",boxShadow:showNotif?"0 0 8px rgba(0,255,136,0.25)":"none"}}>
+                style={{height:28,width:28,background:showNotif?"rgba(0,255,136,0.1)":"rgba(255,255,255,0.04)",border:"1px solid "+(showNotif?"rgba(0,255,136,0.4)":"rgba(255,255,255,0.08)"),borderRadius:6,padding:0,cursor:"pointer",color:C.green,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,transition:"all 0.18s",boxShadow:showNotif?"0 0 8px rgba(0,255,136,0.25)":"none"}}>
                 <BellIcon hasUnread={!readNotif}/>
               </button>
               {showNotif && (
-                <div style={{position:"absolute",top:"calc(100% + 4px)",right:0,background:"#0a0f1e",border:"1px solid rgba(0,255,136,0.15)",borderRadius:8,overflow:"hidden",zIndex:400,width:220,boxShadow:"0 4px 24px rgba(0,0,0,0.6),0 0 16px rgba(0,255,136,0.04)"}}>
+                <div style={{position:"absolute",top:"calc(100% + 4px)",right:0,background:C.bg,border:"1px solid rgba(0,255,136,0.15)",borderRadius:8,overflow:"hidden",zIndex:400,width:220,boxShadow:"0 4px 24px rgba(0,0,0,0.6),0 0 16px rgba(0,255,136,0.04)"}}>
                   <div style={{padding:"9px 12px",borderBottom:"1px solid rgba(255,255,255,0.05)",fontSize:8,color:"rgba(0,255,136,0.4)",letterSpacing:"0.18em",fontFamily:"monospace"}}>通知 // NOTIFICATIONS</div>
                   {NOTIFS.map(n => {
                     const iconMap = { assign:"✔", msg:"◈", doc:"▣" };
@@ -352,7 +352,7 @@ export default function AppShell({ citizenId, userId, onLogout }) {
               onMouseUp={cancelLongPress}
               onTouchStart={startLongPress}
               onTouchEnd={cancelLongPress}
-              style={{height:28,background:showId?"rgba(0,255,136,0.12)":"rgba(255,255,255,0.04)",border:"1px solid "+(showId?"rgba(0,255,136,0.5)":"rgba(255,255,255,0.08)"),borderRadius:6,padding:"0 10px",cursor:"pointer",color:"#00ff88",fontSize:9,letterSpacing:"0.08em",fontWeight:600,fontFamily:"inherit",transition:"all 0.18s",whiteSpace:"nowrap",flexShrink:0,display:"flex",alignItems:"center",boxShadow:showId?"0 0 10px rgba(0,255,136,0.25)":"none",textShadow:showId?"0 0 6px rgba(0,255,136,0.5)":"none"}}>
+              style={{height:28,background:showId?"rgba(0,255,136,0.12)":"rgba(255,255,255,0.04)",border:"1px solid "+(showId?"rgba(0,255,136,0.5)":"rgba(255,255,255,0.08)"),borderRadius:6,padding:"0 10px",cursor:"pointer",color:C.green,fontSize:9,letterSpacing:"0.08em",fontWeight:600,fontFamily:"inherit",transition:"all 0.18s",whiteSpace:"nowrap",flexShrink:0,display:"flex",alignItems:"center",boxShadow:showId?"0 0 10px rgba(0,255,136,0.25)":"none",textShadow:showId?"0 0 6px rgba(0,255,136,0.5)":"none"}}>
               {showId ? "x" : "◈ 市民証"}
             </button>
           </div>
@@ -441,7 +441,7 @@ export default function AppShell({ citizenId, userId, onLogout }) {
                   <div>NODE: IKEMOTO-ALPHA-7</div>
                   <div>ACCESS_LEVEL: CITIZEN_GRADE_1</div>
                   <div>ISSUED: 2026.02.26</div>
-                  <div>STATUS: <span style={{color:"#00ff88"}}>ACTIVE</span></div>
+                  <div>STATUS: <span style={{color:C.green}}>ACTIVE</span></div>
                 </div>
                 <div style={{width:"100%",height:24,background:"repeating-linear-gradient(90deg,#1a1a1a 0px,#1a1a1a 10px,#000 10px,#000 11px)",borderRadius:3,marginTop:4}}/>
               </div>
@@ -452,7 +452,7 @@ export default function AppShell({ citizenId, userId, onLogout }) {
 
       {/* ── SCREENS ── */}
       <div ref={contentRef} key={screenKey} className="screen-fade"
-        style={{flex:1,display:"flex",flexDirection:"column",overflowY:"auto",position:"relative",background:"#0a0f1e",color:"#f9fafb"}}>
+        style={{flex:1,display:"flex",flexDirection:"column",overflowY:"auto",position:"relative",background:C.bg,color:C.tx}}>
         {tab==="board"  && <Board        key={resetKeys.board}  onNudge={onNudge} lang={lang} citizenId={citizenId}/>}
         {tab==="market" && <ScreenErrorBoundary key={resetKeys.market}><MarketScreen onNudge={onNudge} lang={lang}
           followedShops={followedShops} onFollowShop={handleFollowShop}

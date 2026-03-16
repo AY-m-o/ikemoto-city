@@ -13,19 +13,19 @@ import { useTheme } from "./ThemeContext.jsx";
 function FollowingView({ onBack, followedShops, onNavigateMarket }) {
   const shops = Object.keys(followedShops || {});
   return (
-    <div style={{flex:1,display:"flex",flexDirection:"column",overflowY:"auto",paddingBottom:72,background:"#0a0f1e",color:"#f9fafb"}}>
+    <div style={{flex:1,display:"flex",flexDirection:"column",overflowY:"auto",paddingBottom:72,background:C.bg,color:C.tx}}>
       <SubScreenNav label="フォロー中の店舗" onBack={onBack}/>
       <div style={{padding:"14px 14px 0"}}>
         <div style={{fontSize:8,color:C.txL,letterSpacing:"0.14em",marginBottom:10}}>FOLLOWING — {shops.length}店舗</div>
         {shops.length === 0 ? (
-          <div style={{background:C.card,border:"1px solid "+C.border,borderRadius:8,padding:"22px 16px",textAlign:"center"}}>
+          <div style={{...C.glass,background:C.card,border:"1px solid "+C.border,borderRadius:8,padding:"22px 16px",textAlign:"center"}}>
             <div style={{fontSize:9.5,color:C.txL,marginBottom:5}}>フォロー中の店舗はありません</div>
             <div style={{fontSize:8.5,color:C.txL}}>商業区で店舗を開いてフォローしてみましょう</div>
           </div>
         ) : shops.map(shopName => (
           <div key={shopName}
             onClick={() => { onNavigateMarket && onNavigateMarket(shopName); }}
-            style={{background:C.card,border:"1px solid "+C.border,borderLeft:"3px solid "+C.green,borderRadius:8,padding:"13px 14px",marginBottom:9,cursor:"pointer",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+            style={{...C.glass,background:C.card,border:"1px solid "+C.border,borderLeft:"3px solid "+C.green,borderRadius:8,padding:"13px 14px",marginBottom:9,cursor:"pointer",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
             <div style={{display:"flex",alignItems:"center",gap:10}}>
               <div style={{width:34,height:34,borderRadius:7,background:"linear-gradient(135deg,rgba(0,255,136,0.15),rgba(0,100,60,0.3))",display:"flex",alignItems:"center",justifyContent:"center",fontSize:12,color:C.green,border:"1px solid rgba(0,255,136,0.2)",flexShrink:0}}>&#9647;</div>
               <div>
@@ -51,7 +51,7 @@ function LikedView({ onBack, likedItems, likedShops, onNavigateMarket }) {
   const entries = Object.entries(likedItems || {});
   const shopEntries = Object.keys(likedShops || {});
   return (
-    <div style={{flex:1,display:"flex",flexDirection:"column",overflowY:"auto",paddingBottom:72,background:"#0a0f1e",color:"#f9fafb"}}>
+    <div style={{flex:1,display:"flex",flexDirection:"column",overflowY:"auto",paddingBottom:72,background:C.bg,color:C.tx}}>
       <SubScreenNav label="いいね済み" onBack={onBack}/>
       <div style={{padding:"14px 14px 0"}}>
         {shopEntries.length > 0 && (
@@ -60,7 +60,7 @@ function LikedView({ onBack, likedItems, likedShops, onNavigateMarket }) {
             {shopEntries.map(shopName => (
               <div key={shopName}
                 onClick={() => { onNavigateMarket && onNavigateMarket(shopName); }}
-                style={{background:C.card,border:"1px solid "+C.border,borderLeft:"3px solid #ff6090",borderRadius:8,padding:"12px 14px",marginBottom:9,cursor:"pointer",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+                style={{...C.glass,background:C.card,border:"1px solid "+C.border,borderLeft:"3px solid #ff6090",borderRadius:8,padding:"12px 14px",marginBottom:9,cursor:"pointer",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
                 <div style={{display:"flex",alignItems:"center",gap:10}}>
                   <div style={{width:32,height:32,borderRadius:7,background:"rgba(255,60,100,0.12)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:14,color:"#ff6090",flexShrink:0}}>♥</div>
                   <div>
@@ -76,14 +76,14 @@ function LikedView({ onBack, likedItems, likedShops, onNavigateMarket }) {
         )}
         <div style={{fontSize:8,color:C.txL,letterSpacing:"0.14em",marginBottom:10}}>LIKED ASSETS — {entries.length}件</div>
         {entries.length === 0 && shopEntries.length === 0 ? (
-          <div style={{background:C.card,border:"1px solid "+C.border,borderRadius:8,padding:"22px 16px",textAlign:"center"}}>
+          <div style={{...C.glass,background:C.card,border:"1px solid "+C.border,borderRadius:8,padding:"22px 16px",textAlign:"center"}}>
             <div style={{fontSize:9.5,color:C.txL,marginBottom:5}}>いいねしたアイテムはありません</div>
             <div style={{fontSize:8.5,color:C.txL}}>商業区で店舗・作品にいいねしてみましょう</div>
           </div>
         ) : entries.map(([name, data]) => (
           <div key={name}
             onClick={() => { onNavigateMarket && onNavigateMarket(data.shop, name); }}
-            style={{background:C.card,border:"1px solid "+C.border,borderLeft:"3px solid "+C.green,borderRadius:8,padding:"13px 14px",marginBottom:9,cursor:"pointer",display:"flex",alignItems:"center",gap:10}}>
+            style={{...C.glass,background:C.card,border:"1px solid "+C.border,borderLeft:"3px solid "+C.green,borderRadius:8,padding:"13px 14px",marginBottom:9,cursor:"pointer",display:"flex",alignItems:"center",gap:10}}>
             <div style={{width:34,height:34,borderRadius:7,background:"rgba(0,255,136,0.1)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:16,color:C.green,flexShrink:0,border:"1px solid rgba(0,255,136,0.2)"}}>◈</div>
             <div style={{flex:1}}>
               <div style={{fontSize:12,fontWeight:700,color:C.tx,letterSpacing:"0.03em",lineHeight:1.3}}>{name}</div>
@@ -147,7 +147,7 @@ export default function MyPage({ citizenId, onNudge, onLogout, followedShops, li
   if (subView === "blocked")   return <BlockList onBack={() => setSubView(null)} blockedShops={blockedShops} onUnblockShop={onUnblockShop}/>;
 
   return (
-    <div style={{flex:1,overflowY:"auto",paddingBottom:72,background:"#0a0f1e",color:"#f9fafb"}} onScroll={onNudge}>
+    <div style={{flex:1,overflowY:"auto",paddingBottom:72,background:C.bg,color:C.tx}} onScroll={onNudge}>
       <div style={{padding:"15px 14px 0"}}>
         {/* 市民証ミニカード */}
         <div style={{background:C.navy,borderRadius:9,padding:"14px 15px",marginBottom:14,position:"relative",overflow:"hidden"}}>
@@ -159,7 +159,7 @@ export default function MyPage({ citizenId, onNudge, onLogout, followedShops, li
 
         {/* EVI 折れ線グラフ */}
         <SectionHead accent={C.navy} label="EVI — 存在価値係数" sub="Existence Value Index"/>
-        <div style={{background:C.card,border:"1px solid "+C.border,borderRadius:8,padding:"14px 14px 10px",marginBottom:12}}>
+        <div style={{...C.glass,background:C.card,border:"1px solid "+C.border,borderRadius:8,padding:"14px 14px 10px",marginBottom:12}}>
           {(()=>{
             const W=320, H=82, PX=24, PY=10;
             const cw = W - PX*2, ch = H - PY*2;
@@ -211,7 +211,7 @@ export default function MyPage({ citizenId, onNudge, onLogout, followedShops, li
             { label:"登録作品", val:"2", sub:"市台帳登録済資産" },
             { label:"市民歴", val:"12日", sub:"市制施行からの経過" },
           ].map((s) => (
-            <div key={s.label} style={{background:C.card,border:"1px solid "+C.border,borderRadius:8,padding:"11px 12px"}}>
+            <div key={s.label} style={{...C.glass,background:C.card,border:"1px solid "+C.border,borderRadius:8,padding:"11px 12px"}}>
               <div style={{fontSize:8,color:C.txL,letterSpacing:"0.12em",marginBottom:4}}>{s.label}</div>
               <div style={{fontSize:18,fontWeight:700,color:C.tx,letterSpacing:"0.06em",marginBottom:2}}>{s.val}</div>
               <div style={{fontSize:7.5,color:C.txL,letterSpacing:"0.06em"}}>{s.sub}</div>
@@ -222,14 +222,14 @@ export default function MyPage({ citizenId, onNudge, onLogout, followedShops, li
         {/* 参加中プロジェクト */}
         <SectionHead accent={C.navy} label="参加中のプロジェクト" sub="Active Projects"/>
         {joinedProjects.length === 0 ? (
-          <div style={{background:C.card,border:"1px solid "+C.border,borderRadius:8,padding:"14px",marginBottom:14,textAlign:"center"}}>
+          <div style={{...C.glass,background:C.card,border:"1px solid "+C.border,borderRadius:8,padding:"14px",marginBottom:14,textAlign:"center"}}>
             <div style={{fontSize:9.5,color:C.txL,letterSpacing:"0.08em"}}>まだ参加中のプロジェクトはありません</div>
             <div style={{fontSize:8.5,color:C.txL,letterSpacing:"0.06em",marginTop:5}}>掲示板からプロジェクトに参加申請してください</div>
           </div>
         ) : (
           joinedProjects.map(p => (
             <div key={p.reg}
-              style={{background:C.card,border:"1px solid "+C.border,borderLeft:"3px solid "+C.green,borderRadius:8,padding:"11px 13px",marginBottom:8,cursor:"default",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+              style={{...C.glass,background:C.card,border:"1px solid "+C.border,borderLeft:"3px solid "+C.green,borderRadius:8,padding:"11px 13px",marginBottom:8,cursor:"default",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
               <div>
                 <div style={{fontSize:8,color:C.txL,letterSpacing:"0.12em",marginBottom:3}}>{p.dept} / {p.reg}</div>
                 <div style={{fontSize:11,fontWeight:600,color:C.tx,letterSpacing:"0.03em",lineHeight:1.3}}>{p.title}</div>
@@ -244,7 +244,7 @@ export default function MyPage({ citizenId, onNudge, onLogout, followedShops, li
         <SectionHead accent={C.navy} label="ソーシャル活動" sub="Social"/>
         <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:9,marginBottom:14}}>
           <div onClick={() => setSubView("following")}
-            style={{background:C.card,border:"1px solid "+C.border,borderRadius:8,padding:"14px 12px",cursor:"pointer",display:"flex",flexDirection:"column",alignItems:"center",gap:7}}>
+            style={{...C.glass,background:C.card,border:"1px solid "+C.border,borderRadius:8,padding:"14px 12px",cursor:"pointer",display:"flex",flexDirection:"column",alignItems:"center",gap:7}}>
             <div style={{width:38,height:38,borderRadius:8,background:"linear-gradient(135deg,rgba(46,107,79,0.3),rgba(26,57,44,0.5))",display:"flex",alignItems:"center",justifyContent:"center",fontSize:17,color:C.green,border:"1px solid rgba(46,107,79,0.3)"}}>◫</div>
             <div style={{textAlign:"center"}}>
               <div style={{fontSize:11,fontWeight:700,color:C.tx,marginBottom:2}}>フォロー中</div>
@@ -253,7 +253,7 @@ export default function MyPage({ citizenId, onNudge, onLogout, followedShops, li
             <span style={{fontSize:8,color:C.green,fontWeight:600}}>店舗一覧 ›</span>
           </div>
           <div onClick={() => setSubView("liked")}
-            style={{background:C.card,border:"1px solid "+C.border,borderRadius:8,padding:"14px 12px",cursor:"pointer",display:"flex",flexDirection:"column",alignItems:"center",gap:7}}>
+            style={{...C.glass,background:C.card,border:"1px solid "+C.border,borderRadius:8,padding:"14px 12px",cursor:"pointer",display:"flex",flexDirection:"column",alignItems:"center",gap:7}}>
             <div style={{width:38,height:38,borderRadius:8,background:"rgba(46,107,79,0.15)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:18,color:C.green,border:"1px solid rgba(46,107,79,0.25)"}}>◈</div>
             <div style={{textAlign:"center"}}>
               <div style={{fontSize:11,fontWeight:700,color:C.tx,marginBottom:2}}>いいね済み</div>
@@ -271,7 +271,7 @@ export default function MyPage({ citizenId, onNudge, onLogout, followedShops, li
           { key:"inquiry",  label:"行政への意見具申", sub:"問い合わせフォーム" },
           { key:"logout",   label:"ログアウト",       sub:"端末との接続を切断" },
         ].map((m) => (
-          <div key={m.key} onClick={() => setSubView(m.key)} style={{background:C.card,border:"1px solid "+C.border,borderRadius:7,padding:"12px 14px",marginBottom:8,display:"flex",justifyContent:"space-between",alignItems:"center",cursor:"pointer"}}>
+          <div key={m.key} onClick={() => setSubView(m.key)} style={{...C.glass,background:C.card,border:"1px solid "+C.border,borderRadius:7,padding:"12px 14px",marginBottom:8,display:"flex",justifyContent:"space-between",alignItems:"center",cursor:"pointer"}}>
             <div>
               <div style={{fontSize:11,fontWeight:600,color:m.key==="logout"?C.red:C.tx,letterSpacing:"0.04em",marginBottom:2}}>{m.label}</div>
               <div style={{fontSize:8.5,color:C.txL,letterSpacing:"0.06em"}}>{m.sub}</div>
@@ -286,7 +286,7 @@ export default function MyPage({ citizenId, onNudge, onLogout, followedShops, li
           { key:"guide", label:"市民ガイドブック",   sub:"各タブの使い方・チュートリアル" },
           { key:"faq",   label:"よくある質問",       sub:"FAQ" },
         ].map((m) => (
-          <div key={m.key} onClick={() => setSubView(m.key)} style={{background:C.card,border:"1px solid "+C.border,borderRadius:7,padding:"12px 14px",marginBottom:8,display:"flex",justifyContent:"space-between",alignItems:"center",cursor:"pointer"}}>
+          <div key={m.key} onClick={() => setSubView(m.key)} style={{...C.glass,background:C.card,border:"1px solid "+C.border,borderRadius:7,padding:"12px 14px",marginBottom:8,display:"flex",justifyContent:"space-between",alignItems:"center",cursor:"pointer"}}>
             <div>
               <div style={{fontSize:11,fontWeight:600,color:C.tx,letterSpacing:"0.04em",marginBottom:2}}>{m.label}</div>
               <div style={{fontSize:8.5,color:C.txL,letterSpacing:"0.06em"}}>{m.sub}</div>
@@ -303,7 +303,7 @@ export default function MyPage({ citizenId, onNudge, onLogout, followedShops, li
           { key:"commerce", label:"特定商取引法に基づく表記",     sub:"事業者情報・返金ポリシー" },
           { key:"contact",  label:"お問い合わせ",                sub:"info@city-ikemoto.jp" },
         ].map((m) => (
-          <div key={m.key} onClick={() => setSubView(m.key)} style={{background:C.card,border:"1px solid "+C.border,borderRadius:7,padding:"12px 14px",marginBottom:8,display:"flex",justifyContent:"space-between",alignItems:"center",cursor:"pointer"}}>
+          <div key={m.key} onClick={() => setSubView(m.key)} style={{...C.glass,background:C.card,border:"1px solid "+C.border,borderRadius:7,padding:"12px 14px",marginBottom:8,display:"flex",justifyContent:"space-between",alignItems:"center",cursor:"pointer"}}>
             <div>
               <div style={{fontSize:11,fontWeight:600,color:C.tx,letterSpacing:"0.04em",marginBottom:2}}>{m.label}</div>
               <div style={{fontSize:8.5,color:C.txL,letterSpacing:"0.06em"}}>{m.sub}</div>

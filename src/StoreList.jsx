@@ -47,7 +47,7 @@ export default function StoreList({ shops, followed, likedShops, onBlockShop, on
                 ⋯
               </button>
               {shopMenuOpen===shop.name && (
-                <div style={{position:"absolute",top:36,right:8,background:"#0a0f1e",border:"1px solid rgba(0,255,136,0.2)",borderRadius:8,zIndex:300,minWidth:136,boxShadow:"0 4px 20px rgba(0,0,0,0.7)"}} onClick={e => e.stopPropagation()}>
+                <div style={{position:"absolute",top:36,right:8,background:C.bg,border:"1px solid rgba(0,255,136,0.2)",borderRadius:8,zIndex:300,minWidth:136,boxShadow:"0 4px 20px rgba(0,0,0,0.7)"}} onClick={e => e.stopPropagation()}>
                   <button onClick={() => { setShopMenuOpen(null); setShopReport(shop.name); setShopReportReason(""); setShopReportDone(false); }}
                     style={{display:"block",width:"100%",padding:"11px 14px",background:"transparent",border:"none",color:"rgba(156,163,175,0.8)",fontSize:9.5,cursor:"pointer",fontFamily:"inherit",textAlign:"left",letterSpacing:"0.04em",borderBottom:"1px solid rgba(255,255,255,0.05)"}}>
                     通報する
@@ -61,7 +61,7 @@ export default function StoreList({ shops, followed, likedShops, onBlockShop, on
               {/* カード本体 */}
               <div onClick={() => handleShopEnter(shop)}
                 style={{borderRadius:12,overflow:"hidden",transition:"transform 0.32s cubic-bezier(0.4,0,0.2,1), opacity 0.32s ease",transform:shopEntering&&shopEnterTarget?.name===shop.name?"translateX(-100%) scale(0.96)":"translateX(0) scale(1)",opacity:shopEntering&&shopEnterTarget?.name===shop.name?0:1}}>
-                <div style={{background:"#111827",padding:"16px 15px 14px",position:"relative",overflow:"hidden"}}>
+                <div style={{...C.glass,background:C.card,padding:"16px 15px 14px",position:"relative",overflow:"hidden"}}>
                   <div style={{position:"absolute",top:-20,right:-20,width:80,height:80,borderRadius:"50%",background:"rgba(255,255,255,0.03)"}}/>
                   <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start"}}>
                     <div>
@@ -74,11 +74,11 @@ export default function StoreList({ shops, followed, likedShops, onBlockShop, on
                       </div>
                     </div>
                     {isFollowed && (
-                      <span style={{background:"rgba(0,255,136,0.15)",color:"#00ff88",fontSize:8,padding:"2px 9px",borderRadius:10,fontWeight:600,letterSpacing:"0.06em",flexShrink:0,marginRight:36,textShadow:"0 0 6px rgba(0,255,136,0.5)"}}>フォロー中</span>
+                      <span style={{background:"rgba(0,255,136,0.15)",color:C.green,fontSize:8,padding:"2px 9px",borderRadius:10,fontWeight:600,letterSpacing:"0.06em",flexShrink:0,marginRight:36,textShadow:"0 0 6px rgba(0,255,136,0.5)"}}>フォロー中</span>
                     )}
                   </div>
                 </div>
-                <div style={{background:C.card,border:"1px solid "+C.border,borderTop:"none",padding:"10px 15px",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+                <div style={{...C.glass,background:C.card,border:"1px solid "+C.border,borderTop:"none",padding:"10px 15px",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
                   <span style={{fontSize:8.5,color:C.txL,letterSpacing:"0.06em"}}>{t.market_assets} {shop.count} {t.market_items}</span>
                   <span style={{fontSize:8.5,color:C.green,fontWeight:600,letterSpacing:"0.1em",textShadow:"0 0 6px rgba(0,255,136,0.3)"}}>{t.market_go}</span>
                 </div>
@@ -106,7 +106,7 @@ export default function StoreList({ shops, followed, likedShops, onBlockShop, on
             </>
           ) : (
             <div style={{background:"rgba(0,255,136,0.06)",border:"1px solid rgba(0,255,136,0.2)",borderRadius:8,padding:"14px 13px",textAlign:"center"}}>
-              <div style={{fontSize:10,color:"#00ff88",fontWeight:600,marginBottom:4}}>通報を受け付けました</div>
+              <div style={{fontSize:10,color:C.green,fontWeight:600,marginBottom:4}}>通報を受け付けました</div>
               <div style={{fontSize:9,color:C.txL}}>内容を確認の上対処いたします。</div>
             </div>
           )}

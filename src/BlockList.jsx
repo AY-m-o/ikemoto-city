@@ -8,17 +8,17 @@ import { useTheme } from "./ThemeContext.jsx";
 export default function BlockList({ onBack, blockedShops, onUnblockShop }) {
   const C = useTheme();
   return (
-    <div style={{flex:1,display:"flex",flexDirection:"column",overflowY:"auto",paddingBottom:72,background:"#0a0f1e",color:"#f9fafb"}}>
+    <div style={{flex:1,display:"flex",flexDirection:"column",overflowY:"auto",paddingBottom:72,background:C.bg,color:C.tx}}>
       <SubScreenNav label="ブロックリスト" onBack={onBack}/>
       <div style={{padding:"16px 14px 0"}}>
         <div style={{fontSize:8,color:C.txL,letterSpacing:"0.18em",marginBottom:12}}>ブロック中の店舗 // BLOCKED SHOPS</div>
         {Object.keys(blockedShops||{}).length===0 ? (
-          <div style={{background:C.card,border:"1px solid "+C.border,borderRadius:10,padding:"24px 16px",textAlign:"center"}}>
+          <div style={{...C.glass,background:C.card,border:"1px solid "+C.border,borderRadius:10,padding:"24px 16px",textAlign:"center"}}>
             <div style={{fontSize:11,color:C.txL,letterSpacing:"0.08em"}}>ブロック中の店舗はありません</div>
           </div>
         ) : (
           Object.keys(blockedShops||{}).map(shopName => (
-            <div key={shopName} style={{background:C.card,border:"1px solid "+C.border,borderRadius:10,padding:"13px 14px",marginBottom:8,display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+            <div key={shopName} style={{...C.glass,background:C.card,border:"1px solid "+C.border,borderRadius:10,padding:"13px 14px",marginBottom:8,display:"flex",justifyContent:"space-between",alignItems:"center"}}>
               <div>
                 <div style={{fontSize:10,fontWeight:600,color:C.tx,letterSpacing:"0.04em",marginBottom:3}}>{shopName}</div>
                 <div style={{fontSize:8,color:C.txL,letterSpacing:"0.08em"}}>ブロック中</div>
