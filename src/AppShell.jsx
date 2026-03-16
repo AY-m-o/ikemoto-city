@@ -127,6 +127,9 @@ export default function AppShell({ citizenId, userId, onLogout }) {
   const [searchQuery, setSearchQuery] = useState("");
   // タブアニメ
   const [tappedTab, setTappedTab] = useState(null);
+  // グレア位置（CSS変数）
+  const [glare, setGlare] = useState({ x: 50, y: 50 });
+  const navRef = useRef(null);
   // ② ソーシャルstate（Supabase連携）
   const [followedShops, setFollowedShops] = useState({});
   const [likedItems,    setLikedItems]    = useState({});
@@ -222,6 +225,18 @@ export default function AppShell({ citizenId, userId, onLogout }) {
   };
 
   const onNudge = useCallback(() => setRR((v) => nudge(v)), []);
+
+  // グレア追従ハンドラ
+  const handleNavMove = (e) => {
+    if (!navRef.current) return;
+    const rect = navRef.current.getBoundingClientRect();
+    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+    setGlare({
+      x: Math.round(((clientX - rect.left) / rect.width) * 100),
+      y: Math.round(((clientY - rect.top) / rect.height) * 100),
+    });
+  };
 
   useEffect(() => {
     const t = setInterval(() => setRR((v) => nudge(v)), 8000);
@@ -469,31 +484,100 @@ export default function AppShell({ citizenId, userId, onLogout }) {
           onNavigateMarket={navigateToMarket}/>}
       </div>
 
-      {/* BOTTOM NAV — ガラス風 */}
-      <div style={isLight
-        ? {position:"fixed",bottom:0,left:"50%",transform:"translateX(-50%)",width:"calc(390px - 24px)",margin:"0 12px 12px 12px",...C.glass,display:"flex",zIndex:200,overflow:"hidden",borderRadius:20}
-        : {position:"fixed",bottom:0,left:"50%",transform:"translateX(-50%)",width:"calc(390px - 24px)",margin:"0 12px 12px 12px",background:"rgba(255,255,255,0.08)",backdropFilter:"blur(20px)",WebkitBackdropFilter:"blur(20px)",border:"1px solid rgba(255,255,255,0.15)",borderRadius:20,boxShadow:"0 4px 24px rgba(0,0,0,0.4), 0 0 40px rgba(0,255,136,0.04)",display:"flex",zIndex:200,overflow:"hidden"}
-      }>
-        {TABS.map((t) => {
-          const isActive = tab === t.id;
-          const isTapped = tappedTab === t.id;
-          return (
-            <button key={t.id} onClick={() => handleTabChange(t.id)}
-              style={{flex:1,padding:"9px 0 11px",background:isActive?(isLight?"rgba(0,0,0,0.04)":"rgba(0,255,136,0.04)"):"transparent",border:"none",cursor:"pointer",display:"flex",flexDirection:"column",alignItems:"center",gap:3,borderTop:isActive?(isLight?"1.5px solid #000000":"1.5px solid #00ff88"):"1.5px solid transparent",marginTop:-1.5,fontFamily:"inherit",transition:"all 0.14s"}}>
-              <span style={{
-                fontSize:18,
-                lineHeight:1,
-                color:isActive?(isLight?"#000000":"#00ff88"):(isLight?"#888888":"#374151"),
-                transform:isTapped?"translateY(-4px) scale(1.15)":(isActive?"translateY(-2px) scale(1.05)":"translateY(0) scale(1)"),
-                transition:"transform 0.15s ease-out, color 0.14s, filter 0.14s",
-                display:"inline-block",
-                filter:isActive&&!isLight?"drop-shadow(0 0 6px rgba(0,255,136,0.8))":"none",
-              }}>{t.icon}</span>
-              <span style={{fontSize:8.5,letterSpacing:"0.1em",fontWeight:isActive?700:400,color:isActive?(isLight?"#000000":"#00ff88"):(isLight?"#888888":"#4b5563"),transition:"color 0.14s"}}>{t.label}</span>
-            </button>
-          );
-        })}
-      </div>
+      {/* BOTTOM NAV — リキッドグラス */}
+      {(() => {
+        const activeIdx = TABS.findIndex(t => t.id === tab);
+        const tabW = 100 / TABS.length;
+        const navBg    = isLight ? "rgba(255,255,255,0.18)" : "rgba(255,255,255,0.06)";
+        const navBorder = isLight ? "1px solid rgba(255,255,255,0.85)" : "1px solid rgba(255,255,255,0.18)";
+        const navShadow = isLight
+          ? "0 16px 48px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.9), inset 0 -1px 0 rgba(0,0,0,0.04)"
+          : "0 8px 32px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.12), inset 0 -1px 0 rgba(0,0,0,0.2)";
+        const pillBg   = isLight ? "rgba(0,0,0,0.07)" : "rgba(255,255,255,0.14)";
+        const colActive = isLight ? "#000000" : "#ffffff";
+        const colInactive = isLight ? "#888888" : "rgba(255,255,255,0.4)";
+        return (
+          <div
+            ref={navRef}
+            className="liq-nav"
+            onMouseMove={handleNavMove}
+            onTouchMove={handleNavMove}
+            style={{
+              "--gx": glare.x + "%",
+              "--gy": glare.y + "%",
+              position: "fixed",
+              bottom: 0,
+              left: "50%",
+              transform: "translateX(-50%)",
+              width: "calc(390px - 32px)",
+              margin: "0 16px 24px 16px",
+              background: navBg,
+              backdropFilter: "blur(50px) saturate(200%) brightness(1.05)",
+              WebkitBackdropFilter: "blur(50px) saturate(200%) brightness(1.05)",
+              border: navBorder,
+              borderRadius: 999,
+              boxShadow: navShadow,
+              display: "flex",
+              zIndex: 200,
+              padding: "4px 4px",
+              overflow: "visible",
+            }}
+          >
+            {/* スライドするアクティブピル */}
+            <div style={{
+              position: "absolute",
+              top: 4, bottom: 4,
+              left: `calc(${activeIdx * tabW}% + 4px)`,
+              width: `calc(${tabW}% - 4px)`,
+              background: pillBg,
+              borderRadius: 999,
+              transition: "left 0.5s cubic-bezier(0.34,1.2,0.64,1), background 0.25s",
+              pointerEvents: "none",
+            }}/>
+
+            {TABS.map((t) => {
+              const isActive = tab === t.id;
+              const isTapped = tappedTab === t.id;
+              return (
+                <button key={t.id}
+                  onClick={() => handleTabChange(t.id)}
+                  style={{
+                    flex: 1,
+                    padding: "9px 0 10px",
+                    background: "transparent",
+                    border: "none",
+                    cursor: "pointer",
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    gap: 3,
+                    fontFamily: "inherit",
+                    transform: isTapped ? "scale(0.92)" : "scale(1)",
+                    transition: "transform 0.18s cubic-bezier(0.34,1.2,0.64,1)",
+                    borderRadius: 999,
+                  }}
+                >
+                  <span style={{
+                    fontSize: 18,
+                    lineHeight: 1,
+                    display: "inline-block",
+                    color: isActive ? colActive : colInactive,
+                    filter: isActive && !isLight ? "drop-shadow(0 0 8px rgba(255,255,255,0.6))" : "none",
+                    transition: "color 0.25s, filter 0.25s",
+                  }}>{t.icon}</span>
+                  <span style={{
+                    fontSize: 8.5,
+                    letterSpacing: "0.08em",
+                    fontWeight: isActive ? 700 : 400,
+                    color: isActive ? colActive : colInactive,
+                    transition: "color 0.25s, font-weight 0.2s",
+                  }}>{t.label}</span>
+                </button>
+              );
+            })}
+          </div>
+        );
+      })()}
 
       <Watermark id={citizenId}/>
       <RR value={rr}/>

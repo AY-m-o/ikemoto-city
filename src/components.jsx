@@ -348,4 +348,18 @@ export const GLOBAL_CSS = `
 
   /* ⑧ 等幅数字 */
   .mono{font-family:'SF Mono','Fira Mono','Courier New',monospace;}
+
+  /* リキッドグラスタブバー */
+  .liq-nav{position:relative;isolation:isolate;}
+  .liq-nav::before{
+    content:"";position:absolute;inset:0;border-radius:inherit;
+    background:linear-gradient(to bottom,rgba(255,255,255,0.55) 0%,rgba(255,255,255,0) 55%);
+    pointer-events:none;z-index:1;
+  }
+  .liq-nav::after{
+    content:"";position:absolute;inset:0;border-radius:inherit;
+    background:radial-gradient(circle at var(--gx,50%) var(--gy,-20%),rgba(255,255,255,0.38) 0%,transparent 60%);
+    pointer-events:none;z-index:2;transition:background 0.12s ease;
+  }
+  .liq-nav>*{position:relative;z-index:3;}
 `;
