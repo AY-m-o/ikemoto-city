@@ -1,6 +1,6 @@
 // Vercel Serverless Function
 // Triggered by Supabase Database Webhook on reports INSERT
-// Judges the report with Gemini Flash and auto-moderates
+// Uses Gemini to judge reported content and auto-moderates based on severity
 
 const { createClient } = require("@supabase/supabase-js");
 
@@ -12,14 +12,13 @@ const supabase = createClient(
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 const GEMINI_BASE = "https://generativelanguage.googleapis.com/v1beta";
 
-// 利用可能なモデルを動的に取得（キャッシュ付き）
+// 利用可能なGeminiモデルを動的取得（キャッシュ付き）
 let _cachedModel = null;
 async function getAvailableModel() {
   if (_cachedModel) return _cachedModel;
   const res = await fetch(`${GEMINI_BASE}/models?key=${GEMINI_API_KEY}`);
   if (!res.ok) throw new Error("ListModels failed: " + res.status);
   const { models = [] } = await res.json();
-  // generateContent対応モデルの中でflashを優先
   const candidates = models.filter(m =>
     (m.supportedGenerationMethods || []).includes("generateContent")
   );
@@ -34,7 +33,10 @@ async function getAvailableModel() {
 // 同ユーザーの違反が何回でエスカレートするか
 const ESCALATE_THRESHOLD = 3;
 
-// キーワードベースのフォールバック判定（Gemini API が使えない場合に使用）
+// システムプロンプト
+const SYSTEM_PROMPT = `あなたは池本市（Ikemoto City）というクリエイター経済プラットフォームのコンテンツ審査AIです。以下のコンテンツがコミュニティガイドラインに違反しているか判定してください。違反カテゴリ：ヘイトスピーチ・差別的表現、性的・暴力的コンテンツ、脅迫・ハラスメント、詐欺・不正取引への誘導、外部プラットフォームへのスパム的誘導、なりすまし・偽市民証。また以下の単語・表現を含む場合は違反として扱う：スパム, spam, 出会い, 売春, 援助交際, 詐欺, フィッシング, わいせつ, ポルノ, 暴力, 殺, 死ね（ただし創作・文学的文脈は除く）, ヘイト, 差別, 個人情報, マルウェア, ウイルス, 不法, 違法, 薬物。以下のJSON形式のみで返答してください：{"violation": true/false, "category": "カテゴリ名またはnull", "severity": "low/medium/high", "reason": "理由"}`;
+
+// キーワードフォールバック判定（Gemini APIが使えない場合）
 function judgeByKeyword({ targetTitle, targetDesc, reason }) {
   const BLOCK_KEYWORDS = [
     "スパム", "spam", "出会い", "売春", "援助交際", "詐欺", "フィッシング",
@@ -44,88 +46,86 @@ function judgeByKeyword({ targetTitle, targetDesc, reason }) {
   const text = [targetTitle, targetDesc, reason].join(" ").toLowerCase();
   const matched = BLOCK_KEYWORDS.some(kw => text.includes(kw));
   if (matched) {
-    return { verdict: "auto_blocked", reason: "キーワード検出による自動ブロック" };
+    return {
+      violation: true,
+      category: "キーワード違反",
+      severity: "high",
+      reason: "禁止キーワードを検出（自動判定）",
+    };
   }
-  // 規約違反・不適切コンテンツの通報理由はレビュー待ちに
-  if (reason === "規約違反" || reason === "不適切なコンテンツ") {
-    return { verdict: "pending_review", reason: "要人間レビュー" };
-  }
-  return { verdict: "pending_review", reason: "AIなし判定：人間レビュー待ち" };
+  return {
+    violation: false,
+    category: null,
+    severity: "low",
+    reason: "キーワード違反なし・AI未使用",
+  };
 }
 
+// Gemini APIで審査
 async function judgeWithGemini({ targetTitle, targetDesc, reason }) {
-  const prompt = `
-あなたはオンラインコミュニティ「池本市」のコンテンツモデレーターです。
-以下の通報を分析し、JSONで判定を返してください。
-
+  const userContent = `
 【通報対象プロジェクト】
 タイトル: ${targetTitle || "(不明)"}
 説明: ${targetDesc || "(なし)"}
 
 【通報理由（ユーザー選択）】
-${reason}
-
-以下のいずれかを verdict として返してください:
-- "auto_blocked": 明らかな規約違反（スパム・ヘイトスピーチ・詐欺・暴力・わいせつ・個人情報漏洩など）
-- "pending_review": グレーゾーン（人間の判断が必要）
-- "dismissed": 問題なし
-
-必ず以下のJSON形式のみで返してください（余計なテキスト不要）:
-{"verdict":"<verdict>","reason":"<判定理由（日本語・50文字以内）>"}
+${reason || "(なし)"}
 `.trim();
 
   const model = await getAvailableModel();
   const url = `${GEMINI_BASE}/models/${model}:generateContent?key=${GEMINI_API_KEY}`;
+
   const res = await fetch(url, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
-      contents: [{ parts: [{ text: prompt }] }],
+      contents: [
+        { role: "user", parts: [{ text: SYSTEM_PROMPT }] },
+        { role: "model", parts: [{ text: '{"violation": false, "category": null, "severity": "low", "reason": "理解しました。審査します。"}' }] },
+        { role: "user", parts: [{ text: userContent }] },
+      ],
       generationConfig: {
         temperature: 0.1,
-        maxOutputTokens: 1024,
+        maxOutputTokens: 512,
       },
     }),
   });
 
   if (!res.ok) {
     const err = await res.text();
-    throw new Error("Gemini API error: " + err);
+    throw new Error("Gemini API error: " + err.slice(0, 200));
   }
 
   const data = await res.json();
+  const raw = data?.candidates?.[0]?.content?.parts?.[0]?.text || "";
+  console.log("Gemini raw:", raw.slice(0, 300));
 
-  // デバッグ: 全構造を確認
-  const dataStr = JSON.stringify(data).slice(0, 400);
-  const raw = data?.candidates?.[0]?.content?.parts?.[0]?.text
-           || data?.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data
-           || "";
+  // violation / category / severity / reason をそれぞれ抽出
+  const violationMatch = raw.match(/"violation"\s*:\s*(true|false)/);
+  const categoryMatch  = raw.match(/"category"\s*:\s*"([^"]{0,60})"/);
+  const severityMatch  = raw.match(/"severity"\s*:\s*"(low|medium|high)"/);
+  const reasonMatch    = raw.match(/"reason"\s*:\s*"([^"]{1,200})"/);
 
-  if (!raw) {
-    return { verdict: "pending_review", reason: "AI応答なし（safety block等）" };
-  }
-
-  const verdictMatch = raw.match(/"verdict"\s*:\s*"(auto_blocked|pending_review|dismissed)"/);
-  const reasonMatch  = raw.match(/"reason"\s*:\s*"([^"]{1,100})"/);
-
-  if (!verdictMatch) {
-    return { verdict: "pending_review", reason: "AI応答解析不可" };
+  if (!violationMatch) {
+    throw new Error("Gemini response missing violation field: " + raw.slice(0, 100));
   }
 
   return {
-    verdict: verdictMatch[1],
-    reason:  reasonMatch ? reasonMatch[1] : "AI判定完了",
+    violation: violationMatch[1] === "true",
+    category:  categoryMatch  ? categoryMatch[1]  : null,
+    severity:  severityMatch  ? severityMatch[1]  : "medium",
+    reason:    reasonMatch    ? reasonMatch[1]    : "AI判定完了",
   };
 }
 
+// judge: Gemini → フォールバック
 async function judge(params) {
   try {
     return await judgeWithGemini(params);
   } catch (e) {
-    const errMsg = e.message.slice(0, 120);
-    console.error("Gemini error:", errMsg);
+    console.error("Gemini error, falling back to keyword judge:", e.message);
     const fallback = judgeByKeyword(params);
-    return { ...fallback, reason: fallback.reason + " [GeminiErr:" + errMsg + "]" };
+    return { ...fallback, reason: fallback.reason + " [GeminiErr]" };
   }
 }
 
@@ -134,7 +134,6 @@ module.exports = async function handler(req, res) {
     return res.status(405).json({ error: "Method Not Allowed" });
   }
 
-  // Supabase Webhook の payload
   const record = req.body?.record;
   if (!record) {
     return res.status(400).json({ error: "No record in payload" });
@@ -143,7 +142,7 @@ module.exports = async function handler(req, res) {
   const { id: reportId, target_id: targetReg, reason, reporter_user_id } = record;
 
   try {
-    // 対象プロジェクトの情報を取得（タイトル・説明）
+    // 対象プロジェクトの情報を取得
     let targetTitle = targetReg;
     let targetDesc = "";
     if (targetReg) {
@@ -158,18 +157,27 @@ module.exports = async function handler(req, res) {
       }
     }
 
-    // Gemini（失敗時はキーワード判定）で判定
-    const { verdict, reason: aiReason } = await judge({
-      targetTitle,
-      targetDesc,
-      reason,
-    });
+    // 審査実行
+    const aiResult = await judge({ targetTitle, targetDesc, reason });
+    const { violation, severity } = aiResult;
 
-    // report のステータスを更新
-    let finalStatus = verdict; // auto_blocked | pending_review | dismissed
+    // 最終ステータス決定
+    // severity=high かつ violation=true → auto_blocked
+    // violation=true かつ severity=medium → pending_review
+    // violation=false → dismissed
+    let finalStatus;
+    if (violation && severity === "high") {
+      finalStatus = "auto_blocked";
+    } else if (violation && severity === "medium") {
+      finalStatus = "pending_review";
+    } else if (violation && severity === "low") {
+      finalStatus = "pending_review";
+    } else {
+      finalStatus = "dismissed";
+    }
 
-    // 同ユーザーの違反回数を確認してエスカレートするか判断
-    if (verdict === "auto_blocked" && reporter_user_id) {
+    // エスカレーション判定（同ユーザーの auto_blocked 累積）
+    if (finalStatus === "auto_blocked" && reporter_user_id) {
       const { data: user } = await supabase
         .from("users")
         .select("report_count")
@@ -179,7 +187,6 @@ module.exports = async function handler(req, res) {
       const currentCount = user?.report_count || 0;
       const newCount = currentCount + 1;
 
-      // 違反カウントを更新
       await supabase
         .from("users")
         .update({ report_count: newCount })
@@ -190,27 +197,35 @@ module.exports = async function handler(req, res) {
       }
     }
 
-    // report を更新
+    // reports テーブルを更新（ai_result に JSON全体を保存）
     await supabase
       .from("reports")
-      .update({ status: finalStatus, ai_verdict: verdict, ai_reason: aiReason })
+      .update({
+        status: finalStatus,
+        ai_verdict: violation ? (severity === "high" ? "auto_blocked" : "pending_review") : "dismissed",
+        ai_reason: aiResult.reason,
+        ai_result: aiResult,
+      })
       .eq("id", reportId);
 
-    // auto_blocked の場合はプロジェクトを非表示に
-    if (verdict === "auto_blocked" && targetReg) {
+    // severity=high なら対象プロジェクトを非表示
+    if (violation && severity === "high" && targetReg) {
       await supabase
         .from("projects")
         .update({ hidden: true })
         .eq("reg", targetReg);
+      console.log("Project hidden:", targetReg);
     }
 
-    return res.status(200).json({ verdict, aiReason, finalStatus });
+    return res.status(200).json({ aiResult, finalStatus });
   } catch (e) {
     console.error("moderate-report error:", e);
-    // エラーでも report を pending_review に更新して人間が対応できるようにする
     await supabase
       .from("reports")
-      .update({ status: "pending_review", ai_reason: "処理エラー: " + e.message })
+      .update({
+        status: "pending_review",
+        ai_reason: "処理エラー: " + e.message.slice(0, 100),
+      })
       .eq("id", reportId);
     return res.status(500).json({ error: e.message });
   }

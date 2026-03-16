@@ -150,3 +150,7 @@ create policy if not exists "reports: service update" on public.reports
 -- ⑩ 画像アップロード用カラム追加（Supabase SQL Editorで実行）
 alter table public.projects add column if not exists image_urls text[] default '{}';
 alter table public.users    add column if not exists avatar_url text;
+
+-- ⑪ AI審査結果カラム追加（Supabase SQL Editorで実行）
+-- ai_result: Geminiの審査JSON全体（violation/category/severity/reason）を保存
+alter table public.reports add column if not exists ai_result jsonb;
