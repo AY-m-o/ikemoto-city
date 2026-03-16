@@ -5,6 +5,7 @@ import { useI18n } from "./i18n.js";
 import MessageRoom from "./MessageRoom.jsx";
 import { supabase, fetchAssignments, insertAssignment, deleteAssignment, fetchProjects, createProject, submitReport, fetchHiddenRegs, uploadProjectImage, deleteProjectImage, updateProjectImages } from "./supabase.js";
 import { useTheme } from "./ThemeContext.jsx";
+import { C_DARK as C } from "./ThemeContext.jsx";
 
 // ─────────────────────────────────────────────
 // PROJECT IMAGE SECTION（画像アップロード）
