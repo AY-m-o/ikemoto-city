@@ -362,4 +362,26 @@ export const GLOBAL_CSS = `
     pointer-events:none;z-index:2;transition:background 0.12s ease;
   }
   .liq-nav>*{position:relative;z-index:3;}
+
+  /* ─── ライトモード全体 ─── */
+  body.ik-light{background:#ffffff!important;color:#000000!important;}
+
+  /* ライトモード：カードのglass効果 */
+  body.ik-light .card,
+  body.ik-light .pressable{
+    background:rgba(255,255,255,0.4)!important;
+    backdrop-filter:blur(24px) saturate(180%)!important;
+    -webkit-backdrop-filter:blur(24px) saturate(180%)!important;
+    border:1px solid rgba(255,255,255,0.8)!important;
+    box-shadow:0 4px 24px rgba(0,0,0,0.06)!important;
+  }
+  body.ik-light .card:hover{
+    border-color:rgba(180,190,210,0.9)!important;
+    box-shadow:0 8px 32px rgba(0,0,0,0.1)!important;
+    transform:translateY(-2px);
+  }
+
+  /* ライトモード：グリーン色を黒に上書き */
+  body.ik-light .follow-active{animation:none!important;border-color:rgba(0,0,0,0.2)!important;}
+  body.ik-light ::placeholder{color:rgba(0,0,0,0.3)!important;}
 `;

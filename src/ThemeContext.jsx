@@ -34,18 +34,16 @@ export const C_LIGHT = {
   greenD:  "#000000",
   red:     "#c0392b",
   bg:      "#ffffff",
-  card:    "rgba(255,255,255,0.25)",
-  border:  "rgba(255,255,255,0.9)",
-  borderD: "rgba(0,0,0,0.08)",
+  card:    "rgba(255,255,255,0.4)",
+  border:  "rgba(255,255,255,0.8)",
+  borderD: "rgba(0,0,0,0.1)",
   tx:      "#000000",
   txM:     "#222222",
   txL:     "#888888",
   glass: {
-    background:           "rgba(255,255,255,0.25)",
-    backdropFilter:       "blur(40px) saturate(180%) brightness(1.1)",
-    WebkitBackdropFilter: "blur(40px) saturate(180%) brightness(1.1)",
-    border:               "1px solid rgba(255,255,255,0.9)",
-    boxShadow:            "0 8px 32px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,1), inset 0 -1px 0 rgba(0,0,0,0.04)",
+    backdropFilter:       "blur(24px) saturate(180%)",
+    WebkitBackdropFilter: "blur(24px) saturate(180%)",
+    boxShadow:            "0 4px 24px rgba(0,0,0,0.06)",
     borderRadius:         20,
   },
   // ボタン専用スタイル（primaryのみ上書き）
@@ -78,10 +76,11 @@ export function ThemeProvider({ children }) {
 
   const C = isLight ? C_LIGHT : C_DARK;
 
-  // body背景を同期
+  // body背景・クラスをテーマに同期
   useEffect(() => {
     document.body.style.background = C.bg;
     document.body.style.color = C.tx;
+    document.body.classList.toggle("ik-light", isLight);
   }, [isLight]);
 
   return (
