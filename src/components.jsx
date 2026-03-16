@@ -366,18 +366,20 @@ export const GLOBAL_CSS = `
   /* ─── ライトモード全体 ─── */
   body.ik-light{background:#ffffff!important;color:#000000!important;}
 
-  /* ライトモード：カードのglass効果 */
+  /* ライトモード：カードのglass効果（SVGフィルター付き） */
   body.ik-light .card,
   body.ik-light .pressable{
-    background:rgba(255,255,255,0.4)!important;
-    backdrop-filter:blur(24px) saturate(180%)!important;
-    -webkit-backdrop-filter:blur(24px) saturate(180%)!important;
+    background:rgba(255,255,255,0.25)!important;
+    backdrop-filter:blur(12px)!important;
+    -webkit-backdrop-filter:blur(12px)!important;
+    filter:url(#glass-distortion)!important;
     border:1px solid rgba(255,255,255,0.8)!important;
-    box-shadow:0 4px 24px rgba(0,0,0,0.06)!important;
+    box-shadow:inset 0 0 10px -6px rgba(255,255,255,0.7), 0 8px 32px rgba(0,0,0,0.06)!important;
+    border-radius:20px!important;
   }
   body.ik-light .card:hover{
-    border-color:rgba(180,190,210,0.9)!important;
-    box-shadow:0 8px 32px rgba(0,0,0,0.1)!important;
+    border-color:rgba(200,210,230,0.9)!important;
+    box-shadow:inset 0 0 16px -4px rgba(255,255,255,0.8), 0 12px 40px rgba(0,0,0,0.1)!important;
     transform:translateY(-2px);
   }
 
