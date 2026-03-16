@@ -463,8 +463,8 @@ export default function AppShell({ citizenId, userId, onLogout }) {
           onNavigateMarket={navigateToMarket}/>}
       </div>
 
-      {/* BOTTOM NAV — リキッドグラス風 */}
-      <div style={{position:"fixed",bottom:0,left:"50%",transform:"translateX(-50%)",width:390,background:"linear-gradient(180deg, rgba(0,255,136,0.07) 0%, rgba(4,8,20,0.3) 100%)",backdropFilter:"blur(40px) saturate(200%) brightness(1.1)",WebkitBackdropFilter:"blur(40px) saturate(200%) brightness(1.1)",borderTop:"1px solid rgba(0,255,136,0.25)",boxShadow:"0 -1px 0 rgba(0,255,136,0.1) inset, 0 -12px 40px rgba(0,0,0,0.5), 0 0 60px rgba(0,255,136,0.04)",display:"flex",zIndex:200}}>
+      {/* BOTTOM NAV — ガラス風 */}
+      <div style={{position:"fixed",bottom:0,left:"50%",transform:"translateX(-50%)",width:"calc(390px - 24px)",margin:"0 12px 12px 12px",background:"rgba(255,255,255,0.08)",backdropFilter:"blur(20px)",WebkitBackdropFilter:"blur(20px)",border:"1px solid rgba(255,255,255,0.15)",borderRadius:20,boxShadow:"0 4px 24px rgba(0,0,0,0.4), 0 0 40px rgba(0,255,136,0.04)",display:"flex",zIndex:200,overflow:"hidden"}}>
         {TABS.map((t) => {
           const isActive = tab === t.id;
           const isTapped = tappedTab === t.id;
