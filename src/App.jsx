@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react";
-import { C } from "./constants.js";
 import { GLOBAL_CSS } from "./components.jsx";
 import AuthScreen       from "./AuthScreen.jsx";
 import AppShell         from "./AppShell.jsx";
 import OnboardingScreen from "./OnboardingScreen.jsx";
 import EULAScreen       from "./EULAScreen.jsx";
 import { supabase } from "./supabase.js";
+import { ThemeProvider, useTheme } from "./ThemeContext.jsx";
 
 export default function App() {
   const [loggedIn,    setLoggedIn]    = useState(false);
@@ -78,15 +78,30 @@ export default function App() {
   }
 
   return (
+    <ThemeProvider>
+      <AppInner
+        loggedIn={loggedIn}
+        citizenId={citizenId}
+        userId={userId}
+        eulaAgreed={eulaAgreed}
+        setEulaAgreed={setEulaAgreed}
+        showOnboarding={showOnboarding}
+        handleOnboardingDone={handleOnboardingDone}
+        handleLogin={handleLogin}
+        handleLogout={handleLogout}
+      />
+    </ThemeProvider>
+  );
+}
+
+function AppInner({ loggedIn, citizenId, userId, eulaAgreed, setEulaAgreed, showOnboarding, handleOnboardingDone, handleLogin, handleLogout }) {
+  const C = useTheme();
+  return (
     <div style={{minHeight:"100vh",background:"#0f1828",display:"flex",justifyContent:"center",alignItems:"flex-start"}}>
       <style>{GLOBAL_CSS}</style>
       <div style={{fontFamily:"'Noto Sans JP','Yu Gothic','YuGothic',sans-serif",background:loggedIn?C.bg:C.navy,minHeight:"100vh",width:"100%",maxWidth:390,display:"flex",flexDirection:"column",boxShadow:"0 0 60px rgba(0,0,0,0.35)",position:"relative",overflow:"clip"}}>
-        {/* EULA同意画面（未同意の場合は必ず表示） */}
         {!eulaAgreed && <EULAScreen onAgree={() => { localStorage.setItem("ik_eula_agreed","1"); setEulaAgreed(true); }}/>}
-
-        {/* オンボーディング画面（初回ログイン後）*/}
         {showOnboarding && <OnboardingScreen onDone={handleOnboardingDone}/>}
-
         {!loggedIn
           ? <AuthScreen onLogin={handleLogin}/>
           : <AppShell citizenId={citizenId} userId={userId} onLogout={handleLogout}/>

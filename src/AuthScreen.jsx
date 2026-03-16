@@ -1,9 +1,11 @@
 import { useState, useCallback } from "react";
-import { C, DOMAINS, CHARTER, runSequence } from "./constants.js";
+import { DOMAINS, CHARTER, runSequence } from "./constants.js";
 import { AuthField, Btn, LogTerminal } from "./components.jsx";
 import { signUp, signIn, resetPassword } from "./supabase.js";
+import { useTheme } from "./ThemeContext.jsx";
 
 export default function AuthScreen({ onLogin }) {
+  const C = useTheme();
   const [mode, setMode]               = useState("top"); // top|login|reg1|reg2|reg3
   const [citizenName, setCitizenName] = useState("");
   const [domain, setDomain]           = useState("");

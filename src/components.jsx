@@ -1,5 +1,5 @@
 import { useRef, useEffect, useState } from "react";
-import { C } from "./constants.js";
+import { useTheme } from "./ThemeContext.jsx";
 
 // ─────────────────────────────────────────────
 // CYBER TICKER
@@ -68,6 +68,7 @@ export function RR({ value }) {
 // SECTION HEADER
 // ─────────────────────────────────────────────
 export function SectionHead({ accent, label, sub }) {
+  const C = useTheme();
   const col = accent || C.green;
   return (
     <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:18}}>
@@ -82,6 +83,7 @@ export function SectionHead({ accent, label, sub }) {
 // LOG TERMINAL
 // ─────────────────────────────────────────────
 export function LogTerminal({ logs, running, dark=true }) {
+  const C = useTheme();
   const ref = useRef(null);
   useEffect(()=>{ if(ref.current) ref.current.scrollTop=ref.current.scrollHeight; },[logs]);
 
@@ -117,6 +119,7 @@ export function LogTerminal({ logs, running, dark=true }) {
 // BUTTON — primary: #00ff88 + glow
 // ─────────────────────────────────────────────
 export function Btn({ label, onClick, variant="primary", small=false, disabled=false }) {
+  const C = useTheme();
   const [pressed, setPressed] = useState(false);
 
   const styles = {
@@ -187,6 +190,7 @@ export function Btn({ label, onClick, variant="primary", small=false, disabled=f
 // MODAL (bottom slide-up overlay)
 // ─────────────────────────────────────────────
 export function Modal({ children, onClose }) {
+  const C = useTheme();
   return (
     <div
       onClick={onClose}
@@ -204,6 +208,7 @@ export function Modal({ children, onClose }) {
 // INPUT FIELD — dark background (Auth)
 // ─────────────────────────────────────────────
 export function AuthField({ label, value, onChangeVal, placeholder, type="text" }) {
+  const C = useTheme();
   return (
     <div style={{marginBottom:13}}>
       <div style={{fontSize:8.5,color:C.txL,letterSpacing:"0.2em",marginBottom:6,textTransform:"uppercase"}}>{label}</div>
@@ -224,6 +229,7 @@ export function AuthField({ label, value, onChangeVal, placeholder, type="text" 
 // INPUT FIELD — dark background (App)
 // ─────────────────────────────────────────────
 export function Field({ label, value, onChangeVal, placeholder, type="text" }) {
+  const C = useTheme();
   return (
     <div style={{marginBottom:13}}>
       <div style={{fontSize:8.5,color:C.txL,letterSpacing:"0.2em",marginBottom:6,textTransform:"uppercase"}}>{label}</div>
@@ -244,6 +250,7 @@ export function Field({ label, value, onChangeVal, placeholder, type="text" }) {
 // SUB-SCREEN HEADER NAV
 // ─────────────────────────────────────────────
 export function SubScreenNav({ label, onBack }) {
+  const C = useTheme();
   return (
     <div style={{background:C.navy,padding:"0",borderBottom:"1px solid rgba(0,255,136,0.15)",marginBottom:0}}>
       <div style={{display:"flex",alignItems:"center",gap:0}}>

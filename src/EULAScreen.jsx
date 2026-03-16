@@ -1,4 +1,5 @@
-import { C } from "./constants.js";
+// constants imported;
+import { useTheme } from "./ThemeContext.jsx";
 
 const EULA_TEXT = `施行日：2026年4月1日
 
@@ -33,6 +34,7 @@ const EULA_TEXT = `施行日：2026年4月1日
 お問い合わせ：info@city-ikemoto.jp`;
 
 export default function EULAScreen({ onAgree }) {
+  const C = useTheme();
   return (
     <div style={{position:"fixed",inset:0,background:"rgba(8,14,28,0.97)",zIndex:9999,display:"flex",flexDirection:"column",maxWidth:390,margin:"0 auto"}}>
       {/* ヘッダー */}

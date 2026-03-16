@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
-import { C, TICKER, TABS, MARKET_ITEMS, SHOP_META, nudge } from "./constants.js";
+import { TICKER, TABS, MARKET_ITEMS, SHOP_META, nudge } from "./constants.js";
 import { Stamp, Watermark, RR } from "./components.jsx";
 import Board        from "./Board.jsx";
 import MarketScreen from "./MarketScreen.jsx";
@@ -7,6 +7,7 @@ import ProcScreen   from "./ProcScreen.jsx";
 import GovScreen    from "./GovScreen.jsx";
 import MyPage       from "./MyPage.jsx";
 import { fetchLikes, fetchFollows, toggleLike, toggleFollow } from "./supabase.js";
+import { useTheme } from "./ThemeContext.jsx";
 
 class ScreenErrorBoundary extends React.Component {
   constructor(props) {
@@ -90,6 +91,7 @@ function SearchTag({ type }) {
 }
 
 export default function AppShell({ citizenId, userId, onLogout }) {
+  const C = useTheme();
   const [tab, setTab]           = useState("board");
   const [showId, setShowId]     = useState(false);
   const [rr, setRR]             = useState(4821);

@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
-import { C, LOGOUT_LOGS, BOARD_ITEMS_INIT, runSequence } from "./constants.js";
+import { LOGOUT_LOGS, BOARD_ITEMS_INIT, runSequence } from "./constants.js";
 import { SectionHead, LogTerminal, Btn, Field, SubScreenNav } from "./components.jsx";
 import { useI18n } from "./i18n.js";
 import { supabase, uploadAvatar, fetchAvatarUrl } from "./supabase.js";
+import { useTheme } from "./ThemeContext.jsx";
 
 // ─────────────────────────────────────────────
 // SETTINGS SUB-VIEW
@@ -451,6 +452,7 @@ function LikedView({ onBack, likedItems, likedShops, onNavigateMarket }) {
 // MY SCREEN (root)
 // ─────────────────────────────────────────────
 export default function MyScreen({ citizenId, onNudge, onLogout, followedShops, likedItems, likedShops, onNavigateMarket, blockedShops, onUnblockShop, lang }) {
+  const C = useTheme();
   const t = useI18n(lang);
   const [subView, setSubView] = useState(null);
 

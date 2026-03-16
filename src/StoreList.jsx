@@ -1,11 +1,13 @@
 import { useState } from "react";
-import { C } from "./constants.js";
+// constants imported;
 import { Modal, Btn } from "./components.jsx";
+import { useTheme } from "./ThemeContext.jsx";
 
 // ─────────────────────────────────────────────
 // STORE LIST（店舗一覧）
 // ─────────────────────────────────────────────
 export default function StoreList({ shops, followed, likedShops, onBlockShop, onSelectShop, onNudge, t }) {
+  const C = useTheme();
   const [shopMenuOpen, setShopMenuOpen] = useState(null);
   const [shopReport, setShopReport] = useState(null);
   const [shopReportReason, setShopReportReason] = useState("");

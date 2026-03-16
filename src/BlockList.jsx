@@ -1,10 +1,12 @@
-import { C } from "./constants.js";
+// constants imported;
 import { SubScreenNav } from "./components.jsx";
+import { useTheme } from "./ThemeContext.jsx";
 
 // ─────────────────────────────────────────────
 // BLOCK LIST（ブロックリスト）
 // ─────────────────────────────────────────────
 export default function BlockList({ onBack, blockedShops, onUnblockShop }) {
+  const C = useTheme();
   return (
     <div style={{flex:1,display:"flex",flexDirection:"column",overflowY:"auto",paddingBottom:72,background:"#0a0f1e",color:"#f9fafb"}}>
       <SubScreenNav label="ブロックリスト" onBack={onBack}/>

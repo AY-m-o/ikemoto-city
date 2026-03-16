@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
-import { C, BOARD_ITEMS_INIT, ASSIGN_LOGS, DOMAINS, runSequence } from "./constants.js";
+import { BOARD_ITEMS_INIT, ASSIGN_LOGS, DOMAINS, runSequence } from "./constants.js";
 import { Stamp, SectionHead, LogTerminal, Btn, Modal } from "./components.jsx";
 import { useI18n } from "./i18n.js";
 import MessageRoom from "./MessageRoom.jsx";
 import { supabase, fetchAssignments, insertAssignment, deleteAssignment, fetchProjects, createProject, submitReport, fetchHiddenRegs, uploadProjectImage, deleteProjectImage, updateProjectImages } from "./supabase.js";
+import { useTheme } from "./ThemeContext.jsx";
 
 // ─────────────────────────────────────────────
 // PROJECT IMAGE SECTION（画像アップロード）
@@ -159,6 +160,7 @@ function ProjectDetail({ item, onBack, onAssign, onRoom, onNudge, alreadyAssigne
 // BOARD（掲示板メイン）
 // ─────────────────────────────────────────────
 export default function Board({ onNudge, lang, citizenId }) {
+  const C = useTheme();
   const t = useI18n(lang);
   const [boardItems, setBoardItems] = useState(BOARD_ITEMS_INIT);
   const [assignedRegs, setAssignedRegs] = useState([]);

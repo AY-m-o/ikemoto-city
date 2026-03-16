@@ -1,5 +1,6 @@
 import { useState, useRef } from "react";
-import { C } from "./constants.js";
+import { useTheme } from "./ThemeContext.jsx";
+// constants imported;
 
 // ─────────────────────────────────────────────
 // MESSAGE ROOM（プロジェクトチャット）
@@ -12,6 +13,7 @@ const DUMMY_MESSAGES = [
 ];
 
 export default function MessageRoom({ room, onBack, onNudge }) {
+  const C = useTheme();
   const [msgs, setMsgs] = useState(DUMMY_MESSAGES);
   const [input, setInput] = useState("");
   const bottomRef = useRef(null);

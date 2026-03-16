@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
-import { C, PURCHASE_LOGS, calcTax, runSequence } from "./constants.js";
+import { PURCHASE_LOGS, calcTax, runSequence } from "./constants.js";
 import { Btn, Modal, LogTerminal } from "./components.jsx";
 import { getStripe } from "./stripe.js";
+import { useTheme } from "./ThemeContext.jsx";
 
 // ダミーレビューデータ
 const DUMMY_REVIEWS = {
@@ -39,6 +40,7 @@ export function StarRating({ value, onChange, readonly=false }) {
 // ASSET DETAIL（作品詳細）
 // ─────────────────────────────────────────────
 export default function AssetDetail({ item, shopName, onBack, onNudge, likedItems, onLikeItem }) {
+  const C = useTheme();
   const [slideIdx, setSlideIdx] = useState(0);
   const [purchasePhase, setPurchasePhase] = useState(null);
   const [purchaseLogs, setPurchaseLogs] = useState([]);

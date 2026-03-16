@@ -1,7 +1,8 @@
 import { useState } from "react";
-import { C } from "./constants.js";
+// constants imported;
 import { SectionHead } from "./components.jsx";
 import { useI18n } from "./i18n.js";
+import { useTheme } from "./ThemeContext.jsx";
 
 const MAYOR_POSTS = [
   {
@@ -30,6 +31,7 @@ const MAYOR_POSTS = [
 ];
 
 export default function GovScreen({ onNudge, lang }) {
+  const C = useTheme();
   const t = useI18n(lang);
   const [openPost, setOpenPost] = useState(null);
   const [commentInputs, setCommentInputs] = useState({});

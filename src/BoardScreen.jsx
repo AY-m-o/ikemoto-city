@@ -1,7 +1,8 @@
 import { useState, useRef } from "react";
-import { C, BOARD_ITEMS_INIT, ASSIGN_LOGS, runSequence } from "./constants.js";
+import { BOARD_ITEMS_INIT, ASSIGN_LOGS, runSequence } from "./constants.js";
 import { Stamp, SectionHead, LogTerminal, Btn, Modal } from "./components.jsx";
 import { useI18n } from "./i18n.js";
+import { useTheme } from "./ThemeContext.jsx";
 
 // ─────────────────────────────────────────────
 // PROJECT ROOM（チャット画面）
@@ -145,6 +146,7 @@ function ProjectDetail({ item, onBack, onAssign, onRoom, onNudge, alreadyAssigne
 // BOARD SCREEN（メイン）
 // ─────────────────────────────────────────────
 export default function BoardScreen({ onNudge, lang, citizenId }) {
+  const C = useTheme();
   const t = useI18n(lang);
   const [boardItems, setBoardItems] = useState(BOARD_ITEMS_INIT);
   // 自分が参加申請制のプロジェクトreg一覧（承認済み）

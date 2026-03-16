@@ -1,12 +1,15 @@
 import { useState, useEffect } from "react";
-import { C, LOGOUT_LOGS, runSequence } from "./constants.js";
+import { C as C_FALLBACK, LOGOUT_LOGS, runSequence } from "./constants.js";
 import { SectionHead, LogTerminal, Btn, SubScreenNav } from "./components.jsx";
 import { uploadAvatar, fetchAvatarUrl } from "./supabase.js";
+import { useTheme, useThemeCtx } from "./ThemeContext.jsx";
 
 // ─────────────────────────────────────────────
 // SETTINGS VIEW（パラメータ設定）
 // ─────────────────────────────────────────────
 export function SettingsView({ onBack, onNudge, userId }) {
+  const C = useTheme();
+  const { toggle, isLight } = useThemeCtx();
   const [displayName, setDisplayName] = useState("開発局員");
   const [notifs, setNotifs] = useState({ assign:true, market:false, system:true });
   const [saved, setSaved] = useState(false);
@@ -66,6 +69,17 @@ export function SettingsView({ onBack, onNudge, userId }) {
 
           <input value={displayName} onChange={e => setDisplayName(e.target.value)} placeholder="表示名を入力"
             style={{width:"100%",padding:"8px 12px",background:C.bg,border:"1px solid "+C.border,borderRadius:7,color:C.tx,fontSize:12,fontFamily:"inherit",outline:"none",letterSpacing:"0.04em",boxSizing:"border-box"}}/>
+
+          {/* テーマ切替 */}
+          <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginTop:14,paddingTop:12,borderTop:"1px solid "+C.border}}>
+            <div>
+              <div style={{fontSize:11,color:C.tx,fontWeight:500,letterSpacing:"0.03em",marginBottom:2}}>テーマ</div>
+              <div style={{fontSize:8.5,color:C.txL}}>{isLight?"ライトモード（グラスモーフィズム）":"ダークモード（サイバーシティ）"}</div>
+            </div>
+            <div onClick={toggle} style={{width:48,height:26,borderRadius:13,background:isLight?C.green:"rgba(255,255,255,0.15)",position:"relative",cursor:"pointer",transition:"background 0.25s",flexShrink:0,border:"1px solid "+C.border}}>
+              <div style={{position:"absolute",top:3,left:isLight?24:3,width:18,height:18,borderRadius:"50%",background:"#fff",transition:"left 0.25s",boxShadow:"0 1px 4px rgba(0,0,0,0.3)"}}/>
+            </div>
+          </div>
         </div>
         <div style={{background:C.card,border:"1px solid "+C.border,borderRadius:8,padding:"14px 14px",marginBottom:14}}>
           <div style={{fontSize:9,color:C.txL,letterSpacing:"0.18em",fontWeight:600,marginBottom:12}}>通知設定</div>

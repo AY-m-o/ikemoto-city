@@ -1,5 +1,6 @@
 import { useState, useRef } from "react";
-import { C } from "./constants.js";
+import { useTheme } from "./ThemeContext.jsx";
+// constants imported;
 
 const SLIDES = [
   {
@@ -45,6 +46,7 @@ const SLIDES = [
 ];
 
 export default function OnboardingScreen({ onDone }) {
+  const C = useTheme();
   const [idx, setIdx] = useState(0);
   const touchStartX = useRef(null);
 

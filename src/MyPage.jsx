@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
-import { C, BOARD_ITEMS_INIT } from "./constants.js";
+import { BOARD_ITEMS_INIT } from "./constants.js";
 import { SectionHead, SubScreenNav } from "./components.jsx";
 import { useI18n } from "./i18n.js";
 import { SettingsView, InquiryView, LogoutView, GuideView, FaqView, LegalView, ContactView, PRIVACY_TEXT, TERMS_TEXT, COMMERCE_TEXT } from "./Settings.jsx";
 import BlockList from "./BlockList.jsx";
 import { supabase } from "./supabase.js";
+import { useTheme } from "./ThemeContext.jsx";
 
 // ─────────────────────────────────────────────
 // FOLLOWING VIEW（フォロー中店舗一覧）
@@ -100,6 +101,7 @@ function LikedView({ onBack, likedItems, likedShops, onNavigateMarket }) {
 // MY PAGE（マイページメイン + オーケストレーター）
 // ─────────────────────────────────────────────
 export default function MyPage({ citizenId, onNudge, onLogout, followedShops, likedItems, likedShops, onNavigateMarket, blockedShops, onUnblockShop, lang }) {
+  const C = useTheme();
   const t = useI18n(lang);
   const [subView, setSubView] = useState(null);
 
