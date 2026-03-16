@@ -366,21 +366,45 @@ export const GLOBAL_CSS = `
   /* ─── ライトモード全体 ─── */
   body.ik-light{background:#ffffff!important;color:#000000!important;}
 
-  /* ライトモード：カードのglass効果 */
-  body.ik-light .card,
-  body.ik-light .pressable{
-    background:rgba(255,255,255,0.25)!important;
-    backdrop-filter:blur(16px) saturate(180%)!important;
-    -webkit-backdrop-filter:blur(16px) saturate(180%)!important;
-    border:1px solid rgba(255,255,255,0.8)!important;
-    box-shadow:0 4px 24px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,0.9)!important;
+  /* ライトモード：.card疑似要素ガラス（コンテンツ保護） */
+  body.ik-light .card{
+    position:relative!important;
+    isolation:isolate!important;
+    background:transparent!important;
+    backdrop-filter:none!important;
+    -webkit-backdrop-filter:none!important;
+    border:none!important;
     border-radius:20px!important;
+    box-shadow:0px 0px 21px -8px rgba(0,0,0,0.12)!important;
+    overflow:visible!important;
   }
-  body.ik-light .card:hover{
-    border-color:rgba(200,210,230,0.9)!important;
-    box-shadow:0 8px 32px rgba(0,0,0,0.1), inset 0 1px 0 rgba(255,255,255,1)!important;
-    transform:translateY(-2px);
+  /* ティント + インナーシャドウ + ボーダー層 */
+  body.ik-light .card::before{
+    content:"";position:absolute;inset:0;z-index:0;
+    border-radius:20px;
+    background:rgba(255,255,255,0.15);
+    border:1px solid rgba(255,255,255,0.75);
+    box-shadow:inset 0 0 10px -6px rgba(255,255,255,0.8),
+               inset 0 1px 0 rgba(255,255,255,0.9);
+    pointer-events:none;
   }
+  /* backdrop-filter + distortion 背景層（コンテンツ非影響） */
+  body.ik-light .card::after{
+    content:"";position:absolute;inset:0;z-index:-1;
+    border-radius:20px;
+    backdrop-filter:blur(8px) saturate(180%);
+    -webkit-backdrop-filter:blur(8px) saturate(180%);
+    filter:url(#glass-distortion);
+    isolation:isolate;
+    pointer-events:none;
+  }
+  /* カード内の直接コンテンツを疑似要素より前面に */
+  body.ik-light .card>*{position:relative;z-index:1;}
+  body.ik-light .card:hover::before{
+    background:rgba(255,255,255,0.22);
+    border-color:rgba(255,255,255,0.9);
+  }
+  body.ik-light .card:hover{transform:translateY(-2px);}
 
   /* ライトモード：グリーン色を黒に上書き */
   body.ik-light .follow-active{animation:none!important;border-color:rgba(0,0,0,0.2)!important;}
