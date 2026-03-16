@@ -42,11 +42,10 @@ export const C_LIGHT = {
   txL:     "#888888",
   glass: {
     background:           "rgba(255,255,255,0.25)",
-    backdropFilter:       "blur(12px)",
-    WebkitBackdropFilter: "blur(12px)",
-    filter:               "url(#glass-distortion)",
+    backdropFilter:       "blur(16px) saturate(180%)",
+    WebkitBackdropFilter: "blur(16px) saturate(180%)",
     border:               "1px solid rgba(255,255,255,0.8)",
-    boxShadow:            "inset 0 0 10px -6px rgba(255,255,255,0.7), 0 8px 32px rgba(0,0,0,0.06)",
+    boxShadow:            "0 4px 24px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,0.9)",
     borderRadius:         20,
   },
   // ボタン専用スタイル（primaryのみ上書き）
