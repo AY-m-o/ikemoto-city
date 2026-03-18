@@ -89,7 +89,7 @@ export default function OnboardingScreen({ onDone }) {
       <div style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:"48px 28px 24px",textAlign:"center",position:"relative"}}>
         {/* アイコン */}
         <div style={{width:80,height:80,borderRadius:"50%",background:slide.accent,display:"flex",alignItems:"center",justifyContent:"center",fontSize:28,color:"rgba(255,255,255,0.7)",marginBottom:28,border:"1px solid rgba(255,255,255,0.1)",boxShadow:"0 4px 24px rgba(0,0,0,0.3)",transition:"all 0.35s ease"}}>
-          {slide.icon}
+          <span style={{lineHeight:"1",display:"block"}}>{slide.icon}</span>
         </div>
 
         {/* テキスト */}

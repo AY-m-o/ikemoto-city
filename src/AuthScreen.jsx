@@ -29,6 +29,9 @@ export default function AuthScreen({ onLogin }) {
   const [resetSent,    setResetSent]    = useState(false);
   const [resetError,   setResetError]   = useState("");
 
+  // 池本市とは？モーダル
+  const [showAbout, setShowAbout] = useState(false);
+
   const handleLogin = async () => {
     setAuthError("");
     if (!email.trim()) { setAuthError("メールアドレスを入力してください。"); return; }
@@ -117,6 +120,27 @@ export default function AuthScreen({ onLogin }) {
       overflow:"hidden",
       boxSizing:"border-box",
     }}>
+
+      {/* ？ボタン */}
+      <button onClick={() => setShowAbout(true)}
+        style={{position:"absolute",top:16,right:16,width:28,height:28,borderRadius:"50%",background:"rgba(255,255,255,0.06)",border:"1px solid rgba(255,255,255,0.12)",color:"rgba(143,168,200,0.6)",fontSize:12,cursor:"pointer",fontFamily:"inherit",display:"flex",alignItems:"center",justifyContent:"center",lineHeight:"1",zIndex:10}}>
+        ?
+      </button>
+
+      {/* 池本市とは？モーダル */}
+      {showAbout && (
+        <div style={{position:"fixed",inset:0,zIndex:1000,display:"flex",alignItems:"center",justifyContent:"center",background:"rgba(0,0,0,0.6)",padding:"24px"}} onClick={() => setShowAbout(false)}>
+          <div style={{background:"#111827",border:"1px solid rgba(0,255,136,0.2)",borderRadius:12,padding:"24px 20px",maxWidth:320,width:"100%",position:"relative",boxShadow:"0 8px 32px rgba(0,0,0,0.6)"}} onClick={e => e.stopPropagation()}>
+            <button onClick={() => setShowAbout(false)}
+              style={{position:"absolute",top:12,right:12,background:"transparent",border:"none",color:"rgba(143,168,200,0.5)",fontSize:16,cursor:"pointer",lineHeight:"1",padding:"4px 8px"}}>
+              ×
+            </button>
+            <div style={{color:"rgba(0,255,136,0.4)",fontSize:8,letterSpacing:"0.24em",marginBottom:10,fontFamily:"monospace"}}>// ABOUT</div>
+            <div style={{color:"#e4eaf4",fontSize:16,fontWeight:700,letterSpacing:"0.08em",marginBottom:14}}>池本市とは？</div>
+            <div style={{color:"rgba(200,218,238,0.75)",fontSize:11,lineHeight:1.9,letterSpacing:"0.04em"}}>池本市（Ikemoto City）は、クリエイターが作品を売り、仲間と繋がるための仮想都市です。手数料は約５％のみ。あなたの売上の約９５％はあなたのものです。</div>
+          </div>
+        </div>
+      )}
       {/* グリッド背景 */}
       <div style={{position:"absolute",inset:0,backgroundImage:"linear-gradient(#1f2937 1px,transparent 1px),linear-gradient(90deg,#1f2937 1px,transparent 1px)",backgroundSize:"30px 30px",opacity:0.3,pointerEvents:"none"}}/>
 
