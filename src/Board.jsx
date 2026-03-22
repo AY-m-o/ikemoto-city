@@ -245,7 +245,12 @@ export default function Board({ onNudge, lang, citizenId }) {
 
   const isLeadOf = (reg) => {
     const item = boardItems.find(b => b.reg === reg);
-    return !!(item && citizenId && citizenId === item.leadId);
+    if (!item) return false;
+    // UUID で判定（Supabase由来のプロジェクト）
+    if (currentUserId && item.lead_user_id && item.lead_user_id === currentUserId) return true;
+    // 市民ID で判定（静的データ用フォールバック）
+    if (currentCitizenId && item.leadId && item.leadId === currentCitizenId) return true;
+    return false;
   };
 
   const handleCardTap = (item) => {
@@ -308,6 +313,8 @@ export default function Board({ onNudge, lang, citizenId }) {
   const totalMsgBadge = myAssignedProjects.length + myPendingProjects.length;
 
   const openAssign = (item) => {
+    // 自分が起案したプロジェクトには申請不可
+    if (isLeadOf(item.reg)) return;
     setAssignTarget(item);
     setAssignPhase("form");
     setAssignLogs([]);
@@ -370,7 +377,7 @@ export default function Board({ onNudge, lang, citizenId }) {
         });
       }
       setBoardItems(prev => [newItem, ...prev]);
-      setAssignedRegs(prev => [...prev, newReg]);
+      // 起案者は「参加中」ではなく「起案者」なので assignedRegs には追加しない
       setShowCreate(false);
       setCreateTitle(""); setCreateDesc(""); setCreateSkills([]); setCreateSeats(3); setCreateDept(""); setCreateError("");
       onNudge();
@@ -393,7 +400,7 @@ export default function Board({ onNudge, lang, citizenId }) {
     });
   };
 
-  const approveAssign = (reg) => {
+  const approveAssign = async (reg) => {
     setPendingRegs(prev => prev.filter(r => r !== reg));
     setAssignedRegs(prev => prev.includes(reg) ? prev : [...prev, reg]);
     setBoardItems(prev =>
@@ -403,11 +410,36 @@ export default function Board({ onNudge, lang, citizenId }) {
           : it
       )
     );
+    // Supabase: assignments の status を active に更新
+    if (currentUserId) {
+      try {
+        await supabase.from("assignments")
+          .update({ status: "active" })
+          .eq("project_id", reg);
+        // seats / status も DB に反映
+        const item = boardItems.find(b => b.reg === reg);
+        if (item) {
+          const newSeats = Math.max(0, item.seats - 1);
+          await supabase.from("projects")
+            .update({ seats: newSeats, status: newSeats <= 0 ? "充足" : "受付中" })
+            .eq("reg", reg);
+        }
+      } catch(_) {}
+    }
     onNudge();
   };
 
-  const rejectAssign = (reg) => {
+  const rejectAssign = async (reg) => {
     setPendingRegs(prev => prev.filter(r => r !== reg));
+    // Supabase: assignments から削除
+    if (currentUserId) {
+      try {
+        await supabase.from("assignments")
+          .delete()
+          .eq("project_id", reg)
+          .eq("status", "pending");
+      } catch(_) {}
+    }
     onNudge();
   };
 
@@ -640,6 +672,10 @@ export default function Board({ onNudge, lang, citizenId }) {
                   onClick={async () => {
                     if (!reportReason) return;
                     setReportSubmitting(true);
+                    if (!currentUserId) {
+                      setReportSubmitting(false);
+                      return;
+                    }
                     try {
                       await submitReport({
                         reporterUserId: currentUserId,
@@ -708,7 +744,7 @@ export default function Board({ onNudge, lang, citizenId }) {
           <div style={{marginBottom:12}}>
             <div style={{fontSize:8,color:C.txL,letterSpacing:"0.14em",marginBottom:5}}>所属局 <span style={{color:"#ef4444"}}>*</span></div>
             <div style={{display:"flex",flexWrap:"wrap",gap:6}}>
-              {["建設局","文化局","厘生局","情報局","行政局","財務局"].map(d => (
+              {["建設局","文化局","厚生局","情報局","教育局","産業局"].map(d => (
                 <button key={d} onClick={() => setCreateDept(d)}
                   style={{padding:"5px 12px",background:createDept===d?C.navy:"transparent",border:"1px solid "+(createDept===d?C.navy:C.border),borderRadius:20,color:createDept===d?"#e4eaf4":C.txM,fontSize:9.5,cursor:"pointer",fontFamily:"inherit",transition:"all 0.15s",letterSpacing:"0.06em"}}>{d}</button>
               ))}
@@ -732,7 +768,7 @@ export default function Board({ onNudge, lang, citizenId }) {
           {/* 募集人数 */}
           <div style={{marginBottom:16}}>
             <div style={{fontSize:8,color:C.txL,letterSpacing:"0.14em",marginBottom:5}}>募集人数：<span style={{color:C.green,fontWeight:700}}>{createSeats}名</span></div>
-            <input type="range" min={1} max={10} value={createSeats} onChange={e => setCreateSeats(Number(e.target.value))}
+            <input type="range" min={1} max={100} value={createSeats} onChange={e => setCreateSeats(Number(e.target.value))}
               style={{width:"100%",accentColor:"#00ff88"}}/>
           </div>
 

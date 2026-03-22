@@ -53,7 +53,17 @@ export async function signUp(email, password, citizenName, domain) {
 export async function signIn(email, password) {
   const { data, error } = await supabase.auth.signInWithPassword({ email, password });
   if (error) throw error;
-  const citizenId = data.user.user_metadata?.citizen_id || "IK-2026-????";
+  const citizenId   = data.user.user_metadata?.citizen_id   || "IK-2026-????";
+  const citizenName = data.user.user_metadata?.citizen_name || "";
+
+  // public.users に存在しない場合はレコードを作成（projects FK 制約を満たすため）
+  await supabase.from("users").upsert({
+    id:           data.user.id,
+    citizen_id:   citizenId,
+    citizen_name: citizenName,
+    email,
+  }, { onConflict: "id" });
+
   return { user: data.user, citizenId };
 }
 
