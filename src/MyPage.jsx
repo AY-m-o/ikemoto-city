@@ -11,6 +11,7 @@ import { useTheme } from "./ThemeContext.jsx";
 // FOLLOWING VIEW（フォロー中店舗一覧）
 // ─────────────────────────────────────────────
 function FollowingView({ onBack, followedShops, onNavigateMarket }) {
+  const C = useTheme();
   const shops = Object.keys(followedShops || {});
   return (
     <div style={{flex:1,display:"flex",flexDirection:"column",overflowY:"auto",paddingBottom:72,background:C.bg,color:C.tx}}>
@@ -48,6 +49,7 @@ function FollowingView({ onBack, followedShops, onNavigateMarket }) {
 // LIKED VIEW（いいね済みアセット + 店舗）
 // ─────────────────────────────────────────────
 function LikedView({ onBack, likedItems, likedShops, onNavigateMarket }) {
+  const C = useTheme();
   const entries = Object.entries(likedItems || {});
   const shopEntries = Object.keys(likedShops || {});
   return (
