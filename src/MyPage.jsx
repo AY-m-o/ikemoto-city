@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { BOARD_ITEMS_INIT } from "./constants.js";
 import { SectionHead, SubScreenNav } from "./components.jsx";
 import { useI18n } from "./i18n.js";
 import { SettingsView, InquiryView, LogoutView, GuideView, FaqView, LegalView, ContactView, PRIVACY_TEXT, TERMS_TEXT, COMMERCE_TEXT } from "./Settings.jsx";
@@ -132,7 +131,28 @@ export default function MyPage({ citizenId, onNudge, onLogout, followedShops, li
     return () => clearInterval(interval);
   }, [subView]);
 
-  const joinedProjects = BOARD_ITEMS_INIT.filter(b => b.status === "充足");
+  const [joinedProjects, setJoinedProjects] = useState([]);
+  useEffect(() => {
+    if (subView !== null) return;
+    (async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+      // active 状態の assignments を取得
+      const { data: rows } = await supabase
+        .from("assignments")
+        .select("project_id")
+        .eq("user_id", user.id)
+        .eq("status", "active");
+      if (!rows || rows.length === 0) return;
+      const projectIds = rows.map(r => r.project_id);
+      // プロジェクト詳細を取得
+      const { data: projects } = await supabase
+        .from("projects")
+        .select("reg,title,dept,lead")
+        .in("reg", projectIds);
+      if (projects) setJoinedProjects(projects);
+    })();
+  }, [subView]);
 
   // サブビュールーティング
   if (subView === "settings")  return <SettingsView  onBack={() => setSubView(null)} onNudge={onNudge} userId={currentUserId}/>;

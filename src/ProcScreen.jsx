@@ -102,7 +102,7 @@ export default function ProcScreen({ onNudge, lang }) {
         <div style={{...C.glass,background:C.card,border:"1px solid "+C.border,borderLeft:"2.5px solid "+C.green,borderRadius:7,padding:"12px 14px",marginBottom:16}}>
           <div style={{fontSize:9.5,color:C.txM,lineHeight:1.8,letterSpacing:"0.04em"}}>
             作品購入時の売上が登録の口座に直接振り込まれます。<br/>
-            <span style={{color:C.txL}}>インフラ維持税（1.5%）を差し引いた公駒金額がお支払いされます。</span>
+            <span style={{color:C.txL}}>インフラ維持税（1.5%）を差し引いた受取金額がお支払いされます。</span>
           </div>
         </div>
 
@@ -258,6 +258,7 @@ export default function ProcScreen({ onNudge, lang }) {
 }
 
 function Input({label, type="text", value, onChange, placeholder}) {
+  const C = useTheme();
   return (
     <div style={{marginBottom:12}}>
       <div style={{fontSize:9,color:C.txM,marginBottom:4}}>{label}</div>
@@ -267,6 +268,7 @@ function Input({label, type="text", value, onChange, placeholder}) {
 }
 
 function Select({label, value, onChange, options}) {
+  const C = useTheme();
   return (
     <div style={{marginBottom:12}}>
       <div style={{fontSize:9,color:C.txM,marginBottom:4}}>{label}</div>

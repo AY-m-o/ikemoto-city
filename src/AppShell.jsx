@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import { TICKER, TABS, MARKET_ITEMS, SHOP_META, nudge } from "./constants.js";
+import { C_DARK as C_STATIC } from "./ThemeContext.jsx";
 import { Stamp, Watermark, RR } from "./components.jsx";
 import Board        from "./Board.jsx";
 import MarketScreen from "./MarketScreen.jsx";
@@ -23,7 +24,7 @@ class ScreenErrorBoundary extends React.Component {
   render() {
     if (this.state.hasError) {
       return (
-        <div style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:"20px",background:C.bg,color:C.tx}}>
+        <div style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:"20px",background:C_STATIC.bg,color:C_STATIC.tx}}>
           <div style={{fontSize:11,color:"#f87171",marginBottom:8,fontWeight:600}}>画面の読み込みに失敗しました</div>
           <div style={{fontSize:9,color:"rgba(255,255,255,0.4)",fontFamily:"monospace",maxWidth:"100%",overflow:"auto",padding:"8px",background:"rgba(255,0,0,0.05)",borderRadius:4}}>
             {this.state.error && this.state.error.message}
@@ -157,12 +158,8 @@ export default function AppShell({ citizenId, userId, onLogout }) {
     return () => el.removeEventListener("scroll", onScroll);
   }, [tab]);
 
-  // ⑥ タブ切替時にscreenKeyを増加してフェード再生
-  const handleTabChange = (newTab) => {
-    setTab(newTab);
-    setScrolled(false);
-    setScreenKey(k => k + 1);
-  };
+  // タブ切替（同一タブ再タップ時はリセット＋フェード）
+  // ※ handleTabChange は削除し handleTab に統合
 
   // マイページから商業区に遷移
   const navigateToMarket = (shop, itemName) => {
@@ -243,14 +240,18 @@ export default function AppShell({ citizenId, userId, onLogout }) {
   }, []);
 
   const handleTab = (id) => {
-    // ⑦ アニメーション
+    // タップアニメーション
     setTappedTab(id);
     setTimeout(() => setTappedTab(null), 300);
 
     if (id === tab) {
+      // 同一タブ再タップ → コンテンツをリセット＋フェード再生
       setResetKeys(p => ({ ...p, [id]: p[id]+1 }));
+      setScreenKey(k => k + 1);
     } else {
       setTab(id);
+      setScrolled(false);
+      setScreenKey(k => k + 1);
     }
     onNudge();
     setShowLangMenu(false);
@@ -553,7 +554,7 @@ export default function AppShell({ citizenId, userId, onLogout }) {
               const isTapped = tappedTab === t.id;
               return (
                 <button key={t.id}
-                  onClick={() => handleTabChange(t.id)}
+                  onClick={() => handleTab(t.id)}
                   style={{
                     flex: 1,
                     padding: "9px 0 10px",

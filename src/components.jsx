@@ -5,6 +5,7 @@ import { useTheme } from "./ThemeContext.jsx";
 // CYBER TICKER
 // ─────────────────────────────────────────────
 export function Ticker({ text }) {
+  const C = useTheme();
   return (
     <div style={{
       background:"#000000",

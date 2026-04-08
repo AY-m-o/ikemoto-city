@@ -1,9 +1,8 @@
 import { useState, useEffect } from "react";
-import { C as C_FALLBACK, LOGOUT_LOGS, runSequence } from "./constants.js";
+import { LOGOUT_LOGS, runSequence } from "./constants.js";
 import { SectionHead, LogTerminal, Btn, SubScreenNav } from "./components.jsx";
 import { uploadAvatar, fetchAvatarUrl } from "./supabase.js";
-import { useTheme } from "./ThemeContext.jsx";
-import { C_DARK as C } from "./ThemeContext.jsx";
+import { useTheme, C_DARK as C } from "./ThemeContext.jsx";
 
 // ─────────────────────────────────────────────
 // SETTINGS VIEW（パラメータ設定）

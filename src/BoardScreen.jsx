@@ -15,6 +15,7 @@ const DUMMY_MESSAGES = [
 ];
 
 function ProjectRoom({ room, onBack, onNudge }) {
+  const C = useTheme();
   const [msgs, setMsgs] = useState(DUMMY_MESSAGES);
   const [input, setInput] = useState("");
   const bottomRef = useRef(null);
@@ -84,6 +85,7 @@ function ProjectRoom({ room, onBack, onNudge }) {
 // PROJECT DETAIL（プロジェクト詳細ページ）
 // ─────────────────────────────────────────────
 function ProjectDetail({ item, onBack, onAssign, onRoom, onNudge, alreadyAssigned }) {
+  const C = useTheme();
   return (
     <div style={{flex:1,overflowY:"auto",paddingBottom:72}} onScroll={onNudge}>
       {/* ヘッダーバナー */}

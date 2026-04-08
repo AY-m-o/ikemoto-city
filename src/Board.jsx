@@ -5,7 +5,6 @@ import { useI18n } from "./i18n.js";
 import MessageRoom from "./MessageRoom.jsx";
 import { supabase, fetchAssignments, insertAssignment, deleteAssignment, fetchProjects, createProject, submitReport, fetchHiddenRegs, uploadProjectImage, deleteProjectImage, updateProjectImages } from "./supabase.js";
 import { useTheme } from "./ThemeContext.jsx";
-import { C_DARK as C } from "./ThemeContext.jsx";
 
 // ─────────────────────────────────────────────
 // PROJECT IMAGE SECTION（画像アップロード）
@@ -410,12 +409,14 @@ export default function Board({ onNudge, lang, citizenId }) {
           : it
       )
     );
-    // Supabase: assignments の status を active に更新
+    // Supabase: 起案者自身以外の pending 申請を active に更新
     if (currentUserId) {
       try {
         await supabase.from("assignments")
           .update({ status: "active" })
-          .eq("project_id", reg);
+          .eq("project_id", reg)
+          .eq("status", "pending")
+          .neq("user_id", currentUserId); // 起案者自身の行は除外
         // seats / status も DB に反映
         const item = boardItems.find(b => b.reg === reg);
         if (item) {
