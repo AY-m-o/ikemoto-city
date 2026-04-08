@@ -414,7 +414,7 @@ export default function AppShell({ citizenId, userId, onLogout }) {
                   <div key={r.key} style={{padding:"9px 12px",borderBottom:"1px solid rgba(255,255,255,0.05)",display:"flex",gap:8,alignItems:"center",cursor:"pointer"}}
                     onClick={() => {
                       if (r.type === "asset" || r.type === "shop") { setTab("market"); }
-                      else if (r.type === "citizen") { setTab("my"); }
+                      // citizen は検索結果を閉じるのみ（タブ遷移なし）
                       setShowSearch(false); setSearchQuery("");
                     }}>
                     <SearchTag type={r.type}/>
@@ -485,7 +485,7 @@ export default function AppShell({ citizenId, userId, onLogout }) {
       {/* ── SCREENS ── */}
       <div ref={contentRef} key={screenKey} className="screen-fade"
         style={{flex:1,display:"flex",flexDirection:"column",overflowY:"auto",position:"relative",background:C.bg,color:C.tx}}>
-        {tab==="board"  && <Board        key={resetKeys.board}  onNudge={onNudge} lang={lang} citizenId={citizenId}/>}
+        {tab==="board"  && <Board        key={resetKeys.board}  onNudge={onNudge} lang={lang} citizenId={citizenId} userId={userId}/>}
         {tab==="market" && <ScreenErrorBoundary key={resetKeys.market}><MarketScreen onNudge={onNudge} lang={lang}
           followedShops={followedShops} onFollowShop={handleFollowShop}
           likedItems={likedItems} onLikeItem={handleLikeItem}

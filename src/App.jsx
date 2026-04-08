@@ -101,7 +101,7 @@ function AppInner({ loggedIn, citizenId, userId, eulaAgreed, setEulaAgreed, show
       <style>{GLOBAL_CSS}</style>
       <div style={{fontFamily:"'Noto Sans JP','Yu Gothic','YuGothic',sans-serif",background:loggedIn?C.bg:C.navy,minHeight:"100vh",width:"100%",maxWidth:390,display:"flex",flexDirection:"column",boxShadow:"0 0 60px rgba(0,0,0,0.35)",position:"relative",overflow:"clip"}}>
         {!eulaAgreed && <EULAScreen onAgree={() => { localStorage.setItem("ik_eula_agreed","1"); setEulaAgreed(true); }}/>}
-        {showOnboarding && <OnboardingScreen onDone={handleOnboardingDone}/>}
+        {eulaAgreed && showOnboarding && <OnboardingScreen onDone={handleOnboardingDone}/>}
         {!loggedIn
           ? <AuthScreen onLogin={handleLogin}/>
           : <AppShell citizenId={citizenId} userId={userId} onLogout={handleLogout}/>

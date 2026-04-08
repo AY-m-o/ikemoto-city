@@ -137,7 +137,7 @@ export default function AuthScreen({ onLogin }) {
             </button>
             <div style={{color:"rgba(0,255,136,0.4)",fontSize:8,letterSpacing:"0.24em",marginBottom:10,fontFamily:"monospace"}}>// ABOUT</div>
             <div style={{color:"#e4eaf4",fontSize:16,fontWeight:700,letterSpacing:"0.08em",marginBottom:14}}>池本市とは？</div>
-            <div style={{color:"rgba(200,218,238,0.75)",fontSize:11,lineHeight:1.9,letterSpacing:"0.04em"}}>池本市（Ikemoto City）は、クリエイターが作品を売り、仲間と繋がるための仮想都市です。手数料は約５％のみ。あなたの売上の約９５％はあなたのものです。</div>
+            <div style={{color:"rgba(200,218,238,0.75)",fontSize:11,lineHeight:1.9,letterSpacing:"0.04em"}}>池本市（Ikemoto City）は、クリエイターが作品を売り、仲間と繋がるための仮想都市です。インフラ維持税はわずか1.5%のみ。あなたの売上の大部分はあなたのものです。</div>
           </div>
         </div>
       )}

@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useTheme } from "./ThemeContext.jsx";
 // constants imported;
 
@@ -25,6 +25,11 @@ export default function MessageRoom({ room, onBack, onNudge }) {
     onNudge();
     setTimeout(() => { if (bottomRef.current) bottomRef.current.scrollIntoView({ behavior:"smooth" }); }, 50);
   };
+
+  // 初回マウント時も最新メッセージへスクロール
+  useEffect(() => {
+    if (bottomRef.current) bottomRef.current.scrollIntoView({ behavior:"instant" });
+  }, []);
 
   return (
     <div style={{flex:1,display:"flex",flexDirection:"column",paddingBottom:72}}>

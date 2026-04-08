@@ -266,7 +266,7 @@ export function Field({ label, value, onChangeVal, placeholder, type="text" }) {
 // ─────────────────────────────────────────────
 // SUB-SCREEN HEADER NAV
 // ─────────────────────────────────────────────
-export function SubScreenNav({ label, onBack }) {
+export function SubScreenNav({ label, onBack, backLabel = "マイページ" }) {
   const C = useTheme();
   return (
     <div style={{background:C.navy,padding:"0",borderBottom:"1px solid rgba(0,255,136,0.15)",marginBottom:0}}>
@@ -275,7 +275,7 @@ export function SubScreenNav({ label, onBack }) {
           onClick={onBack}
           style={{background:"transparent",border:"none",color:C.txL,fontSize:9,cursor:"pointer",fontFamily:"inherit",letterSpacing:"0.1em",padding:"12px 14px",display:"flex",alignItems:"center",gap:6,flexShrink:0}}>
           <span style={{fontSize:12,lineHeight:1}}>‹</span>
-          <span>マイページ</span>
+          <span>{backLabel}</span>
         </button>
         <div style={{flex:1,textAlign:"center",paddingRight:80}}>
           <span style={{fontSize:11,fontWeight:700,color:C.tx,letterSpacing:"0.14em"}}>{label}</span>

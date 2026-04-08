@@ -159,7 +159,7 @@ function ProjectDetail({ item, onBack, onAssign, onRoom, onNudge, alreadyAssigne
 // ─────────────────────────────────────────────
 // BOARD（掲示板メイン）
 // ─────────────────────────────────────────────
-export default function Board({ onNudge, lang, citizenId }) {
+export default function Board({ onNudge, lang, citizenId, userId }) {
   const C = useTheme();
   const t = useI18n(lang);
   const [boardItems, setBoardItems] = useState(BOARD_ITEMS_INIT);
@@ -181,7 +181,7 @@ export default function Board({ onNudge, lang, citizenId }) {
   const [reportedRegs, setReportedRegs] = useState([]);
   const [authChecking, setAuthChecking] = useState(false);
   const [authTarget, setAuthTarget]     = useState(null);
-  const [currentUserId, setCurrentUserId] = useState(null);
+  const [currentUserId, setCurrentUserId] = useState(userId || null);
   const [currentCitizenId, setCurrentCitizenId] = useState(citizenId || "");
   const [currentCitizenName, setCurrentCitizenName] = useState("");
 
