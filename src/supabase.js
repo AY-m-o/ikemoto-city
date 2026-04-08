@@ -152,7 +152,6 @@ export async function toggleFollow(userId, shopName) {
 export async function submitReport({ reporterUserId, targetReg, targetTitle, reason }) {
   const { error } = await supabase.from("reports").insert({
     reporter_user_id: reporterUserId,
-    reporter_id:      reporterUserId,
     target_id:        targetReg || targetTitle,
     reason,
     status:           "pending",

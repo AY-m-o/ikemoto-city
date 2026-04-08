@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { LOGOUT_LOGS, BOARD_ITEMS_INIT, runSequence } from "./constants.js";
+import { LOGOUT_LOGS, runSequence } from "./constants.js";
 import { SectionHead, LogTerminal, Btn, Field, SubScreenNav } from "./components.jsx";
 import { useI18n } from "./i18n.js";
 import { supabase, uploadAvatar, fetchAvatarUrl } from "./supabase.js";
@@ -9,6 +9,7 @@ import { useTheme } from "./ThemeContext.jsx";
 // SETTINGS SUB-VIEW
 // ─────────────────────────────────────────────
 function SettingsView({ onBack, onNudge, userId }) {
+  const C = useTheme();
   const [displayName, setDisplayName] = useState("開発局員");
   const [notifs, setNotifs] = useState({ assign:true, market:false, system:true });
   const [saved, setSaved] = useState(false);
@@ -102,6 +103,7 @@ function SettingsView({ onBack, onNudge, userId }) {
 // INQUIRY SUB-VIEW
 // ─────────────────────────────────────────────
 function InquiryView({ onBack, onNudge }) {
+  const C = useTheme();
   const [category, setCategory] = useState("");
   const [body, setBody] = useState("");
   const [done, setDone] = useState(false);
@@ -150,6 +152,7 @@ function InquiryView({ onBack, onNudge }) {
 // LOGOUT SUB-VIEW
 // ─────────────────────────────────────────────
 function LogoutView({ onBack, onLogout, onNudge }) {
+  const C = useTheme();
   const [phase, setPhase] = useState("confirm");
   const [logs, setLogs] = useState([]);
 
@@ -273,6 +276,7 @@ const FAQ_ITEMS = [
 ];
 
 function GuideView({ onBack }) {
+  const C = useTheme();
   const [open, setOpen] = useState(null);
   return (
     <div style={{flex:1,display:"flex",flexDirection:"column",overflowY:"auto",paddingBottom:72,background:C.bg,color:C.tx}}>
@@ -303,6 +307,7 @@ function GuideView({ onBack }) {
 }
 
 function FaqView({ onBack }) {
+  const C = useTheme();
   const [open, setOpen] = useState(null);
   return (
     <div style={{flex:1,display:"flex",flexDirection:"column",overflowY:"auto",paddingBottom:72,background:C.bg,color:C.tx}}>
@@ -329,6 +334,7 @@ function FaqView({ onBack }) {
 }
 
 function LegalView({ onBack, title, content }) {
+  const C = useTheme();
   return (
     <div style={{flex:1,display:"flex",flexDirection:"column",overflowY:"auto",paddingBottom:72,background:C.bg,color:C.tx}}>
       <SubScreenNav label={title} onBack={onBack}/>
@@ -342,6 +348,7 @@ function LegalView({ onBack, title, content }) {
 }
 
 function ContactView({ onBack }) {
+  const C = useTheme();
   return (
     <div style={{flex:1,display:"flex",flexDirection:"column",overflowY:"auto",paddingBottom:72,background:C.bg,color:C.tx}}>
       <SubScreenNav label="お問い合わせ" onBack={onBack}/>
@@ -361,6 +368,7 @@ function ContactView({ onBack }) {
 
 // フォロー中店舗ページ
 function FollowingView({ onBack, followedShops, onNavigateMarket }) {
+  const C = useTheme();
   const shops = Object.keys(followedShops || {});
   return (
     <div style={{flex:1,display:"flex",flexDirection:"column",overflowY:"auto",paddingBottom:72,background:C.bg,color:C.tx}}>
@@ -397,6 +405,7 @@ function FollowingView({ onBack, followedShops, onNavigateMarket }) {
 
 // いいね済みページ（アセット + 店舗）
 function LikedView({ onBack, likedItems, likedShops, onNavigateMarket }) {
+  const C = useTheme();
   const entries = Object.entries(likedItems || {});
   const shopEntries = Object.keys(likedShops || {});
   return (
@@ -484,8 +493,27 @@ export default function MyScreen({ citizenId, onNudge, onLogout, followedShops, 
     return () => clearInterval(interval);
   }, [subView]);
 
-  // 参加中プロジェクト（充足のもの）
-  const joinedProjects = BOARD_ITEMS_INIT.filter(b => b.status === "充足");
+  // 参加中プロジェクト（Supabase DB から動的取得）
+  const [joinedProjects, setJoinedProjects] = useState([]);
+  useEffect(() => {
+    if (subView !== null) return;
+    (async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+      const { data: rows } = await supabase
+        .from("assignments")
+        .select("project_id")
+        .eq("user_id", user.id)
+        .eq("status", "active");
+      if (!rows || rows.length === 0) return;
+      const projectIds = rows.map(r => r.project_id);
+      const { data: projects } = await supabase
+        .from("projects")
+        .select("reg,title,dept,lead")
+        .in("reg", projectIds);
+      if (projects) setJoinedProjects(projects);
+    })();
+  }, [subView]);
 
   if (subView === "settings")  return <SettingsView  onBack={()=>setSubView(null)} onNudge={onNudge} userId={currentUserId}/>;
   if (subView === "inquiry")   return <InquiryView   onBack={()=>setSubView(null)} onNudge={onNudge}/>;
